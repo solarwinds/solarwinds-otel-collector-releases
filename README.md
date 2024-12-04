@@ -1,0 +1,1 @@
+# SolarWinds OpenTelemetry Collector
