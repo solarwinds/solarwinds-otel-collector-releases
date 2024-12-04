@@ -1,0 +1,44 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    labels:
+      - dependencies
+      - actions
+      - Skip Changelog
+    schedule:
+      interval: weekly
+      day: sunday
+  - package-ecosystem: docker
+    directory: /build/docker
+    labels:
+      - dependencies
+      - docker
+    schedule:
+      interval: weekly
+      day: sunday
+  - package-ecosystem: gomod
+    directories:
+      - /cmd
+      - /exporter
+    labels:
+      - dependencies
+      - go
+    schedule:
+      interval: "daily"
+    allow:
+      # Allow both direct and indirect updates for all packages
+      - dependency-type: "all"
+    ignore:
+      - dependency-name: "github.com/open-telemetry/opentelemetry-collector-contrib*"
+      - dependency-name: "go.opentelemetry.io/collector*"
+    # Disable version updates
+    open-pull-requests-limit: 0
+    groups:
+      minor-and-patch:
+        applies-to: security-updates
+        patterns:
+        - "*"
+        update-types:
+        - "patch"
+        - "minor"
