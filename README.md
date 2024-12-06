@@ -7,21 +7,22 @@ and [opentelemetry-collector-contrib](https://github.com/open-telemetry/opentele
 The SolarWinds OpenTelemetry collector contains following components:
 - receivers
   - full set of [opentelemetry-collector receivers](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.113.0/receiver)
-  - full set of [opentelemetry-collector-contrib receivers](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/release/v0.113.x/receiver)
+  - full set of [opentelemetry-collector-contrib receivers](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.113.0/receiver)
 - processors
   - full set of [opentelemetry-collector processors](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.113.0/processor)
-  - full set of [opentelemetry-collector-contrib processors](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/release/v0.113.x/processor)
+  - full set of [opentelemetry-collector-contrib processors](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.113.0/processor)
 - exporters
-    - full set of [opentelemetry-collector exporters](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.113.0/exporter)
-    - full set of [opentelemetry-collector-contrib exporters](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/release/v0.113.x/exporter) **except:**
-      - `kineticaexporter`
+    - [`otlpexporter`](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.113.0/exporter/otlpexporter)
+    - [`fileexporter`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.113.0/exporter/fileexporter)
     - [`solarwindsexporter`](./exporter/solarwindsexporter)
+    - [`debugexporter`](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.113.0/exporter/debugexporter)
+    - [`nopexporter`](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.113.0/exporter/nopexporter)
 - extensions
     - full set of [opentelemetry-collector extensions](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.113.0/extension)
-    - full set of [opentelemetry-collector-contrib extensions](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/release/v0.113.x/extension)
+    - full set of [opentelemetry-collector-contrib extensions](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.113.0/extension)
 - connectors
     - full set of [opentelemetry-collector connectors](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.113.0/connector)
-    - full set of [opentelemetry-collector-contrib connectors](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/release/v0.113.x/connector)
+    - full set of [opentelemetry-collector-contrib connectors](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.113.0/connector)
 
 ## Installation
 ### Binary
