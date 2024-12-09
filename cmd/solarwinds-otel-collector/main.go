@@ -34,7 +34,7 @@ func main() {
 	info := component.BuildInfo{
 		Command:     "solarwinds-otel-collector",
 		Description: "SolarWinds distribution for OpenTelemetry",
-		Version:     "0.113.1",
+		Version:     "0.113.0",
 	}
 
 	err := run(otelcol.CollectorSettings{
