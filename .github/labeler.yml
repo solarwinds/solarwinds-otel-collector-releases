@@ -1,0 +1,14 @@
+docker:
+  - changed-files:
+      - any-glob-to-any-file:
+          - build/*
+          - cmd/solarwinds-otel-collector/*
+          - exporter/*
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: "docs/*"
+      - any-glob-to-any-file: "*.md"
+ci/cd:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/*

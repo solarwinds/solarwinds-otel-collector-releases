@@ -1,0 +1,40 @@
+name: Build and Deploy Images
+
+on:
+  push:
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+    tags:
+      - '*.*.*'
+
+  pull_request:
+    branches: 
+      - master
+      - release/**
+
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check licenses
+        run: make ci-check-licenses
+
+  build_and_test:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.generate-tag.outputs.value }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate docker image tag
+        id: generate-tag
+        run: echo "::set-output name=value::v${{ github.run_number }}-$(git rev-parse --short HEAD)"
+
+      - name: Build and Test
+        run: docker build . --file build/docker/Dockerfile --tag ${{ steps.generate-tag.outputs.value }}
