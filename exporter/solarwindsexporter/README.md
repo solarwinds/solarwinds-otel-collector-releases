@@ -13,16 +13,12 @@ SolarWinds Exporter is a convenience wrapper around [OTLP gRPC Exporter](https:/
 
 ## Getting Started
 
-You just need to include the SolarWinds Exporter in your exporter definitions and provide the following minimal configuration:
+You just need to include the SolarWinds Exporter in your exporter definitions and no additional configuration is needed. It needs to be used together with the Solarwinds Extension.
 
 ```yaml
 exporters:
   solarwinds:
-    token: "YOUR-INGESTION-TOKEN"
-    data_center: "na-01"
 ```
-- `token` (mandatory) - You can generate your token in your SolarWinds Observability SaaS account under _Settings / API Tokens / Create API Token_. The type is "Ingestion". You can find the complete documentation [here](https://documentation.solarwinds.com/en/success_center/observability/content/settings/api-tokens.htm).
-- `data_center` (mandatory) - Data center is the region you picked during the sign-up process. You can easily see in URLs after logging in to SolarWinds Observability SaaS - it's either `na-01`, `na-02` or `eu-01`. Please refer to the [documentation](https://documentation.solarwinds.com/en/success_center/observability/content/system_requirements/endpoints.htm#Find) for details.
 
 ## Full configuration
 
