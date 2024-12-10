@@ -26,8 +26,6 @@ exporters:
 ```yaml
 exporters:
   solarwinds:
-    token: "YOUR-INGESTION-TOKEN" # No default (mandatory field).
-    data_center: "na-01" # No default (mandatory field).
     timeout: "10s"
     sending_queue:
       enabled: true

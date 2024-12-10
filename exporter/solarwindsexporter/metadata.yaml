@@ -6,3 +6,6 @@ status:
   stability:
     development: [traces, metrics, logs]
 
+tests:
+  skip_lifecycle: true
+

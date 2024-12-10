@@ -139,7 +139,7 @@ func findExtension(extensions map[component.ID]component.Component, cfgExtension
 
 	// If no extension name configured and there is only one
 	// found matching the type, return it.
-	if len(foundExtensions) == 1 && cfgExtensionID != nil {
+	if len(foundExtensions) == 1 && cfgExtensionID == nil {
 		return foundExtensions[0]
 	}
 
@@ -166,10 +166,19 @@ func (swiExporter *solarwindsExporter) start(ctx context.Context, host component
 func (swiExporter *solarwindsExporter) shutdown(ctx context.Context) error {
 	switch swiExporter.exporterType {
 	case metricsExporterType:
+		if swiExporter.metrics == nil {
+			return nil
+		}
 		return swiExporter.metrics.Shutdown(ctx)
 	case logsExporterType:
+		if swiExporter.logs == nil {
+			return nil
+		}
 		return swiExporter.logs.Shutdown(ctx)
 	case tracesExporterType:
+		if swiExporter.traces == nil {
+			return nil
+		}
 		return swiExporter.traces.Shutdown(ctx)
 	default:
 		return fmt.Errorf("unknown exporter type: %v", swiExporter.exporterType)
