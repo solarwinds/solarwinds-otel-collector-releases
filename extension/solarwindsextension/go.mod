@@ -1,6 +1,6 @@
 module github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension
 
-go 1.22.7
+go 1.23.4
 
 require (
 	github.com/stretchr/testify v1.9.0
