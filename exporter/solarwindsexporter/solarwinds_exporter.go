@@ -18,9 +18,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension"
 
 	"go.opentelemetry.io/collector/component"
-	"go.opentelemetry.io/collector/config/configopaque"
 	"go.opentelemetry.io/collector/exporter"
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
 	"go.opentelemetry.io/collector/pdata/plog"
@@ -35,8 +35,6 @@ const (
 	logsExporterType
 	tracesExporterType
 )
-
-var extensionType = component.MustNewType("solarwinds")
 
 type solarwindsExporter struct {
 	exporterType
@@ -75,7 +73,7 @@ func (swiExporter *solarwindsExporter) initExporterType(
 	swiExporter.exporterType = typ
 	var extensionID *component.ID
 	if swiExporter.config.ExtensionName != "" {
-		id := component.NewIDWithName(extensionType, swiExporter.config.ExtensionName)
+		id := component.NewIDWithName(solarwindsextension.NewFactory().Type(), swiExporter.config.ExtensionName)
 		extensionID = &id
 	}
 
@@ -119,20 +117,11 @@ func (swiExporter *solarwindsExporter) initExporterType(
 
 }
 
-type EndpointConfigProvider interface {
-	GetEndpointConfig() EndpointConfig
-}
-
-type EndpointConfig interface {
-	Url() (string, error)
-	Token() configopaque.String
-}
-
-func findExtension(extensions map[component.ID]component.Component, cfgExtensionID *component.ID) EndpointConfigProvider {
-	foundExtensions := make([]EndpointConfigProvider, 0)
+func findExtension(extensions map[component.ID]component.Component, cfgExtensionID *component.ID) *solarwindsextension.SolarwindsExtension {
+	foundExtensions := make([]*solarwindsextension.SolarwindsExtension, 0)
 
 	for foundExtensionID, ext := range extensions {
-		if swiExtension, ok := ext.(EndpointConfigProvider); ok {
+		if swiExtension, ok := ext.(*solarwindsextension.SolarwindsExtension); ok {
 			// If configured extension ID is found, return it.
 			if cfgExtensionID != nil && *cfgExtensionID == foundExtensionID {
 				return swiExtension

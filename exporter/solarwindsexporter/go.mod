@@ -13,6 +13,7 @@ require (
 	go.opentelemetry.io/collector/exporter v0.113.0
 	go.opentelemetry.io/collector/exporter/exportertest v0.113.0
 	go.opentelemetry.io/collector/exporter/otlpexporter v0.113.0
+	github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension v0.113.0
 	go.opentelemetry.io/collector/pdata v1.19.0
 	go.uber.org/goleak v1.3.0
 )
@@ -76,3 +77,5 @@ require (
 	google.golang.org/protobuf v1.35.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension => ../../extension/solarwindsextension
