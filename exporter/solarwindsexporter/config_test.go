@@ -21,6 +21,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/config/configretry"
 	"go.opentelemetry.io/collector/confmap"
 	"go.opentelemetry.io/collector/confmap/confmaptest"
@@ -51,7 +52,7 @@ func TestConfigUnmarshalFull(t *testing.T) {
 
 	// Verify the values.
 	assert.Equal(t, &Config{
-		ExtensionName: "swo",
+		Extension: "solarwinds/1",
 		BackoffSettings: configretry.BackOffConfig{
 			Enabled:             false,
 			InitialInterval:     15000000000,
@@ -97,4 +98,55 @@ func TestConfigTokenRedacted(t *testing.T) {
 
 	// It is redacted when printed.
 	assert.Equal(t, "[REDACTED]", cfg.ingestionToken.String())
+}
+
+// TestConfigExtensionAsComponent test basic scenarios arising from
+// valid and invalid combinations of extension "type/name" when
+// parsed by `Configuration.ExtensionAsComponent()`.
+func TestConfigExtensionAsComponent(t *testing.T) {
+	type test struct {
+		extension string
+		component component.ID
+		ok        bool
+	}
+
+	tests := []test{
+		{
+			extension: "solarwinds",
+			component: component.MustNewID("solarwinds"),
+			ok:        true,
+		},
+		{
+			extension: "solarwinds/1",
+			component: component.MustNewIDWithName("solarwinds", "1"),
+			ok:        true,
+		},
+		{
+			extension: "solarwinds/",
+			component: component.MustNewID("solarwinds"),
+			ok:        true,
+		},
+		{
+			extension: "/",
+			component: component.ID{},
+			ok:        false,
+		},
+		{
+			extension: "/1",
+			component: component.ID{},
+			ok:        false,
+		},
+	}
+
+	for _, tc := range tests {
+		config := &Config{Extension: tc.extension}
+		id, err := config.ExtensionAsComponent()
+
+		if tc.ok { // A URL should be returned.
+			require.NoError(t, err)
+			assert.Equal(t, tc.component, id)
+		} else { // It should fail.
+			assert.ErrorContains(t, err, "invalid extension")
+		}
+	}
 }

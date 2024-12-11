@@ -18,6 +18,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension"
 
 	"go.opentelemetry.io/collector/component"
@@ -72,9 +73,18 @@ func (swiExporter *solarwindsExporter) initExporterType(
 ) error {
 	swiExporter.exporterType = typ
 	var extensionID *component.ID
-	if swiExporter.config.ExtensionName != "" {
-		id := component.NewIDWithName(solarwindsextension.NewFactory().Type(), swiExporter.config.ExtensionName)
-		extensionID = &id
+	if swiExporter.config.Extension != "" {
+		parsedID, err := swiExporter.config.ExtensionAsComponent()
+		if err != nil {
+			return fmt.Errorf("failed parsing extension id: %w", err)
+		}
+		extensionID = &parsedID
+	}
+
+	// Only allow the type of the [solarwindsextension].
+	if extensionID != nil &&
+		extensionID.Type() != solarwindsextension.NewFactory().Type() {
+		return fmt.Errorf("unexpected extension type: %s", extensionID.Type())
 	}
 
 	swiExtension := findExtension(host.GetExtensions(), extensionID)

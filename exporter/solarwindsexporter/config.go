@@ -15,7 +15,9 @@
 package solarwindsexporter
 
 import (
+	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"go.opentelemetry.io/collector/component"
@@ -29,9 +31,9 @@ import (
 
 // Config represents a Solarwinds Exporter configuration.
 type Config struct {
-	// ExtensionName identifies a Solarwinds Extension to
+	// Extension identifies a Solarwinds Extension to
 	// use for obtaining connection credentials in this exporter.
-	ExtensionName string `mapstructure:"extension_name"`
+	Extension string `mapstructure:"extension"`
 	// BackoffSettings configures retry behavior of the exporter.
 	// See [configretry.BackOffConfig] documentation.
 	BackoffSettings configretry.BackOffConfig `mapstructure:"retry_on_failure"`
@@ -44,6 +46,38 @@ type Config struct {
 	ingestionToken configopaque.String `mapstructure:"-"`
 	// endpointURL stores the URL provided by the Solarwinds Extension.
 	endpointURL string `mapstructure:"-"`
+}
+
+// ExtensionAsComponent tries to parse `extension` value of the form 'type/name'
+// or 'type' from the configuration to [component.ID].
+// It fails with an error if it doesn't follow this form or the 'type' part
+// is not a valid [component.Type].
+//
+// Safety: it PANICS if `extension` is empty.
+func (cfg *Config) ExtensionAsComponent() (component.ID, error) {
+	parts := strings.Split(cfg.Extension, "/")
+
+	switch len(parts) {
+	case 1:
+		extensionType, err := component.NewType(parts[0])
+		if err != nil {
+			return component.ID{}, fmt.Errorf("invalid extension type: %q", parts[0])
+		}
+		return component.NewID(extensionType), nil
+	case 2:
+		// Make sure bare '/' fails.
+		if len(parts[0]) == 0 && len(parts[1]) == 0 {
+			return component.ID{}, fmt.Errorf("invalid extension format: %q", cfg.Extension)
+		}
+
+		extensionType, err := component.NewType(parts[0])
+		if err != nil {
+			return component.ID{}, fmt.Errorf("invalid extension type: %q", parts[0])
+		}
+		return component.NewIDWithName(extensionType, parts[1]), nil
+	default:
+		return component.ID{}, errors.New("incorrect 'extension' configuration value")
+	}
 }
 
 // NewDefaultConfig creates a new default configuration.

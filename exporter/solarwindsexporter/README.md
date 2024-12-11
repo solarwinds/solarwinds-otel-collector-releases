@@ -13,7 +13,7 @@ SolarWinds Exporter is a convenience wrapper around [OTLP gRPC Exporter](https:/
 
 ## Getting Started
 
-You just need to include the SolarWinds Exporter in your exporter definitions and no additional configuration is needed. It needs to be used together with the Solarwinds Extension.
+You just need to include the SolarWinds Exporter in your exporter definitions and no additional configuration is needed. It needs to be used together with the [Solarwinds Extension](../../extension/solarwindsextension).
 
 ```yaml
 exporters:
@@ -26,6 +26,7 @@ exporters:
 ```yaml
 exporters:
   solarwinds:
+    extension: "solarwinds/1"
     timeout: "10s"
     sending_queue:
       enabled: true
@@ -39,6 +40,7 @@ exporters:
       max_interval: "30s"
       max_elapsed_time: "300s"
 ```
+- `extension_name` (optional) - A name of an instance of the [Solarwinds Extension](../../extension/solarwindsextension) that this exporter uses to get its configuration from. If there is only a single instance of the extension, it is optional. The format follows the one in the collector configuration.
 - `timeout` (optional) - Timeout for each attempt to send data to the SaaS service. A timeout of zero disables the timeout. The **default** is `5s`.
 - `retry_on_failure` (optional) - These options configure the retry behavior. Please refer to the [Exporter Helper documentation](https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/exporterhelper/README.md).
 - `sending_queue` (optional) - These are the options to set queuing in the exporter. A full descriptions can be similarly found in [Exporter Helper documentation](https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/exporterhelper/README.md).
