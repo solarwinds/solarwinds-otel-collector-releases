@@ -37,6 +37,10 @@ const (
 	tracesExporterType
 )
 
+var (
+	ErrSwiExtensionNotFound = errors.New("solarwinds extension not found")
+)
+
 type solarwindsExporter struct {
 	exporterType
 	config   *Config
@@ -88,7 +92,7 @@ func (swiExporter *solarwindsExporter) initExporterType(
 		if extensionID != nil {
 			return fmt.Errorf("solarwinds extension %q not found", extensionID)
 		}
-		return errors.New("solarwinds extension not found")
+		return ErrSwiExtensionNotFound
 	}
 
 	endpointCfg := swiExtension.GetEndpointConfig()
