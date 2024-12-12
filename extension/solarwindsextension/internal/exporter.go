@@ -20,20 +20,16 @@ import (
 	"go.opentelemetry.io/collector/exporter"
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
 	"go.opentelemetry.io/collector/extension"
-	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.uber.org/zap"
 )
 
 type Exporter struct {
-	logger         *zap.Logger
-	exporter       exporter.Metrics
-	modifyResource resourceModifier
+	logger   *zap.Logger
+	exporter exporter.Metrics
 }
 
-type resourceModifier func(resource pcommon.Resource) error
-
-func NewExporter(ctx context.Context, set extension.Settings, cfg *Config, modifyResource resourceModifier) (*Exporter, error) {
+func newExporter(ctx context.Context, set extension.Settings, cfg *Config) (*Exporter, error) {
 	set.Logger.Debug("Creating Exporter")
 	oCfg, err := cfg.OTLPConfig()
 	if err != nil {
@@ -41,10 +37,7 @@ func NewExporter(ctx context.Context, set extension.Settings, cfg *Config, modif
 	}
 	expSet := toExporterSettings(set)
 
-	exp := &Exporter{
-		logger:         set.Logger,
-		modifyResource: modifyResource,
-	}
+	exp := &Exporter{logger: set.Logger}
 	exp.exporter, err = otlpexporter.NewFactory().CreateMetrics(ctx, expSet, oCfg)
 	if err != nil {
 		return nil, err
@@ -52,12 +45,12 @@ func NewExporter(ctx context.Context, set extension.Settings, cfg *Config, modif
 	return exp, nil
 }
 
-func (e *Exporter) Start(ctx context.Context, host component.Host) error {
+func (e *Exporter) start(ctx context.Context, host component.Host) error {
 	e.logger.Debug("Starting exporter")
 	return e.exporter.Start(ctx, host)
 }
 
-func (e *Exporter) Shutdown(ctx context.Context) error {
+func (e *Exporter) shutdown(ctx context.Context) error {
 	e.logger.Debug("Shutting down exporter")
 	return e.exporter.Shutdown(ctx)
 }
@@ -70,20 +63,10 @@ func toExporterSettings(set extension.Settings) exporter.Settings {
 	}
 }
 
-func (e *Exporter) PushMetrics(ctx context.Context, md pmetric.Metrics) error {
+func (e *Exporter) push(ctx context.Context, md pmetric.Metrics) error {
 	if md.MetricCount() == 0 {
 		// For receivers with no direct output, but scrape pipeline (ie. telegraf)
 		return nil
 	}
-
-	rms := md.ResourceMetrics()
-
-	for i := 0; i < rms.Len(); i++ {
-		rm := rms.At(i)
-		if err := e.modifyResource(rm.Resource()); err != nil {
-			return err
-		}
-	}
-
 	return e.exporter.ConsumeMetrics(ctx, md)
 }

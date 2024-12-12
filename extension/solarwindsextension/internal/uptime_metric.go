@@ -23,7 +23,7 @@ import (
 	"time"
 )
 
-func NewUptimeMetric(logger *zap.Logger) *UptimeMetric {
+func newUptimeMetric(logger *zap.Logger) *UptimeMetric {
 	logger.Debug("Creating UptimeMetric")
 	return &UptimeMetric{logger: logger, uptime: newUptimeCounter()}
 }
@@ -33,7 +33,7 @@ type UptimeMetric struct {
 	uptime *uptimeCounter
 }
 
-func (um *UptimeMetric) AddUptimeMetric(_ context.Context, md pmetric.Metrics) error {
+func (um *UptimeMetric) add(_ context.Context, md pmetric.Metrics) error {
 	um.logger.Debug("Adding uptime metric")
 	res := md.ResourceMetrics().AppendEmpty()
 	scopeMetrics := res.ScopeMetrics().AppendEmpty()
