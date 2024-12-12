@@ -38,7 +38,6 @@ type Heartbeat struct {
 }
 
 var alreadyRunningError = errors.New("heartbeat already running")
-var notRunningError = errors.New("heartbeat not started")
 
 func NewHeartbeat(ctx context.Context, set extension.Settings, cfg *Config) (*Heartbeat, error) {
 	set.Logger.Debug("Creating Heartbeat")
@@ -83,7 +82,8 @@ func (h *Heartbeat) Shutdown(ctx context.Context) error {
 
 	h.logger.Debug("Stopping Heartbeat routine")
 	if h.cancel == nil {
-		return notRunningError
+		// already stopped
+		return nil
 	}
 	h.cancel()
 	h.cancel = nil
