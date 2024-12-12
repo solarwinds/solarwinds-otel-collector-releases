@@ -132,7 +132,7 @@ jobs:
         id: get-tag
         run: echo "tag=${GITHUB_REF#refs/tags/v*}" >> $GITHUB_OUTPUT
 
-      - name: Create Github Release
+      - name: Create GitHub Release
         env:
           # for gh cli
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
