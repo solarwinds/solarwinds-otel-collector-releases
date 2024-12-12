@@ -83,7 +83,7 @@ func (h *Heartbeat) Shutdown(ctx context.Context) error {
 	h.logger.Debug("Stopping Heartbeat routine")
 	if h.cancel == nil {
 		// already stopped
-		return errors.New("heartbeat already stopped")
+		return nil
 	}
 	h.cancel()
 	h.cancel = nil
