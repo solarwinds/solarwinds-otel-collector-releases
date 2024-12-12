@@ -47,7 +47,7 @@ func createMetricsExporter(
 
 	metricsExporter, err := newExporter(exporterCfg, settings, metricsExporterType)
 	if err != nil {
-		return nil, err // TODO: Wrap.
+		return nil, fmt.Errorf("failed to create exporter: %w", err)
 	}
 
 	return exporterhelper.NewMetrics(

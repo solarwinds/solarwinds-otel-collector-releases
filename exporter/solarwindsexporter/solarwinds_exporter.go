@@ -85,6 +85,9 @@ func (swiExporter *solarwindsExporter) initExporterType(
 
 	swiExtension := findExtension(host.GetExtensions(), extensionID)
 	if swiExtension == nil {
+		if extensionID != nil {
+			return fmt.Errorf("solarwinds extension %q not found", extensionID)
+		}
 		return errors.New("solarwinds extension not found")
 	}
 
@@ -94,10 +97,10 @@ func (swiExporter *solarwindsExporter) initExporterType(
 	token := endpointCfg.Token()
 	swiExporter.config.ingestionToken = token
 
-	// Get URl from the extension.
+	// Get URL from the extension.
 	url, err := endpointCfg.Url()
 	if err != nil {
-		return fmt.Errorf(": %w", err)
+		return fmt.Errorf("URL configuration not available: %w", err)
 	}
 	swiExporter.config.endpointURL = url
 
