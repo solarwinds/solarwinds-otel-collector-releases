@@ -1,0 +1,21 @@
+service:
+  pipelines:
+    metrics:
+      receivers: [hostmetrics]
+      exporters: [otlp]
+
+receivers:
+  hostmetrics:
+    collection_interval: 10s
+    scrapers:
+      cpu: {}
+      memory: {}
+      disk: {}
+      filesystem: {}
+      load: {}
+      processes: {}
+exporters:
+  otlp:
+    endpoint: receiving:17016
+    tls:
+      insecure: true

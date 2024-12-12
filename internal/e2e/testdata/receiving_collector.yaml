@@ -1,0 +1,17 @@
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      exporters: [debug]
+
+receivers:
+  otlp:
+    protocols:
+      grpc: 
+        endpoint: :17016
+exporters:
+  debug:
+    verbosity: detailed
+    sampling_initial: 5
+    sampling_thereafter: 200
+  
