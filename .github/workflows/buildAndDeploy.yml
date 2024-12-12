@@ -130,7 +130,7 @@ jobs:
 
       - name: Get current tag
         id: get-tag
-        run: echo "tag=${GITHUB_REF#refs/tags/v*}" >> $GITHUB_OUTPUT
+        run: echo "tag=${GITHUB_REF#refs/tags/*}" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         env:
