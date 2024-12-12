@@ -15,9 +15,7 @@
 package solarwindsexporter
 
 import (
-	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"go.opentelemetry.io/collector/component"
@@ -48,36 +46,20 @@ type Config struct {
 	endpointURL string `mapstructure:"-"`
 }
 
-// ExtensionAsComponent tries to parse `extension` value of the form 'type/name'
-// or 'type' from the configuration to [component.ID].
-// It fails with an error if it doesn't follow this form or the 'type' part
-// is not a valid [component.Type].
+// extensionAsComponent tries to parse `extension` value of the form 'type/name'
+// or 'type' from the configuration to [component.ID]. If the `extension value is empty,
+// it returns `nil` with a `nil` error.
 //
-// Safety: it PANICS if `extension` is empty.
-func (cfg *Config) ExtensionAsComponent() (component.ID, error) {
-	parts := strings.Split(cfg.Extension, "/")
-
-	switch len(parts) {
-	case 1:
-		extensionType, err := component.NewType(parts[0])
-		if err != nil {
-			return component.ID{}, fmt.Errorf("invalid extension type: %q", parts[0])
-		}
-		return component.NewID(extensionType), nil
-	case 2:
-		// Make sure bare '/' fails.
-		if len(parts[0]) == 0 && len(parts[1]) == 0 {
-			return component.ID{}, fmt.Errorf("invalid extension format: %q", cfg.Extension)
-		}
-
-		extensionType, err := component.NewType(parts[0])
-		if err != nil {
-			return component.ID{}, fmt.Errorf("invalid extension type: %q", parts[0])
-		}
-		return component.NewIDWithName(extensionType, parts[1]), nil
-	default:
-		return component.ID{}, errors.New("incorrect 'extension' configuration value")
+// It uses [component.ID.UnmarshalText] and behaves accordingly.
+func (cfg *Config) extensionAsComponent() (*component.ID, error) {
+	if cfg.Extension == "" {
+		return nil, nil
 	}
+
+	parsedID := &component.ID{}
+	err := parsedID.UnmarshalText([]byte(cfg.Extension))
+
+	return parsedID, err
 }
 
 // NewDefaultConfig creates a new default configuration.

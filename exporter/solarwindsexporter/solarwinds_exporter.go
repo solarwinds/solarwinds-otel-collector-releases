@@ -72,13 +72,9 @@ func (swiExporter *solarwindsExporter) initExporterType(
 	typ exporterType,
 ) error {
 	swiExporter.exporterType = typ
-	var extensionID *component.ID
-	if swiExporter.config.Extension != "" {
-		parsedID, err := swiExporter.config.ExtensionAsComponent()
-		if err != nil {
-			return fmt.Errorf("failed parsing extension id: %w", err)
-		}
-		extensionID = &parsedID
+	extensionID, err := swiExporter.config.extensionAsComponent()
+	if err != nil {
+		return fmt.Errorf("failed parsing extension id: %w", err)
 	}
 
 	// Only allow the type of the [solarwindsextension].
