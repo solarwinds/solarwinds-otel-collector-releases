@@ -15,8 +15,9 @@
 package solarwindsextension
 
 import (
-	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension/internal"
 	"go.opentelemetry.io/collector/config/configopaque"
+
+	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension/internal"
 )
 
 type EndpointConfig interface {

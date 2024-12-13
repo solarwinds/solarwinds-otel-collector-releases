@@ -16,6 +16,7 @@ package internal
 
 import (
 	"context"
+
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/exporter"
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
@@ -64,9 +65,5 @@ func toExporterSettings(set extension.Settings) exporter.Settings {
 }
 
 func (e *Exporter) push(ctx context.Context, md pmetric.Metrics) error {
-	if md.MetricCount() == 0 {
-		// For receivers with no direct output, but scrape pipeline (ie. telegraf)
-		return nil
-	}
 	return e.exporter.ConsumeMetrics(ctx, md)
 }

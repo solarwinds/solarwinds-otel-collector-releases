@@ -17,14 +17,15 @@ package internal
 import (
 	"errors"
 	"fmt"
+	"maps"
+	"slices"
+	"strings"
+
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/config/configgrpc"
 	"go.opentelemetry.io/collector/config/configopaque"
 	"go.opentelemetry.io/collector/config/configtls"
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
-	"maps"
-	"slices"
-	"strings"
 )
 
 // Config represents a Solarwinds Exporter configuration.

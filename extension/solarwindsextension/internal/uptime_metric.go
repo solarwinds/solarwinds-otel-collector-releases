@@ -16,11 +16,13 @@ package internal
 
 import (
 	"context"
-	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension/internal/metadata"
+	"time"
+
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.uber.org/zap"
-	"time"
+
+	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension/internal/metadata"
 )
 
 func newUptimeMetric(logger *zap.Logger) *UptimeMetric {
@@ -40,7 +42,7 @@ func (um *UptimeMetric) add(_ context.Context, md pmetric.Metrics) error {
 	scopeMetrics.Scope().SetName(metadata.ScopeName)
 	scopeMetrics.Scope().SetVersion("0.0.1")
 	m := scopeMetrics.Metrics().AppendEmpty()
-	m.SetName("otelcol.uptime")
+	m.SetName("sw.otelcol.uptime")
 	dataPoint := m.SetEmptyGauge().DataPoints().AppendEmpty()
 	dataPoint.SetTimestamp(pcommon.NewTimestampFromTime(time.Now()))
 	dataPoint.SetDoubleValue(um.uptime.Get())

@@ -17,14 +17,25 @@ package internal
 import (
 	"context"
 	"errors"
+	"sync"
+	"time"
+
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/extension"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.uber.org/zap"
-	"sync"
-	"time"
 )
+
+const (
+	defaultHeartbeatInterval = 30 * time.Second
+)
+
+type MetricsExporter interface {
+	start(context.Context, component.Host) error
+	shutdown(context.Context) error
+	push(context.Context, pmetric.Metrics) error
+}
 
 type Heartbeat struct {
 	logger *zap.Logger
@@ -33,27 +44,37 @@ type Heartbeat struct {
 	startShutdownMtx sync.Mutex
 
 	metric        *UptimeMetric
-	exporter      *Exporter
+	exporter      MetricsExporter
 	collectorName string
+
+	beatInterval time.Duration
 }
 
 var alreadyRunningError = errors.New("heartbeat already running")
 
 func NewHeartbeat(ctx context.Context, set extension.Settings, cfg *Config) (*Heartbeat, error) {
 	set.Logger.Debug("Creating Heartbeat")
-	h := &Heartbeat{
-		logger:        set.Logger,
-		metric:        newUptimeMetric(set.Logger),
-		collectorName: cfg.CollectorName,
-	}
 
-	var err error
-	h.exporter, err = newExporter(ctx, set, cfg)
+	exp, err := newExporter(ctx, set, cfg)
 	if err != nil {
 		return nil, err
 	}
 
-	return h, nil
+	return newHeartbeatWithExporter(set, cfg, exp), nil
+}
+
+func newHeartbeatWithExporter(
+	set extension.Settings,
+	cfg *Config,
+	exporter MetricsExporter,
+) *Heartbeat {
+	return &Heartbeat{
+		logger:        set.Logger,
+		metric:        newUptimeMetric(set.Logger),
+		collectorName: cfg.CollectorName,
+		exporter:      exporter,
+		beatInterval:  defaultHeartbeatInterval,
+	}
 }
 
 func (h *Heartbeat) Start(ctx context.Context, host component.Host) error {
@@ -91,7 +112,7 @@ func (h *Heartbeat) Shutdown(ctx context.Context) error {
 }
 
 func (h *Heartbeat) loop(ctx context.Context) {
-	tick := time.NewTicker(30 * time.Second)
+	tick := time.NewTicker(h.beatInterval)
 	defer tick.Stop()
 
 	// Start beat
@@ -132,7 +153,7 @@ func (h *Heartbeat) generate(ctx context.Context) error {
 
 func (h *Heartbeat) decorateResourceAttributes(resource pcommon.Resource) error {
 	if h.collectorName != "" {
-		resource.Attributes().PutStr("collector_name", h.collectorName)
+		resource.Attributes().PutStr("sw.otelcol.collector.name", h.collectorName)
 	}
 	return nil
 }

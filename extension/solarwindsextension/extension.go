@@ -16,10 +16,12 @@ package solarwindsextension
 
 import (
 	"context"
-	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension/internal"
+
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/extension"
 	"go.uber.org/zap"
+
+	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension/internal"
 )
 
 type SolarwindsExtension struct {

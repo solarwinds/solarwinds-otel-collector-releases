@@ -17,10 +17,12 @@ package solarwindsextension
 import (
 	"context"
 	"fmt"
-	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension/internal"
-	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension/internal/metadata"
+
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/extension"
+
+	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension/internal"
+	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension/internal/metadata"
 )
 
 func NewFactory() extension.Factory {
