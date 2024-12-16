@@ -19,8 +19,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension"
+
 	"go.opentelemetry.io/collector/component"
-	"go.opentelemetry.io/collector/config/configopaque"
 	"go.opentelemetry.io/collector/exporter"
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
 	"go.opentelemetry.io/collector/pdata/plog"
@@ -36,7 +37,9 @@ const (
 	tracesExporterType
 )
 
-var extensionType = component.MustNewType("solarwinds")
+var (
+	ErrSwiExtensionNotFound = errors.New("solarwinds extension not found")
+)
 
 type solarwindsExporter struct {
 	exporterType
@@ -73,25 +76,35 @@ func (swiExporter *solarwindsExporter) initExporterType(
 	typ exporterType,
 ) error {
 	swiExporter.exporterType = typ
-	var extensionID *component.ID
-	if swiExporter.config.ExtensionName != "" {
-		id := component.NewIDWithName(extensionType, swiExporter.config.ExtensionName)
-		extensionID = &id
+	extensionID, err := swiExporter.config.extensionAsComponent()
+	if err != nil {
+		return fmt.Errorf("failed parsing extension id: %w", err)
+	}
+
+	// Only allow the type of the [solarwindsextension].
+	if extensionID != nil &&
+		extensionID.Type() != solarwindsextension.NewFactory().Type() {
+		return fmt.Errorf("unexpected extension type: %s", extensionID.Type())
 	}
 
 	swiExtension := findExtension(host.GetExtensions(), extensionID)
 	if swiExtension == nil {
-		return errors.New("solarwinds extension not found")
+		if extensionID != nil {
+			return fmt.Errorf("solarwinds extension %q not found", extensionID)
+		}
+		return ErrSwiExtensionNotFound
 	}
 
+	endpointCfg := swiExtension.GetEndpointConfig()
+
 	// Get token from the extensions.
-	token := swiExtension.Token()
+	token := endpointCfg.Token()
 	swiExporter.config.ingestionToken = token
 
-	// Get URl from the extension.
-	url, err := swiExtension.Url()
+	// Get URL from the extension.
+	url, err := endpointCfg.Url()
 	if err != nil {
-		return fmt.Errorf(": %w", err)
+		return fmt.Errorf("URL configuration not available: %w", err)
 	}
 	swiExporter.config.endpointURL = url
 
@@ -117,16 +130,11 @@ func (swiExporter *solarwindsExporter) initExporterType(
 
 }
 
-type EndpointConfigProvider interface {
-	Url() (string, error)
-	Token() configopaque.String
-}
-
-func findExtension(extensions map[component.ID]component.Component, cfgExtensionID *component.ID) EndpointConfigProvider {
-	foundExtensions := make([]EndpointConfigProvider, 0)
+func findExtension(extensions map[component.ID]component.Component, cfgExtensionID *component.ID) *solarwindsextension.SolarwindsExtension {
+	foundExtensions := make([]*solarwindsextension.SolarwindsExtension, 0)
 
 	for foundExtensionID, ext := range extensions {
-		if swiExtension, ok := ext.(EndpointConfigProvider); ok {
+		if swiExtension, ok := ext.(*solarwindsextension.SolarwindsExtension); ok {
 			// If configured extension ID is found, return it.
 			if cfgExtensionID != nil && *cfgExtensionID == foundExtensionID {
 				return swiExtension

@@ -12,5 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:generate mdatagen metadata.yaml
-package solarwindsextension
+package testutil
+
+import (
+	"fmt"
+	"path/filepath"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"go.opentelemetry.io/collector/confmap"
+	"go.opentelemetry.io/collector/confmap/confmaptest"
+)
+
+// LoadConfigTestdata is a helper function to load a configuration
+// testdata file by its name from the 'testdata' folder of the current package.
+func LoadConfigTestdata(t *testing.T, name string) *confmap.Conf {
+	t.Helper()
+
+	filename := fmt.Sprintf("%s.yaml", name)
+	cm, err := confmaptest.LoadConf(filepath.Join("./testdata", filename))
+	require.NoError(t, err)
+
+	return cm
+}

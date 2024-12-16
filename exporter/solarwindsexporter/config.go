@@ -29,9 +29,9 @@ import (
 
 // Config represents a Solarwinds Exporter configuration.
 type Config struct {
-	// ExtensionName identifies a Solarwinds Extension to
+	// Extension identifies a Solarwinds Extension to
 	// use for obtaining connection credentials in this exporter.
-	ExtensionName string `mapstructure:"extension_name"`
+	Extension string `mapstructure:"extension"`
 	// BackoffSettings configures retry behavior of the exporter.
 	// See [configretry.BackOffConfig] documentation.
 	BackoffSettings configretry.BackOffConfig `mapstructure:"retry_on_failure"`
@@ -44,6 +44,22 @@ type Config struct {
 	ingestionToken configopaque.String `mapstructure:"-"`
 	// endpointURL stores the URL provided by the Solarwinds Extension.
 	endpointURL string `mapstructure:"-"`
+}
+
+// extensionAsComponent tries to parse `extension` value of the form 'type/name'
+// or 'type' from the configuration to [component.ID]. If the `extension value is empty,
+// it returns `nil` with a `nil` error.
+//
+// It uses [component.ID.UnmarshalText] and behaves accordingly.
+func (cfg *Config) extensionAsComponent() (*component.ID, error) {
+	if cfg.Extension == "" {
+		return nil, nil
+	}
+
+	parsedID := &component.ID{}
+	err := parsedID.UnmarshalText([]byte(cfg.Extension))
+
+	return parsedID, err
 }
 
 // NewDefaultConfig creates a new default configuration.

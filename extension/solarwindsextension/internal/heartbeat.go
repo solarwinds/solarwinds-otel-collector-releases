@@ -1,16 +1,41 @@
+// Copyright 2024 SolarWinds Worldwide, LLC. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package internal
 
 import (
 	"context"
 	"errors"
-	"go.opentelemetry.io/collector/pdata/pmetric"
-	"go.uber.org/zap"
 	"sync"
 	"time"
+
+	"go.opentelemetry.io/collector/component"
+	"go.opentelemetry.io/collector/extension"
+	"go.opentelemetry.io/collector/pdata/pcommon"
+	"go.opentelemetry.io/collector/pdata/pmetric"
+	"go.uber.org/zap"
 )
 
-type metricsPusher func(ctx context.Context, md pmetric.Metrics) error
-type metricsAdder func(ctx context.Context, md pmetric.Metrics) error
+const (
+	defaultHeartbeatInterval = 30 * time.Second
+)
+
+type MetricsExporter interface {
+	start(context.Context, component.Host) error
+	shutdown(context.Context) error
+	push(context.Context, pmetric.Metrics) error
+}
 
 type Heartbeat struct {
 	logger *zap.Logger
@@ -18,19 +43,41 @@ type Heartbeat struct {
 	cancel           context.CancelFunc
 	startShutdownMtx sync.Mutex
 
-	pushMetrics metricsPusher
-	addMetrics  metricsAdder
+	metric        *UptimeMetric
+	exporter      MetricsExporter
+	collectorName string
+
+	beatInterval time.Duration
 }
 
 var alreadyRunningError = errors.New("heartbeat already running")
-var notRunningError = errors.New("heartbeat not started")
 
-func NewHeartbeat(logger *zap.Logger, pushMetrics metricsPusher, addMetrics metricsAdder) *Heartbeat {
-	logger.Debug("Creating Heartbeat")
-	return &Heartbeat{logger: logger, pushMetrics: pushMetrics, addMetrics: addMetrics}
+func NewHeartbeat(ctx context.Context, set extension.Settings, cfg *Config) (*Heartbeat, error) {
+	set.Logger.Debug("Creating Heartbeat")
+
+	exp, err := newExporter(ctx, set, cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	return newHeartbeatWithExporter(set, cfg, exp), nil
 }
 
-func (h *Heartbeat) Start() error {
+func newHeartbeatWithExporter(
+	set extension.Settings,
+	cfg *Config,
+	exporter MetricsExporter,
+) *Heartbeat {
+	return &Heartbeat{
+		logger:        set.Logger,
+		metric:        newUptimeMetric(set.Logger),
+		collectorName: cfg.CollectorName,
+		exporter:      exporter,
+		beatInterval:  defaultHeartbeatInterval,
+	}
+}
+
+func (h *Heartbeat) Start(ctx context.Context, host component.Host) error {
 	h.startShutdownMtx.Lock()
 	defer h.startShutdownMtx.Unlock()
 
@@ -38,38 +85,45 @@ func (h *Heartbeat) Start() error {
 	if h.cancel != nil {
 		return alreadyRunningError
 	}
-	var ctx context.Context
-	ctx, h.cancel = context.WithCancel(context.Background())
-	go h.loop(ctx)
+
+	err := h.exporter.start(ctx, host)
+	if err != nil {
+		return err
+	}
+
+	var loopCtx context.Context
+	loopCtx, h.cancel = context.WithCancel(context.Background())
+	go h.loop(loopCtx)
 	return nil
 }
 
-func (h *Heartbeat) Shutdown() error {
+func (h *Heartbeat) Shutdown(ctx context.Context) error {
 	h.startShutdownMtx.Lock()
 	defer h.startShutdownMtx.Unlock()
 
 	h.logger.Debug("Stopping Heartbeat routine")
 	if h.cancel == nil {
-		return notRunningError
+		// already stopped
+		return nil
 	}
 	h.cancel()
 	h.cancel = nil
-	return nil
+	return h.exporter.shutdown(ctx)
 }
 
 func (h *Heartbeat) loop(ctx context.Context) {
-	tick := time.NewTicker(30 * time.Second)
+	tick := time.NewTicker(h.beatInterval)
 	defer tick.Stop()
 
 	// Start beat
-	if err := h.generateHeartbeat(ctx); err != nil {
+	if err := h.generate(ctx); err != nil {
 		h.logger.Error("Generating heartbeat failed", zap.Error(err))
 	}
 
 	for {
 		select {
 		case <-tick.C:
-			if err := h.generateHeartbeat(ctx); err != nil {
+			if err := h.generate(ctx); err != nil {
 				h.logger.Error("Generating heartbeat failed", zap.Error(err))
 			}
 		case <-ctx.Done():
@@ -79,13 +133,27 @@ func (h *Heartbeat) loop(ctx context.Context) {
 
 }
 
-func (h *Heartbeat) generateHeartbeat(ctx context.Context) error {
+func (h *Heartbeat) generate(ctx context.Context) error {
 	h.logger.Debug("Generating heartbeat")
 	md := pmetric.NewMetrics()
 
-	if err := h.addMetrics(ctx, md); err != nil {
+	if err := h.metric.add(ctx, md); err != nil {
 		return err
 	}
 
-	return h.pushMetrics(ctx, md)
+	for i, rms := 0, md.ResourceMetrics(); i < rms.Len(); i++ {
+		rm := rms.At(i)
+		if err := h.decorateResourceAttributes(rm.Resource()); err != nil {
+			return err
+		}
+	}
+
+	return h.exporter.push(ctx, md)
+}
+
+func (h *Heartbeat) decorateResourceAttributes(resource pcommon.Resource) error {
+	if h.collectorName != "" {
+		resource.Attributes().PutStr("sw.otelcol.collector.name", h.collectorName)
+	}
+	return nil
 }

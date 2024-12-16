@@ -3,12 +3,13 @@ module github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsexten
 go 1.23.4
 
 require (
-	github.com/stretchr/testify v1.9.0
+	github.com/solarwinds/solarwinds-otel-collector/pkg/testutil v0.0.0-00010101000000-000000000000
+	github.com/stretchr/testify v1.10.0
 	go.opentelemetry.io/collector/component v0.113.0
 	go.opentelemetry.io/collector/config/configgrpc v0.113.0
 	go.opentelemetry.io/collector/config/configopaque v1.19.0
 	go.opentelemetry.io/collector/config/configtls v1.19.0
-	go.opentelemetry.io/collector/confmap v1.19.0
+	go.opentelemetry.io/collector/confmap v1.21.0
 	go.opentelemetry.io/collector/exporter v0.113.0
 	go.opentelemetry.io/collector/exporter/otlpexporter v0.113.0
 	go.opentelemetry.io/collector/extension v0.113.0
@@ -31,7 +32,7 @@ require (
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/knadh/koanf/maps v0.1.1 // indirect
 	github.com/knadh/koanf/providers/confmap v0.1.0 // indirect
-	github.com/knadh/koanf/v2 v2.1.1 // indirect
+	github.com/knadh/koanf/v2 v2.1.2 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -72,3 +73,5 @@ require (
 	google.golang.org/protobuf v1.35.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/solarwinds/solarwinds-otel-collector/pkg/testutil => ../../pkg/testutil
