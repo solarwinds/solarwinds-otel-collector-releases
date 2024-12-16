@@ -55,9 +55,11 @@ func (m *mockExporter) push(_ context.Context, metrics pmetric.Metrics) error {
 // in isolation with a mocked exporter and inspects
 // emitted metrics.
 func TestHeartbeatEmittingMetrics(t *testing.T) {
-	const testDuration = 1000 * time.Millisecond
-	const beatInterval = 100 * time.Millisecond
-	const expectedCount = int(testDuration / beatInterval)
+	const (
+		testDuration  = 1000 * time.Millisecond
+		beatInterval  = 100 * time.Millisecond
+		expectedCount = int(testDuration / beatInterval)
+	)
 
 	mockExp := newMockExporter()
 	hb := newHeartbeatWithExporter(
@@ -86,7 +88,7 @@ func TestHeartbeatEmittingMetrics(t *testing.T) {
 		expectedCount,
 		len(mockExp.pushed),
 	)
-	
+
 	err = hb.Shutdown(ctx)
 	require.NoError(t, err)
 }

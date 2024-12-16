@@ -3,17 +3,18 @@ module github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexport
 go 1.23.4
 
 require (
+	github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension v0.113.0
+	github.com/solarwinds/solarwinds-otel-collector/pkg/testutil v0.0.0-00010101000000-000000000000
 	github.com/stretchr/testify v1.10.0
 	go.opentelemetry.io/collector/component v0.113.0
 	go.opentelemetry.io/collector/config/configgrpc v0.113.0
 	go.opentelemetry.io/collector/config/configopaque v1.19.0
 	go.opentelemetry.io/collector/config/configretry v1.19.0
 	go.opentelemetry.io/collector/config/configtls v1.19.0
-	go.opentelemetry.io/collector/confmap v1.19.0
+	go.opentelemetry.io/collector/confmap v1.21.0
 	go.opentelemetry.io/collector/exporter v0.113.0
 	go.opentelemetry.io/collector/exporter/exportertest v0.113.0
 	go.opentelemetry.io/collector/exporter/otlpexporter v0.113.0
-	github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension v0.113.0
 	go.opentelemetry.io/collector/pdata v1.19.0
 	go.uber.org/goleak v1.3.0
 )
@@ -79,3 +80,5 @@ require (
 )
 
 replace github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension => ../../extension/solarwindsextension
+
+replace github.com/solarwinds/solarwinds-otel-collector/pkg/testutil => ../../pkg/testutil

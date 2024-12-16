@@ -15,34 +15,20 @@
 package solarwindsexporter
 
 import (
-	"fmt"
-	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/collector/config/configretry"
-	"go.opentelemetry.io/collector/confmap"
-	"go.opentelemetry.io/collector/confmap/confmaptest"
 	"go.opentelemetry.io/collector/exporter/exporterhelper"
+
+	"github.com/solarwinds/solarwinds-otel-collector/pkg/testutil"
 )
-
-// loadConfigTestdata is a helper function to load a testdata
-// file by its name.
-func loadConfigTestdata(t *testing.T, name string) *confmap.Conf {
-	t.Helper()
-
-	filename := fmt.Sprintf("%s.yaml", name)
-	cm, err := confmaptest.LoadConf(filepath.Join("testdata", filename))
-	require.NoError(t, err)
-
-	return cm
-}
 
 // TestConfigUnmarshalFull tries to parse a configuration file
 // with all values provided and verifies the configuration.
 func TestConfigUnmarshalFull(t *testing.T) {
-	cfgFile := loadConfigTestdata(t, "full")
+	cfgFile := testutil.LoadConfigTestdata(t, "full")
 
 	// Parse configuration.
 	factory := NewFactory()
@@ -75,7 +61,7 @@ func TestConfigUnmarshalFull(t *testing.T) {
 // file containing only the mandatory values successfully
 // validates.
 func TestConfigValidateOK(t *testing.T) {
-	cfgFile := loadConfigTestdata(t, "minimal")
+	cfgFile := testutil.LoadConfigTestdata(t, "minimal")
 
 	// Parse configuration.
 	factory := NewFactory()
