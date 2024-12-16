@@ -1,10 +1,17 @@
 service:
   pipelines:
     metrics:
-      receivers: [hostmetrics]
+      receivers: [otlp]
+      exporters: [otlp]
+    traces:
+      receivers: [otlp]
+      exporters: [otlp]
+    logs:
+      receivers: [otlp]
       exporters: [otlp]
 
 receivers:
+  # Just as creative source.
   hostmetrics:
     collection_interval: 10s
     scrapers:
@@ -14,8 +21,12 @@ receivers:
       filesystem: {}
       load: {}
       processes: {}
+  otlp:
+    protocols:
+      grpc:
+        endpoint: :17016
 exporters:
   otlp:
-    endpoint: receiving:17016
+    endpoint: receiver:17016
     tls:
       insecure: true
