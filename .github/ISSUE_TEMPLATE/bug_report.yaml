@@ -21,37 +21,24 @@ body:
     attributes:
       label: Description
       description: Please describe in detail what the issue is.
-      value: |
-        ## Description
-
     validations:
       required: true
   - type: textarea
     attributes:
       label: Steps to Reproduce
       description: Provide sequence of steps to reproduce the issue.
-      value: |
-        ## Steps to Reproduce
-
     validations:
       required: true
   - type: textarea
     attributes:
       label: Expected Result
       description: What is the expected result when the steps are reproduced?
-      value: |
-        ## Expected Result
-
     validations:
       required: true
-
   - type: textarea
     attributes:
       label: Actual Result
       description: What actually happens when the steps are reproduced?
-      value: |
-        ## Actual Result
-
     validations:
       required: true
   - type: input
