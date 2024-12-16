@@ -32,16 +32,17 @@ import (
 type Config struct {
 	// DataCenter ID (e.g. na-01).
 	DataCenter string `mapstructure:"data_center"`
-	// EndpointURLOverride sets OTLP endpoint directly.
-	// Warning: Intended for testing use only, use `DataCenter` instead.
-	EndpointURLOverride string `mapstructure:"endpoint_url_override"`
 	// IngestionToken is your secret generated SWO ingestion token.
 	IngestionToken configopaque.String `mapstructure:"token"`
 	// CollectorName is the name you will see in the SWO UI
 	CollectorName string `mapstructure:"collector_name"`
 	// Insecure disables TLS in the exporters.
-	// Warning: Intended for testing use only
-	// together with the 'endpoint_url_override' option.
+
+	// ⚠️ Warning: For testing purpose only.
+	// EndpointURLOverride sets OTLP endpoint directly, it overrides the DataCenter configuration.
+	EndpointURLOverride string `mapstructure:"endpoint_url_override"`
+	// ⚠️ Warning: For testing purpose only.
+	// Insecure disables the TLS security. It can be used only together with EndpointURLOverride.
 	Insecure bool `mapstructure:"insecure"`
 }
 
