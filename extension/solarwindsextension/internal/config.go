@@ -28,7 +28,7 @@ import (
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
 )
 
-// Config represents a Solarwinds Exporter configuration.
+// Config represents a Solarwinds Extension configuration.
 type Config struct {
 	// DataCenter ID (e.g. na-01).
 	DataCenter string `mapstructure:"data_center"`
