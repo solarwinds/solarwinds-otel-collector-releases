@@ -39,12 +39,17 @@ type Config struct {
 	IngestionToken configopaque.String `mapstructure:"token"`
 	// CollectorName is the name you will see in the SWO UI
 	CollectorName string `mapstructure:"collector_name"`
+	// Insecure disables TLS in the exporters.
+	// Warning: Intended for testing use only
+	// together with the 'endpoint_url_override' option.
+	Insecure bool `mapstructure:"insecure"`
 }
 
 var (
 	missingDataCenterErr    = errors.New("invalid configuration: 'data_center' must be set")
 	missingTokenErr         = errors.New("invalid configuration: 'token' must be set")
 	missingCollectorNameErr = errors.New("invalid configuration: 'collector_name' must be set")
+	insecureInProdErr       = errors.New("invalid configuration: 'insecure' is not allowed in production mode")
 )
 
 // NewDefaultConfig creates a new default configuration.
@@ -59,6 +64,10 @@ func NewDefaultConfig() component.Config {
 func (cfg *Config) Validate() error {
 	if cfg.DataCenter == "" && cfg.EndpointURLOverride == "" {
 		return missingDataCenterErr
+	}
+
+	if cfg.Insecure && cfg.EndpointURLOverride == "" {
+		return insecureInProdErr
 	}
 
 	if _, err := cfg.EndpointUrl(); err != nil {
@@ -101,6 +110,11 @@ func (cfg *Config) OTLPConfig() (*otlpexporter.Config, error) {
 			Headers:      headers,
 			Endpoint:     endpointURL,
 		},
+	}
+
+	// Disable TLS for testing.
+	if cfg.Insecure {
+		otlpConfig.ClientConfig.TLSSetting.Insecure = true
 	}
 
 	if err = otlpConfig.Validate(); err != nil {
