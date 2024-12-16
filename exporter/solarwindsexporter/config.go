@@ -40,6 +40,7 @@ type Config struct {
 	QueueSettings exporterhelper.QueueConfig `mapstructure:"sending_queue"`
 	// Timeout configures timeout in the underlying OTLP exporter.
 	Timeout exporterhelper.TimeoutConfig `mapstructure:"timeout,squash"`
+
 	// ingestionToken stores the token provided by the Solarwinds Extension.
 	ingestionToken configopaque.String `mapstructure:"-"`
 	// endpointURL stores the URL provided by the Solarwinds Extension.
