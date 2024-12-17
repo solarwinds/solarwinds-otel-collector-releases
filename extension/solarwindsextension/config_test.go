@@ -115,6 +115,23 @@ func TestConfigValidateMissingCollectorName(t *testing.T) {
 	)
 }
 
+// TestConfigValidateInsecureInProd tests that 'insecure'
+// cannot be enabled for a production endpoint.
+func TestConfigValidateInsecureInProd(t *testing.T) {
+	cfgFile := testutil.LoadConfigTestdata(t, "insecure_in_prod")
+
+	// Parse configuration.
+	factory := NewFactory()
+	cfg := factory.CreateDefaultConfig()
+	require.NoError(t, cfgFile.Unmarshal(&cfg))
+
+	assert.ErrorContains(
+		t,
+		cfg.(*internal.Config).Validate(),
+		"invalid configuration: 'insecure'",
+	)
+}
+
 // TestConfigTokenRedacted checks that the configuration
 // type doesn't leak its secret token unless it is accessed explicitly.
 func TestConfigTokenRedacted(t *testing.T) {
