@@ -40,10 +40,14 @@ type Config struct {
 	QueueSettings exporterhelper.QueueConfig `mapstructure:"sending_queue"`
 	// Timeout configures timeout in the underlying OTLP exporter.
 	Timeout exporterhelper.TimeoutConfig `mapstructure:"timeout,squash"`
+
 	// ingestionToken stores the token provided by the Solarwinds Extension.
 	ingestionToken configopaque.String `mapstructure:"-"`
 	// endpointURL stores the URL provided by the Solarwinds Extension.
 	endpointURL string `mapstructure:"-"`
+	// insecure stores the option to disable TLS provided
+	// by the Solarwinds Extension.
+	insecure bool `mapstructure:"-"`
 }
 
 // extensionAsComponent tries to parse `extension` value of the form 'type/name'
@@ -109,6 +113,9 @@ func (cfg *Config) OTLPConfig() (*otlpexporter.Config, error) {
 		TimeoutConfig: cfg.Timeout,
 		ClientConfig:  clientCfg,
 	}
+
+	// Disable TLS for testing.
+	otlpConfig.ClientConfig.TLSSetting.Insecure = cfg.insecure
 
 	if err := otlpConfig.Validate(); err != nil {
 		return nil, err

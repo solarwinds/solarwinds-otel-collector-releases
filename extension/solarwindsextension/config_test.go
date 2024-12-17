@@ -42,6 +42,7 @@ func TestConfigUnmarshalFull(t *testing.T) {
 		EndpointURLOverride: "127.0.0.1:1234",
 		IngestionToken:      "TOKEN",
 		CollectorName:       "best-collector-ever",
+		Insecure:            true,
 	}, cfg)
 }
 
