@@ -33,8 +33,7 @@ extensions:
     #data_center: "na-01"
     collector_name: "testing_collector_name"
     endpoint_url_override: receiver:17016
-    tls:
-      insecure: true
+    insecure: true
 
 exporters:
   otlp:

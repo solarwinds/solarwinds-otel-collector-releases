@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -21,10 +22,12 @@ import (
 )
 
 const (
-	receivingContainer  = "receiver"
-	testedContainer     = "sut"
-	generatingContainer = "generator"
-	port                = 17016
+	receivingContainer     = "receiver"
+	testedContainer        = "sut"
+	generatingContainer    = "generator"
+	port                   = 17016
+	collectorRunningPeriod = 35 * time.Second
+	samplesCount           = 10
 )
 
 func TestMetricStream(t *testing.T) {
@@ -44,7 +47,7 @@ func TestMetricStream(t *testing.T) {
 
 	cmd := []string{
 		"metrics",
-		"--metrics", "10",
+		"--metrics", strconv.Itoa(samplesCount),
 		"--otlp-insecure",
 		"--otlp-endpoint", "sut:17016",
 		"--otlp-attributes", "resource.attributes.testing_attribute=\"testing_value\"",
@@ -54,11 +57,10 @@ func TestMetricStream(t *testing.T) {
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, gContainer)
 
-	<-time.After(35 * time.Second)
+	<-time.After(collectorRunningPeriod)
 	log.Println("***: evaluation in progress")
 
-	expectedMetricsCount := 10
-	evaluateMetricsStream(t, ctx, rContainer, expectedMetricsCount)
+	evaluateMetricsStream(t, ctx, rContainer, samplesCount)
 }
 
 func evaluateMetricsStream(
@@ -103,7 +105,7 @@ func TestTracesStream(t *testing.T) {
 
 	cmd := []string{
 		"traces",
-		"--traces", "10",
+		"--traces", strconv.Itoa(samplesCount),
 		"--otlp-insecure",
 		"--otlp-endpoint", "sut:17016",
 		"--otlp-attributes", "resource.attributes.testing_attribute=\"testing_value\"",
@@ -113,10 +115,10 @@ func TestTracesStream(t *testing.T) {
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, gContainer)
 
-	<-time.After(10 * time.Second)
+	<-time.After(collectorRunningPeriod)
 	log.Println("***: evaluation in progress")
 
-	expectedTracesCount := 10 * 2
+	expectedTracesCount := samplesCount * 2
 	evaluateTracesStream(t, ctx, rContainer, expectedTracesCount)
 }
 
@@ -131,17 +133,27 @@ func evaluateTracesStream(
 	require.NoError(t, err)
 
 	trs := ptrace.NewTraces()
-	jum := new(ptrace.JSONUnmarshaler)
+	ms := pmetric.NewMetrics()
+	tum := new(ptrace.JSONUnmarshaler)
+	mum := new(pmetric.JSONUnmarshaler)
 	for _, line := range lines {
-		tr, err := jum.UnmarshalTraces([]byte(line))
-		if err != nil {
+		// Traces to process.
+		tr, err := tum.UnmarshalTraces([]byte(line))
+		if err == nil && tr.ResourceSpans().Len() != 0 {
+			evaluateResourceAttributes(t, tr.ResourceSpans().At(0).Resource().Attributes())
+			tr.ResourceSpans().MoveAndAppendTo(trs.ResourceSpans())
 			continue
 		}
 
-		require.Equal(t, tr.ResourceSpans().Len(), 1, "it must contain exactly one resource span")
-		evaluateResourceAttributes(t, tr.ResourceSpans().At(0).Resource().Attributes())
-		tr.ResourceSpans().MoveAndAppendTo(trs.ResourceSpans())
+		// Metrics to process.
+		m, err := mum.UnmarshalMetrics([]byte(line))
+		if err == nil && m.ResourceMetrics().Len() != 0 {
+			m.ResourceMetrics().MoveAndAppendTo(ms.ResourceMetrics())
+			continue
+		}
 	}
+
+	evaluateHeartbeetMetrics(t, ms)
 	require.Equal(t, expectedCount, trs.SpanCount())
 }
 
@@ -162,8 +174,7 @@ func TestLogsStream(t *testing.T) {
 
 	cmd := []string{
 		"logs",
-		"--logs", "10",
-		"--body", "testing log body",
+		"--logs", strconv.Itoa(samplesCount),
 		"--otlp-insecure",
 		"--otlp-endpoint", "sut:17016",
 		"--otlp-attributes", "resource.attributes.testing_attribute=\"testing_value\"",
@@ -173,7 +184,7 @@ func TestLogsStream(t *testing.T) {
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, gContainer)
 
-	<-time.After(10 * time.Second)
+	<-time.After(collectorRunningPeriod)
 	log.Println("***: evaluation in progress")
 
 	expectedLogsCount := 10
@@ -191,18 +202,39 @@ func evaluateLogsStream(
 	require.NoError(t, err)
 
 	lgs := plog.NewLogs()
-	jum := new(plog.JSONUnmarshaler)
+	ms := pmetric.NewMetrics()
+	lum := new(plog.JSONUnmarshaler)
+	mum := new(pmetric.JSONUnmarshaler)
 	for _, line := range lines {
-		lg, err := jum.UnmarshalLogs([]byte(line))
-		if err != nil {
+		// Logs to process.
+		lg, err := lum.UnmarshalLogs([]byte(line))
+		if err == nil && lg.ResourceLogs().Len() != 0 {
+			evaluateResourceAttributes(t, lg.ResourceLogs().At(0).Resource().Attributes())
+			lg.ResourceLogs().MoveAndAppendTo(lgs.ResourceLogs())
 			continue
 		}
 
-		require.Equal(t, lg.ResourceLogs().Len(), 1, "it must contain exactly one resource log")
-		evaluateResourceAttributes(t, lg.ResourceLogs().At(0).Resource().Attributes())
-		lg.ResourceLogs().MoveAndAppendTo(lgs.ResourceLogs())
+		// Metrics to process.
+		m, err := mum.UnmarshalMetrics([]byte(line))
+		if err == nil && m.ResourceMetrics().Len() != 0 {
+			m.ResourceMetrics().MoveAndAppendTo(ms.ResourceMetrics())
+			continue
+		}
 	}
+
+	evaluateHeartbeetMetrics(t, ms)
 	require.Equal(t, expectedCount, lgs.LogRecordCount())
+}
+
+func evaluateHeartbeetMetrics(
+	t *testing.T,
+	ms pmetric.Metrics,
+) {
+	require.GreaterOrEqual(t, ms.ResourceMetrics().Len(), 1, "there must be at least one metric")
+	atts := ms.ResourceMetrics().At(0).Resource().Attributes()
+	v, available := atts.Get("sw.otelcol.collector.name")
+	require.True(t, available, "sw.otelcol.collector.name resource attribute must be available")
+	require.Equal(t, "testing_collector_name", v.AsString(), "attribute value must be the same")
 }
 
 func evaluateResourceAttributes(
