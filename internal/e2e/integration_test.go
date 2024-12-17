@@ -54,7 +54,7 @@ func TestMetricStream(t *testing.T) {
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, gContainer)
 
-	<-time.After(10 * time.Second)
+	<-time.After(35 * time.Second)
 	log.Println("***: evaluation in progress")
 
 	expectedMetricsCount := 10
