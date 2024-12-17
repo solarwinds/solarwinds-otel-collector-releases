@@ -47,10 +47,10 @@ type Config struct {
 }
 
 var (
-	missingDataCenterErr    = errors.New("invalid configuration: 'data_center' must be set")
-	missingTokenErr         = errors.New("invalid configuration: 'token' must be set")
-	missingCollectorNameErr = errors.New("invalid configuration: 'collector_name' must be set")
-	insecureInProdErr       = errors.New("invalid configuration: 'insecure' is not allowed in production mode")
+	ErrMissingDataCenter    = errors.New("invalid configuration: 'data_center' must be set")
+	ErrMissingToken         = errors.New("invalid configuration: 'token' must be set")
+	ErrMissingCollectorName = errors.New("invalid configuration: 'collector_name' must be set")
+	ErrInsecureInProd       = errors.New("invalid configuration: 'insecure' is not allowed in production mode")
 )
 
 // NewDefaultConfig creates a new default configuration.
@@ -64,11 +64,11 @@ func NewDefaultConfig() component.Config {
 // Validate checks the configuration for its validity.
 func (cfg *Config) Validate() error {
 	if cfg.DataCenter == "" && cfg.EndpointURLOverride == "" {
-		return missingDataCenterErr
+		return ErrMissingDataCenter
 	}
 
 	if cfg.Insecure && cfg.EndpointURLOverride == "" {
-		return insecureInProdErr
+		return ErrInsecureInProd
 	}
 
 	if _, err := cfg.EndpointUrl(); err != nil {
@@ -76,10 +76,10 @@ func (cfg *Config) Validate() error {
 	}
 
 	if cfg.IngestionToken == "" {
-		return missingTokenErr
+		return ErrMissingToken
 	}
 	if cfg.CollectorName == "" {
-		return missingCollectorNameErr
+		return ErrMissingCollectorName
 	}
 
 	return nil
