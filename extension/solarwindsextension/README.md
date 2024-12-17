@@ -14,7 +14,7 @@ SolarWinds Extension is required sidecar for the [Solarwinds Exporter](../../exp
 
 It provides these features:
 
-- Hearbeat signal
+- Heartbeat signal
   - It's a standard metric: `sw.otecol.uptime`
     - The value is a time from the start of the collector in seconds
   - This signal is necessary for SWO to detect the collector when installed and to determine if it's still alive.
