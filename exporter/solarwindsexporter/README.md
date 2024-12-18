@@ -17,8 +17,6 @@ You just need to include the SolarWinds Exporter in your exporter definitions an
 
 ```yaml
 exporters:
-  solarwinds: {}
-extensions:
   solarwinds:
 extensions:
   solarwinds:
