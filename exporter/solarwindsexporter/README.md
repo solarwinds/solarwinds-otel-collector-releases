@@ -17,7 +17,7 @@ You just need to include the SolarWinds Exporter in your exporter definitions an
 
 ```yaml
 exporters:
-  solarwinds: {}
+  solarwinds:
 extensions:
   solarwinds:
     token: "TOKEN"
