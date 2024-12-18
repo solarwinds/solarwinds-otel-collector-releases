@@ -14,7 +14,7 @@ The SolarWinds Extension offers capabilities related to the SolarWinds Observabi
 
 It provides these features:
 
-- Endpoint configuratioin for the Solarwinds Exporters
+- Endpoint configuration for the Solarwinds Exporters
 - Heartbeat signal
   - It's a standard metric: `sw.otecol.uptime`
     - The value is a time from the start of the collector in seconds
