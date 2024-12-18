@@ -16,6 +16,7 @@ package e2e
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
 	"strconv"
@@ -31,6 +32,11 @@ import (
 
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/network"
+)
+
+const (
+	resourceAttributeName  = "resource.attributes.testing_attribute"
+	resourceAttributeValue = "testing_value"
 )
 
 func TestMetricStream(t *testing.T) {
@@ -52,8 +58,8 @@ func TestMetricStream(t *testing.T) {
 		"metrics",
 		"--metrics", strconv.Itoa(samplesCount),
 		"--otlp-insecure",
-		"--otlp-endpoint", "sut:17016",
-		"--otlp-attributes", "resource.attributes.testing_attribute=\"testing_value\"",
+		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
+		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),
 	}
 
 	gContainer, err := runGeneratorContainer(ctx, net.Name, cmd)
@@ -84,8 +90,8 @@ func TestTracesStream(t *testing.T) {
 		"traces",
 		"--traces", strconv.Itoa(samplesCount),
 		"--otlp-insecure",
-		"--otlp-endpoint", "sut:17016",
-		"--otlp-attributes", "resource.attributes.testing_attribute=\"testing_value\"",
+		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
+		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),
 	}
 
 	gContainer, err := runGeneratorContainer(ctx, net.Name, cmd)
@@ -118,8 +124,8 @@ func TestLogsStream(t *testing.T) {
 		"logs",
 		"--logs", strconv.Itoa(samplesCount),
 		"--otlp-insecure",
-		"--otlp-endpoint", "sut:17016",
-		"--otlp-attributes", "resource.attributes.testing_attribute=\"testing_value\"",
+		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
+		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),
 	}
 
 	gContainer, err := runGeneratorContainer(ctx, net.Name, cmd)
@@ -258,9 +264,9 @@ func evaluateResourceAttributes(
 	t *testing.T,
 	atts pcommon.Map,
 ) {
-	val, ok := atts.Get("resource.attributes.testing_attribute")
+	val, ok := atts.Get(resourceAttributeName)
 	require.True(t, ok, "testing attribute must exist")
-	require.Equal(t, val.AsString(), "testing_value", "testing attribute value must be the same")
+	require.Equal(t, val.AsString(), resourceAttributeValue, "testing attribute value must be the same")
 }
 
 func loadResultFile(
