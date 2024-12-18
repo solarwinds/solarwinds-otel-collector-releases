@@ -19,7 +19,7 @@ It provides these features:
   - It's a standard metric: `sw.otecol.uptime`
     - The value is a time from the start of the collector in seconds
   - This signal is necessary for SolarWinds Observability SaaS to detect the collector when installed and to determine if it's still alive.
-  - It also contains some additional informations as resource attributes for SolarWinds Observability SaaS:
+  - It also contains some additional information as resource attributes for SolarWinds Observability SaaS:
     - Collector name: `sw.collector.name`
 
 ## Getting Started
