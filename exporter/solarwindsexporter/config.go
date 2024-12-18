@@ -83,6 +83,16 @@ func NewDefaultConfig() component.Config {
 
 // Validate checks the configuration for its validity.
 func (cfg *Config) Validate() error {
+	if len(cfg.Extension) != 0 {
+		_, err := cfg.extensionAsComponent()
+		if err != nil {
+			return fmt.Errorf(
+				"invalid configuration: %q is not a correct value for 'extension'",
+				cfg.Extension,
+			)
+		}
+	}
+
 	return nil
 }
 

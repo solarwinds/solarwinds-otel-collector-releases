@@ -32,9 +32,9 @@ import (
 type Config struct {
 	// DataCenter ID (e.g. na-01).
 	DataCenter string `mapstructure:"data_center"`
-	// IngestionToken is your secret generated SWO ingestion token.
+	// IngestionToken is your secret generated SolarWinds Observability SaaS ingestion token.
 	IngestionToken configopaque.String `mapstructure:"token"`
-	// CollectorName is the name you will see in the SWO UI
+	// CollectorName name of the collector passed in the heartbeat metric
 	CollectorName string `mapstructure:"collector_name"`
 	// Insecure disables TLS in the exporters.
 

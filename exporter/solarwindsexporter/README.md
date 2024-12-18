@@ -20,6 +20,8 @@ exporters:
   solarwinds: {}
 extensions:
   solarwinds:
+extensions:
+  solarwinds:
     token: "TOKEN"
     data_center: "na-01"
 ```
