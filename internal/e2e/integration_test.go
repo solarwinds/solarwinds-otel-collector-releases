@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build integration
+
 package e2e
 
 import (
@@ -176,7 +178,7 @@ func evaluateMetricsStream(
 		}
 	}
 	require.Equal(t, gms.MetricCount(), expectedCount)
-	evaluateHeartbeetMetrics(t, hbms)
+	evaluateHeartbeatMetric(t, hbms)
 }
 
 func evaluateTracesStream(
@@ -210,7 +212,7 @@ func evaluateTracesStream(
 		}
 	}
 
-	evaluateHeartbeetMetrics(t, ms)
+	evaluateHeartbeatMetric(t, ms)
 	require.Equal(t, expectedCount, trs.SpanCount())
 }
 
@@ -245,11 +247,11 @@ func evaluateLogsStream(
 		}
 	}
 
-	evaluateHeartbeetMetrics(t, ms)
+	evaluateHeartbeatMetric(t, ms)
 	require.Equal(t, expectedCount, lgs.LogRecordCount())
 }
 
-func evaluateHeartbeetMetrics(
+func evaluateHeartbeatMetric(
 	t *testing.T,
 	ms pmetric.Metrics,
 ) {
