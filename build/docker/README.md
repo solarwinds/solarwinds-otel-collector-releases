@@ -4,8 +4,12 @@ Docker image for _SolarWinds OpenTelemetry Collector_:
  - runs set of tests validating correct functionality of components used
  - starts the Collector at entrypoint, expecting input config located by default as `/opt/default-config.yaml`
 
-## How to Build
-To build the image, simply run docker build command, i.e.
+## Getting the Image
+Pull the image from DockerHub.
+
+`docker pull solarwinds/solarwinds-otel-collector:0.113.2`
+
+Optionally you can build the image yourself, simply run docker build command, i.e.
 
 `docker build . -f build/docker/Dockerfile -t solarwinds-otel-collector:local`
 
