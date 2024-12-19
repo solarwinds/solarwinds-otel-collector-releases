@@ -1,3 +1,3 @@
-.PHONY: integration-tests
-integration-tests:
-	go test -tags=integration
+.PHONY: e2e-tests
+e2e-tests:
+	go test -tags=e2e

@@ -45,9 +45,9 @@ jobs:
           --tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}
           --tag solarwinds-otel-collector:latest
 
-      - name: Integration Tests
+      - name: E2E Tests
         working-directory: internal/e2e
-        run: make integration-tests
+        run: make e2e-tests
 
   deploy_dockerhub:
     runs-on: ubuntu-latest
