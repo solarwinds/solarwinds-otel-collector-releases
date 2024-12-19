@@ -1,7 +1,7 @@
 # SolarWinds OpenTelemetry Collector
 SolarWinds OpenTelemetry Collector is a distribution of OpenTelemetry Collector with components
 bundled from [opentelemetry-collector](https://github.com/open-telemetry/opentelemetry-collector/tree/main)
-and [opentelemetry-collector-contrib](https://github.com/open-telemetry/opentelemetry-collector-contrib). It also contains specific SolarWinds components for easier usage and enhanced metric collection.
+and [opentelemetry-collector-contrib](https://github.com/open-telemetry/opentelemetry-collector-contrib). It also contains specific SolarWinds components for easier usage and enhanced telemetry collection.
 
 
 ## Installation
@@ -28,8 +28,8 @@ Run `solarwinds-otel-collector --config=config.yaml`.
 Configuration for SolarWinds OTel Collector has to contain [SolarWinds Extension](./extension/solarwindsextension/README.md) and [Solarwinds Exporter](./exporter/solarwindsexporter/README.md). 
 
 ### Example with docker
-1. Generate your ingestion in SWO. See [API Tokens](https://documentation.solarwinds.com/en/success_center/observability/content/settings/api-tokens.htm).
-2. Create a `config.yaml` file that contains configuration for the SolarWinds OTel Collector. Insert the ingestion token and choose correct data center (na-01, na-02, na-03). Specify the collector name.
+1. Generate your ingestion token in SWO. See [API Tokens](https://documentation.solarwinds.com/en/success_center/observability/content/settings/api-tokens.htm).
+2. Create a `config.yaml` file that contains configuration for the SolarWinds OTel Collector. Insert the ingestion token and choose a correct data center (na-01, na-02, eu-01). Specify the collector name.
 ```yaml
 service:
   extensions: [solarwinds]
