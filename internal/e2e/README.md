@@ -4,7 +4,7 @@ The purpose of the integration tests is to validate the overall integrity of Sol
 ## How to Develop
 For local test runs it is required to have local build of SolarWinds OpenTelemetry Collector tagged as `solarwinds-otel-collector:latest`.
 
-Tests then can be run with `go test -tags=integration` command.
+To run the tests, call `make integration-tests` command
 
 > [!NOTE]  
 > Please refer to documentation on how to produce the local docker image [here](../../build/docker/README.md).

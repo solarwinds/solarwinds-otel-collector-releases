@@ -47,7 +47,7 @@ jobs:
 
       - name: Integration Tests
         working-directory: internal/e2e
-        run: go test -tags=integration
+        run: make integration-tests
 
   deploy_dockerhub:
     runs-on: ubuntu-latest
