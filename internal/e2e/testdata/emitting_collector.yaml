@@ -12,16 +12,6 @@ service:
       exporters: [solarwinds]
 
 receivers:
-  # Just as creative source.
-  hostmetrics:
-    collection_interval: 10s
-    scrapers:
-      cpu: {}
-      memory: {}
-      disk: {}
-      filesystem: {}
-      load: {}
-      processes: {}
   otlp:
     protocols:
       grpc:
