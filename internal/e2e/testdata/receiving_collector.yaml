@@ -16,10 +16,6 @@ receivers:
       grpc: 
         endpoint: :17016
 exporters:
-  debug:
-    verbosity: detailed
-    sampling_initial: 5
-    sampling_thereafter: 200
   file:
     path: /tmp/result.json
   

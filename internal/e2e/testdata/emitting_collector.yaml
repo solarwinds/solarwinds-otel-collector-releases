@@ -20,14 +20,9 @@ receivers:
 extensions:
   solarwinds:
     token: <no-matter-in-test>
-    #data_center: "na-01"
     collector_name: "testing_collector_name"
     endpoint_url_override: receiver:17016
     insecure: true
 
 exporters:
-  otlp:
-    endpoint: receiver:17016
-    tls:
-      insecure: true
   solarwinds:
