@@ -18,10 +18,12 @@ package e2e
 
 import (
 	"context"
+	"errors"
 	"log"
 	"path/filepath"
 	"time"
 
+	"github.com/mdelapenya/tlscert"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
@@ -37,6 +39,7 @@ const (
 
 func runReceivingSolarWindsOTELCollector(
 	ctx context.Context,
+	certDir string,
 	networkName string,
 ) (testcontainers.Container, error) {
 	configPath, err := filepath.Abs(filepath.Join(".", "testdata", "receiving_collector.yaml"))
@@ -44,12 +47,32 @@ func runReceivingSolarWindsOTELCollector(
 		return nil, err
 	}
 
-	container, err := runSolarWindsOTELCollector(ctx, networkName, receivingContainer, configPath)
-	return container, err
+	// Used by the OTLP/gRPC Receiver for TLS (see its config).
+	additionalFiles := []testcontainers.ContainerFile{
+		{
+			HostFilePath:      filepath.Join(certDir, "cert-server.pem"),
+			ContainerFilePath: "/opt/cert-server.pem",
+			FileMode:          0o644,
+		},
+		{
+			HostFilePath:      filepath.Join(certDir, "key-server.pem"),
+			ContainerFilePath: "/opt/key-server.pem",
+			FileMode:          0o644,
+		},
+	}
+
+	return runSolarWindsOTELCollector(
+		ctx,
+		networkName,
+		receivingContainer,
+		configPath,
+		additionalFiles,
+	)
 }
 
 func runTestedSolarWindsOTELCollector(
 	ctx context.Context,
+	certDir string,
 	networkName string,
 ) (testcontainers.Container, error) {
 	configPath, err := filepath.Abs(filepath.Join(".", "testdata", "emitting_collector.yaml"))
@@ -57,8 +80,23 @@ func runTestedSolarWindsOTELCollector(
 		return nil, err
 	}
 
-	container, err := runSolarWindsOTELCollector(ctx, networkName, testedContainer, configPath)
-	return container, err
+	// Add the root certificate for the self-signed certs as trusted.
+	// Warning: This actually replaces all root certificates in the container.
+	additionalFiles := []testcontainers.ContainerFile{
+		{
+			HostFilePath:      filepath.Join(certDir, "cert-ca.pem"),
+			ContainerFilePath: "/etc/ssl/certs/ca-certificates.crt",
+			FileMode:          0o644,
+		},
+	}
+
+	return runSolarWindsOTELCollector(
+		ctx,
+		networkName,
+		testedContainer,
+		configPath,
+		additionalFiles,
+	)
 }
 
 func runSolarWindsOTELCollector(
@@ -66,21 +104,26 @@ func runSolarWindsOTELCollector(
 	networkName string,
 	containerName string,
 	configPath string,
+	additionalFiles []testcontainers.ContainerFile,
 ) (testcontainers.Container, error) {
 	lc := new(logConsumer)
 	lc.Prefix = containerName
+
+	files := []testcontainers.ContainerFile{
+		{
+			HostFilePath:      configPath,
+			ContainerFilePath: "/opt/default-config.yaml",
+			FileMode:          0o440,
+		},
+	}
+	files = append(files, additionalFiles...)
+
 	req := testcontainers.ContainerRequest{
 		Image: "solarwinds-otel-collector:latest",
 		LogConsumerCfg: &testcontainers.LogConsumerConfig{
 			Consumers: []testcontainers.LogConsumer{lc},
 		},
-		Files: []testcontainers.ContainerFile{
-			{
-				HostFilePath:      configPath,
-				ContainerFilePath: "/opt/default-config.yaml",
-				FileMode:          0o440,
-			},
-		},
+		Files:      files,
 		WaitingFor: wait.ForLog("Everything is ready. Begin running and processing data."),
 		Networks:   []string{networkName},
 		Name:       containerName,
@@ -92,6 +135,45 @@ func runSolarWindsOTELCollector(
 	})
 
 	return container, err
+}
+
+type CertPaths struct {
+	CaCertFile string
+	CertFile   string
+	KeyFile    string
+}
+
+// generateCertificates generates a new CA certificate and a server
+// key and certificate derived from it for a given `host`.
+// All files are stored in a `path`. All paths of files written are
+// returned in a CertPaths struct.
+func generateCertificates(host, path string) (*CertPaths, error) {
+	caCert := tlscert.SelfSignedFromRequest(tlscert.Request{
+		Name:      "ca",
+		Host:      host,
+		IsCA:      true,
+		ParentDir: path,
+	})
+	if caCert == nil {
+		return nil, errors.New("failed to generate ca certificate")
+	}
+
+	cert := tlscert.SelfSignedFromRequest(tlscert.Request{
+		Name:      "server",
+		Host:      host,
+		IsCA:      true,
+		Parent:    caCert,
+		ParentDir: path,
+	})
+	if cert == nil {
+		return nil, errors.New("failed to generate server certificate")
+	}
+
+	return &CertPaths{
+		CaCertFile: caCert.CertPath,
+		CertFile:   cert.CertPath,
+		KeyFile:    cert.KeyPath,
+	}, nil
 }
 
 func runGeneratorContainer(
