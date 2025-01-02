@@ -27,13 +27,12 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/network"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.opentelemetry.io/collector/pdata/ptrace"
-
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/network"
 )
 
 const (
@@ -48,11 +47,15 @@ func TestMetricStream(t *testing.T) {
 	require.NoError(t, err)
 	testcontainers.CleanupNetwork(t, net)
 
-	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, net.Name)
+	certPath := t.TempDir()
+	_, err = generateCertificates(receivingContainer, certPath)
+	require.NoError(t, err)
+
+	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, net.Name)
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, rContainer)
 
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, net.Name)
+	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name)
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, eContainer)
 
@@ -80,11 +83,15 @@ func TestTracesStream(t *testing.T) {
 	require.NoError(t, err)
 	testcontainers.CleanupNetwork(t, net)
 
-	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, net.Name)
+	certPath := t.TempDir()
+	_, err = generateCertificates(receivingContainer, certPath)
+	require.NoError(t, err)
+
+	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, net.Name)
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, rContainer)
 
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, net.Name)
+	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name)
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, eContainer)
 
@@ -114,11 +121,15 @@ func TestLogsStream(t *testing.T) {
 	require.NoError(t, err)
 	testcontainers.CleanupNetwork(t, net)
 
-	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, net.Name)
+	certPath := t.TempDir()
+	_, err = generateCertificates(receivingContainer, certPath)
+	require.NoError(t, err)
+
+	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, net.Name)
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, rContainer)
 
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, net.Name)
+	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name)
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, eContainer)
 

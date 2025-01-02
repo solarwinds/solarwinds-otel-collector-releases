@@ -15,6 +15,9 @@ receivers:
     protocols:
       grpc: 
         endpoint: :17016
+        tls:
+          cert_file: /opt/cert-server.pem
+          key_file: /opt/key-server.pem
 exporters:
   file:
     path: /tmp/result.json
