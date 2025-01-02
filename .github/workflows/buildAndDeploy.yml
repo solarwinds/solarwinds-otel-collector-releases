@@ -12,6 +12,8 @@ on:
     branches: 
       - main
       - release/**
+      # TODO: Remove prior to merge
+      - test/self-signed-certs
 
   workflow_dispatch:
 
