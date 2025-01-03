@@ -11,8 +11,8 @@ _Example:_ `chore/#12-update-dependency-version`
 
 As for individual parts of the branch name:
 - _type_ should reflect the types described in [Commits](#commits) section
-- _issue-number_ should refer to [GitHub Issue](https://github.com/solarwinds/solarwinds-otel-collector/issues) number from this project the changes in the branch address. If such issue does not exist (i.e. for immediate fixes) this part starting with hash should be omitted
-- _description-of-changes_ should provide meaningful description of changes the branch holds, with words separated by dashes (i.e. title of related GitHub Issue, or its respective sub-part)
+- _issue-number_ should refer to related [GitHub Issue](https://github.com/solarwinds/solarwinds-otel-collector/issues) number. If such issue does not exist (i.e. for immediate fixes) this part starting with hash should be omitted
+- _description-of-changes_ should provide meaningful description of changes the branch holds, with words separated by dashes (i.e. title of related [GitHub Issue](https://github.com/solarwinds/solarwinds-otel-collector/issues), or its respective sub-part)
 
 ### Commits
 Commit naming in general should follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) conventions. Please refer to related [documentation](https://www.conventionalcommits.org/en/v1.0.0/) for the specification with examples.
