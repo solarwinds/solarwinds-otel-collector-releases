@@ -1,9 +1,25 @@
 FROM docker.io/library/golang:1.23.4-bookworm AS base
 
+
+# Stage 1: Dependency caching
+FROM base AS deps
+    # Set the working directory
+WORKDIR /app
+# Copy go.mod files to cache dependencies
+COPY /cmd/solarwinds-otel-collector/go.mod /src/cmd/solarwinds-otel-collector/go.mod
+COPY /extension/solarwindsextension/go.mod /src/extension/solarwindsextension/go.mod
+COPY /exporter/solarwindsexporter/go.mod /src/exporter/solarwindsexporter/go.mod
+# Download dependencies
+RUN cd /src/cmd/solarwinds-otel-collector && go mod download
+
+FROM deps AS builder
+
+# Copy the dependency cache
+COPY --from=deps /go/pkg /go/pkg
+COPY --from=deps /go/bin /go/bin
+
 COPY /LICENSE /LICENSE
 COPY ./ /src
-
-FROM base AS builder
 
 RUN cd /src/cmd/solarwinds-otel-collector && CGO_ENABLED=0 GOEXPERIMENT=boringcrypto go build -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
 

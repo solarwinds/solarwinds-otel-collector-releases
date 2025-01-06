@@ -46,7 +46,7 @@ func TestConfigUnmarshalFull(t *testing.T) {
 		EndpointURLOverride: "127.0.0.1:1234",
 		IngestionToken:      "TOKEN",
 		CollectorName:       "test-collector",
-		Attributes:          attributeMap,
+		Resource:            attributeMap,
 	}, cfg)
 }
 
