@@ -23,7 +23,7 @@ For feature-altering commits utilize `feature` over `feat` type name.
 _Example:_ `feature: add collector_name parameter to solarwindsextension`
 
 > [!WARNING]  
-> Please pay extra attention to commit naming when creating a squash merge commits to protected branches.
+> Please pay extra attention to commit naming when creating squash merge commits to protected branches.
 
 ### Pull Requests
 Pull requests should reflect [branch name](#branches) they are created from. If the branch name is not descriptive enough, the pull request title should be adjusted to be as descriptive as possible. The format should be following:
