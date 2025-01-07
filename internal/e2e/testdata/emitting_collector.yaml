@@ -22,6 +22,8 @@ extensions:
     token: <no-matter-in-test>
     collector_name: "testing_collector_name"
     endpoint_url_override: receiver:17016
+    resource:
+      custom_attribute: "custom_attribute_value"
 
 exporters:
   solarwinds:
