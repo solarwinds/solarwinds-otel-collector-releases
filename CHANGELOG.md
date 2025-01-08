@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.113.5
+Tags released docker images with `latest` tag.
+
+## v0.113.4
+Adds optional `resource` configuration parameter for [SolarWinds Extension](./extension/solarwindsextension).
+
 ## v0.113.3
 Removes `insecure` testing configuration parameter for [SolarWinds Extension](./extension/solarwindsextension).
 

@@ -53,11 +53,11 @@ exporters:
 ```
 3. Pull the SolarWinds OTel Collector from DockerHub.
 ```
-docker pull solarwinds/solarwinds-otel-collector:0.113.2
+docker pull solarwinds/solarwinds-otel-collector:latest
 ```
 4. Start the container with your `config.yaml`. 
 ```
-docker run  -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel-collector:0.113.2
+docker run  -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel-collector:latest
 ```
 
 ## Components
