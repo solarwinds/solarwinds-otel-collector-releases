@@ -1,4 +1,4 @@
-// Copyright 2024 SolarWinds Worldwide, LLC. All rights reserved.
+// Copyright 2025 SolarWinds Worldwide, LLC. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,15 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build full
+
 package main
 
 import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/fileexporter"
-	"github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexporter"
-	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension"
 	"go.opentelemetry.io/collector/exporter/debugexporter"
 	"go.opentelemetry.io/collector/exporter/nopexporter"
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
+
+	"github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexporter"
+	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension"
 	// extensions
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/ackextension"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/asapauthextension"

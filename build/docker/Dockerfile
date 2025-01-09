@@ -5,7 +5,8 @@ COPY ./ /src
 
 FROM base AS builder
 
-RUN cd /src/cmd/solarwinds-otel-collector && CGO_ENABLED=0 GOEXPERIMENT=boringcrypto go build -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
+RUN cd /src/cmd/solarwinds-otel-collector && CGO_ENABLED=0 GOEXPERIMENT=boringcrypto go build -tags full \
+    -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
 
 FROM builder AS tests
 WORKDIR /src
