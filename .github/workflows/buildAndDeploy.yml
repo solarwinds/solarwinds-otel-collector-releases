@@ -152,7 +152,7 @@ jobs:
 #            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-k8s.json) \
 #            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-k8s.json)
 #
-#      - name: Push Multi-arch Manifest for K8S Image
+#      - name: Push Multi-arch Manifest for k8s Image
 #        run: |
 #          docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-k8s
 
