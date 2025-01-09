@@ -85,7 +85,9 @@ jobs:
           provenance: false
           sbom: false
           push: true
-          tags: ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}
+          tags: |
+            ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}
+            ${{ env.DOCKERHUB_IMAGE }}:latest
 
   create_and_push_docker_manifest:
     runs-on: ubuntu-latest

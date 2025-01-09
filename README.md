@@ -9,11 +9,11 @@ and [opentelemetry-collector-contrib](https://github.com/open-telemetry/opentele
 
 Get the image from DockerHub.
 
-`docker pull solarwinds/solarwinds-otel-collector:0.113.2`
+`docker pull solarwinds/solarwinds-otel-collector:latest`
 
 To run the image utilize following command:
 
-`docker run  -v ./your_config_file.yaml:/opt/default-config.yaml solarwinds-otel-collector:0.113.2`
+`docker run  -v ./your_config_file.yaml:/opt/default-config.yaml solarwinds-otel-collector:latest`
 
 See [complete docker documentation](./build/docker/README.md).
 
@@ -53,11 +53,11 @@ exporters:
 ```
 3. Pull the SolarWinds OTel Collector from DockerHub.
 ```
-docker pull solarwinds/solarwinds-otel-collector:0.113.2
+docker pull solarwinds/solarwinds-otel-collector:latest
 ```
 4. Start the container with your `config.yaml`. 
 ```
-docker run  -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel-collector:0.113.2
+docker run  -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel-collector:latest
 ```
 
 ## Components
