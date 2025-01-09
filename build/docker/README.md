@@ -7,7 +7,7 @@ Docker image for _SolarWinds OpenTelemetry Collector_:
 ## Getting the Image
 Pull the image from DockerHub.
 
-`docker pull solarwinds/solarwinds-otel-collector:0.113.2`
+`docker pull solarwinds/solarwinds-otel-collector:latest`
 
 Optionally you can build the image yourself, simply run docker build command, i.e.
 
