@@ -8,7 +8,7 @@ WORKDIR /src
 FROM base AS builder
 
 RUN cd /src/cmd/solarwinds-otel-collector && CGO_ENABLED=0 GOEXPERIMENT=boringcrypto go build -tags k8s \
-    -trimpath -o /src/bin/solarwinds-otel-collector-k8s "-ldflags=-s -w"
+    -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
 
 FROM builder AS tests
 # run all tests for all go modules in `src` folder
@@ -31,10 +31,10 @@ FROM gcr.io/distroless/static-debian12@sha256:41972110a1c1a5c0b6adb283e8aa092c43
 ARG USER_UID=10001
 USER ${USER_UID}
 
-COPY --from=builder /src/bin/solarwinds-otel-collector-k8s /swi-otelcol
+COPY --from=builder /src/bin/solarwinds-otel-collector /solarwinds-otel-collector
 COPY --from=wrapper /src/bin/wrapper /wrapper
 COPY --from=journal /journalctl-deps/ /
 
 ENTRYPOINT ["/wrapper"]
-CMD ["/solarwinds-otel-collector-k8s", "--config=/opt/default-config.yaml"]
+CMD ["/solarwinds-otel-collector", "--config=/opt/default-config.yaml"]
 
