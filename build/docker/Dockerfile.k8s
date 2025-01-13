@@ -10,6 +10,8 @@ FROM base AS builder
 RUN cd /src/cmd/solarwinds-otel-collector && CGO_ENABLED=0 GOEXPERIMENT=boringcrypto go build -tags k8s \
     -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
 
+# Copy the journactl binary from this Debian image with
+# systemd (using the copy-journal-binary.sh script).
 FROM debian:bookworm AS journal
 RUN apt update
 RUN apt install -y systemd
@@ -17,6 +19,9 @@ COPY /build/docker/copy-journal-binary.sh /script.sh
 RUN chmod +x /script.sh
 RUN /script.sh
 
+# Build and use a wrapper to execute the collector binary.
+# The wrapper is needed to recover from corrupted files of the filestorage extension
+# (see https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/35899).
 FROM base AS wrapper
 WORKDIR /src/cmd/wrapper
 RUN CGO_ENABLED=0 GOEXPERIMENT=boringcrypto go build -a -tags netgo -ldflags '-w -extldflags "-static"' \

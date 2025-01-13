@@ -82,14 +82,5 @@ The SolarWinds OpenTelemetry collector contains following components:
     - full set of [opentelemetry-collector connectors](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.113.0/connector)
     - full set of [opentelemetry-collector-contrib connectors](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.113.0/connector)
 
-## CI/CD
-The _SolarWinds OpenTelemetry Collector_ utilizes [GitHub Actions pipeline](./.github). 
-The standard build pipeline is triggered with each PR opened to main or release branch and consists of:
-- build of _SolarWinds OpenTelemetry Collector_ docker image
-
-The release pipeline is triggered with designated tag publishing and consists of:
-- build of _SolarWinds OpenTelemetry Collector_ docker image and its publishing to DockerHub
-- creation of GitHub release
-
 ## Contributing
 See [CONTRIBUTING.md](./CONTRIBUTING.md).

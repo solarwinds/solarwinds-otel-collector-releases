@@ -28,3 +28,8 @@ The image contains following layers:
 - **tests** - runs the unit tests of the components defined in this repository used in the Collector
 
 Final layer runs the binary built in **builder** layer, starting with `--config` parameter pointed at `/opt/default-config.yaml` location.
+
+## The "k8s" Dockerfile
+
+The [Dockerfile.k8s](Dockerfile.k8s) builds a distribution of the `solarwinds-otel-collector` defined with the `k8s` 
+Go build tag (see [CONTRIBUTING.md](../../CONTRIBUTING.md#distribution-build-tags)).
