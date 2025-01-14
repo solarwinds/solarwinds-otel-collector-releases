@@ -37,5 +37,5 @@ COPY --from=wrapper /src/bin/wrapper /wrapper
 COPY --from=journal /journalctl-deps/ /
 
 ENTRYPOINT ["/wrapper"]
-CMD ["/wrapper", "/solarwinds-otel-collector", "--config=/opt/default-config.yaml"]
+CMD ["/solarwinds-otel-collector", "--config=/opt/default-config.yaml"]
 

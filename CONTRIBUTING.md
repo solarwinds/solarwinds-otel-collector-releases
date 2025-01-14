@@ -8,6 +8,9 @@ Once ready, we will update the `CONTRIBUTING.md` file with clear instructions.
 
 ## Development
 
+For general information on the development process in this project,
+please refer to the [Development Guidelines](docs/development-guidelines.md).
+
 ## CI/CD
 The _SolarWinds OpenTelemetry Collector_ utilizes [GitHub Actions pipeline](./.github).
 The standard build pipeline is triggered with each PR opened to main or release branch and consists of:
