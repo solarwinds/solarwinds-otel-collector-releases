@@ -28,12 +28,14 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckv2extension v0.111.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/httpforwarderextension v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/oauth2clientauthextension v0.113.0
+	github.com/open-telemetry/opentelemetry-collector-contrib/extension/observer/k8sobserver v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/oidcauthextension v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/opampextension v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/pprofextension v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/remotetapextension v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/sigv4authextension v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/solarwindsapmsettingsextension v0.113.0
+	github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/sumologicextension v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.111.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/coralogixprocessor v0.113.0
@@ -130,6 +132,7 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/purefareceiver v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/purefbreceiver v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/rabbitmqreceiver v0.113.0
+	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/receivercreator v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/redisreceiver v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/riakreceiver v0.113.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/saphanareceiver v0.113.0
@@ -345,7 +348,6 @@ require (
 	github.com/facebook/time v0.0.0-20240510113249-fa89cc575891 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
-	github.com/frankban/quicktest v1.14.6 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
@@ -478,6 +480,7 @@ require (
 	github.com/onsi/gomega v1.33.1 // indirect
 	github.com/open-telemetry/opamp-go v0.17.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/kafkaexporter v0.113.0 // indirect
+	github.com/open-telemetry/opentelemetry-collector-contrib/extension/observer v0.113.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/opampcustommessages v0.113.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/internal/aws/awsutil v0.113.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/internal/aws/containerinsight v0.113.0 // indirect
@@ -569,6 +572,7 @@ require (
 	github.com/soheilhy/cmux v0.1.5 // indirect
 	github.com/solarwindscloud/apm-proto v1.0.8 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
+	github.com/spf13/cast v1.7.0 // indirect
 	github.com/spf13/cobra v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
@@ -599,6 +603,7 @@ require (
 	github.com/yuin/gopher-lua v1.1.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
+	go.etcd.io/bbolt v1.3.11 // indirect
 	go.mongodb.org/atlas v0.37.0 // indirect
 	go.mongodb.org/mongo-driver v1.17.1 // indirect
 	go.opencensus.io v0.24.0 // indirect
