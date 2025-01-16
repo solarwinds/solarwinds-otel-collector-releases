@@ -74,8 +74,9 @@ func runTestedSolarWindsOTELCollector(
 	ctx context.Context,
 	certDir string,
 	networkName string,
+	configName string,
 ) (testcontainers.Container, error) {
-	configPath, err := filepath.Abs(filepath.Join(".", "testdata", "emitting_collector.yaml"))
+	configPath, err := filepath.Abs(filepath.Join(".", "testdata", configName))
 	if err != nil {
 		return nil, err
 	}

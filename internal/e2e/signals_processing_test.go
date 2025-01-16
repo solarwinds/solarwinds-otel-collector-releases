@@ -18,21 +18,16 @@ package e2e
 
 import (
 	"context"
-	"fmt"
-	"io"
-	"log"
-	"strconv"
-	"strings"
-	"testing"
-	"time"
-
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/network"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.opentelemetry.io/collector/pdata/ptrace"
+	"io"
+	"log"
+	"strings"
+	"testing"
 )
 
 const (
@@ -55,7 +50,7 @@ func TestMetricStream(t *testing.T) {
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, rContainer)
 
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name)
+	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name, "emitting_collector.yaml")
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, eContainer)
 
@@ -91,7 +86,7 @@ func TestTracesStream(t *testing.T) {
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, rContainer)
 
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name)
+	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name, "emitting_collector.yaml")
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, eContainer)
 
@@ -129,7 +124,7 @@ func TestLogsStream(t *testing.T) {
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, rContainer)
 
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name)
+	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name, "emitting_collector.yaml")
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, eContainer)
 
@@ -275,6 +270,10 @@ func evaluateHeartbeatMetric(
 	v2, available2 := atts.Get("custom_attribute")
 	require.True(t, available2, "custom_attribute resource attribute must be available")
 	require.Equal(t, "custom_attribute_value", v2.AsString(), "attribute value must be the same")
+
+	v3, available3 := atts.Get("sw.otelcol.collector.entity_creation")
+	require.True(t, available3, "sw.otelcol.collector.entity_creation resource attribute must be available")
+	require.Equal(t, "on", v3.AsString(), "attribute value must be the same")
 }
 
 func evaluateResourceAttributes(

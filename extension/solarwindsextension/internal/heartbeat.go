@@ -46,6 +46,7 @@ type Heartbeat struct {
 	metric        *UptimeMetric
 	exporter      MetricsExporter
 	collectorName string
+	withoutEntity bool
 
 	beatInterval time.Duration
 	resource     map[string]string
@@ -76,6 +77,7 @@ func newHeartbeatWithExporter(
 		exporter:      exporter,
 		beatInterval:  defaultHeartbeatInterval,
 		resource:      cfg.Resource,
+		withoutEntity: cfg.WithoutEntity,
 	}
 }
 
@@ -162,6 +164,11 @@ func (h *Heartbeat) decorateResourceAttributes(resource pcommon.Resource) error 
 
 	if h.collectorName != "" {
 		resource.Attributes().PutStr("sw.otelcol.collector.name", h.collectorName)
+	}
+	if h.withoutEntity {
+		resource.Attributes().PutStr("sw.otelcol.collector.entity_creation", "off")
+	} else {
+		resource.Attributes().PutStr("sw.otelcol.collector.entity_creation", "on")
 	}
 	return nil
 }

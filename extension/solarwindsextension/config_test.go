@@ -47,6 +47,7 @@ func TestConfigUnmarshalFull(t *testing.T) {
 		IngestionToken:      "TOKEN",
 		CollectorName:       "test-collector",
 		Resource:            attributeMap,
+		WithoutEntity:       false,
 	}, cfg)
 }
 
@@ -156,4 +157,23 @@ func TestConfigOTLPWithOverride(t *testing.T) {
 		map[string]configopaque.String{"Authorization": "Bearer YOUR-INGESTION-TOKEN"},
 		otlpCfg.Headers,
 	)
+}
+
+// TestConfigWithoutEntity tests that when config parses "without_entity: true"
+func TestConfigWithoutEntity(t *testing.T) {
+	cfgFile := testutil.LoadConfigTestdata(t, "without_entity")
+
+	// Parse configuration.
+	factory := NewFactory()
+	cfg := factory.CreateDefaultConfig()
+	require.NoError(t, cfgFile.Unmarshal(&cfg))
+
+	// Verify the values.
+	assert.Equal(t, &internal.Config{
+		DataCenter:     "na-01",
+		IngestionToken: "YOUR-INGESTION-TOKEN",
+		CollectorName:  "test-collector",
+		Resource:       nil,
+		WithoutEntity:  true,
+	}, cfg)
 }
