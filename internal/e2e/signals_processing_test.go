@@ -26,6 +26,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/solarwinds/solarwinds-otel-collector/pkg/version"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/network"
@@ -275,7 +276,7 @@ func evaluateHeartbeatMetric(
 
 	v, available = atts.Get("sw.otelcol.collector.version")
 	require.True(t, available, "sw.otelcol.collector.version resource attribute must be available")
-	require.Equal(t, "0.113.0", v.AsString(), "attribute value must be the same")
+	require.Equal(t, version.Version, v.AsString(), "version attribute doesn't match")
 
 	v2, available2 := atts.Get("custom_attribute")
 	require.True(t, available2, "custom_attribute resource attribute must be available")
