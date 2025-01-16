@@ -268,10 +268,12 @@ func evaluateHeartbeatMetric(
 ) {
 	require.GreaterOrEqual(t, ms.ResourceMetrics().Len(), 1, "there must be at least one metric")
 	atts := ms.ResourceMetrics().At(0).Resource().Attributes()
+
 	v, available := atts.Get("sw.otelcol.collector.name")
 	require.True(t, available, "sw.otelcol.collector.name resource attribute must be available")
 	require.Equal(t, "testing_collector_name", v.AsString(), "attribute value must be the same")
-	v, available := atts.Get("sw.otelcol.collector.version")
+
+	v, available = atts.Get("sw.otelcol.collector.version")
 	require.True(t, available, "sw.otelcol.collector.version resource attribute must be available")
 	require.Equal(t, "0.113.0", v.AsString(), "attribute value must be the same")
 
