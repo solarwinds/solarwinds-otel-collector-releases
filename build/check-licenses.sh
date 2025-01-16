@@ -19,21 +19,21 @@ ALL_SRC=$(find . \( -name "*.go" -o -name "*.sh" \) \
 			     -not -path '*generated*' \
 			     -type f | sort)
 
-for f in $ALL_SRC; do \
-    case "$f" in \
-        *.go) \
-            if ! diff -q <(head -n 13 "$f") $EXPECTED_GO_LICENSE_HEADER > /dev/null; then \
+for f in $ALL_SRC; do
+    case "$f" in
+        *.go)
+            if ! diff -q <(head -n 13 "$f") $EXPECTED_GO_LICENSE_HEADER > /dev/null; then
                 echo "Missing or incorrect headers!"
-                echo "Diff for $f:"; \
-                diff --label="$f" -u <(head -n 13 "$f") $EXPECTED_GO_LICENSE_HEADER; \
-            fi; \
-        ;; \
-        *.sh) \
-            if ! diff -q <(tail -n +2 "$f" | head -n 13) $EXPECTED_SHELL_LICENSE_HEADER > /dev/null; then \
+                echo "Diff for $f:";
+                diff --label="$f" -u <(head -n 13 "$f") $EXPECTED_GO_LICENSE_HEADER;
+            fi;
+        ;;
+        *.sh)
+            if ! diff -q <(tail -n +2 "$f" | head -n 13) $EXPECTED_SHELL_LICENSE_HEADER > /dev/null; then
                 echo "Missing or incorrect headers!"
-                echo "Diff for $f:"; \
-                diff --label="$f" -u <(tail -n +2 "$f" | head -n 13) $EXPECTED_SHELL_LICENSE_HEADER; \
-            fi; \
-        ;; \
-    esac; \
+                echo "Diff for $f:";
+                diff --label="$f" -u <(tail -n +2 "$f" | head -n 13) $EXPECTED_SHELL_LICENSE_HEADER;
+            fi;
+        ;;
+    esac;
 done
