@@ -19,21 +19,25 @@ ALL_SRC=$(find . \( -name "*.go" -o -name "*.sh" \) \
 			     -not -path '*generated*' \
 			     -type f | sort)
 
+RC=0
 for f in $ALL_SRC; do
     case "$f" in
         *.go)
             if ! diff -q <(head -n 13 "$f") $EXPECTED_GO_LICENSE_HEADER > /dev/null; then
-                echo "Missing or incorrect headers!"
+                echo "Missing or incorrect license headers in Go source files!"
                 echo "Diff for $f:";
                 diff --label="$f" -u <(head -n 13 "$f") $EXPECTED_GO_LICENSE_HEADER;
+                RC=1
             fi;
         ;;
         *.sh)
             if ! diff -q <(tail -n +2 "$f" | head -n 13) $EXPECTED_SHELL_LICENSE_HEADER > /dev/null; then
-                echo "Missing or incorrect headers!"
+                echo "Missing or incorrect license headers in shell source files!"
                 echo "Diff for $f:";
                 diff --label="$f" -u <(tail -n +2 "$f" | head -n 13) $EXPECTED_SHELL_LICENSE_HEADER;
+                RC=1
             fi;
         ;;
     esac;
 done
+exit $RC
