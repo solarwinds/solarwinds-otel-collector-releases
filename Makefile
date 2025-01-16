@@ -1,8 +1,8 @@
 include Makefile.Common
 
-ALL_SRC=$(shell find . \( -name "*.go" -o -name "*.sh" \) \
-			     -not -path '*generated*' \
-			     -type f | sort)
+ALL_SRC := $(shell find . \( -name "*.go" \) \
+							-not -path '*generated*' \
+							-type f | sort)
 
 .PHONY: ci-check-licenses
 ci-check-licenses: add-licenses check-licenses
