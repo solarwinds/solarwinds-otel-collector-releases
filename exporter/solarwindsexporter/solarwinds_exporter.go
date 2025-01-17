@@ -37,10 +37,6 @@ const (
 	tracesExporterType
 )
 
-// collectorNameAttribute is a resource attribute appended
-// to all exported telemetry signals.
-const collectorNameAttribute = "sw.otelcol.collector.name"
-
 var (
 	ErrSwiExtensionNotFound = errors.New("solarwinds extension not found")
 )
@@ -238,7 +234,7 @@ func (swiExporter *solarwindsExporter) pushMetrics(ctx context.Context, metrics 
 	for i, rms := 0, metrics.ResourceMetrics(); i < rms.Len(); i++ {
 		resource := rms.At(i).Resource()
 		resource.Attributes().PutStr(
-			collectorNameAttribute,
+			solarwindsextension.CollectorNameAttribute,
 			swiExporter.config.collectorName,
 		)
 	}
@@ -255,7 +251,7 @@ func (swiExporter *solarwindsExporter) pushLogs(ctx context.Context, logs plog.L
 	for i, rls := 0, logs.ResourceLogs(); i < rls.Len(); i++ {
 		resource := rls.At(i).Resource()
 		resource.Attributes().PutStr(
-			collectorNameAttribute,
+			solarwindsextension.CollectorNameAttribute,
 			swiExporter.config.collectorName,
 		)
 	}
@@ -272,7 +268,7 @@ func (swiExporter *solarwindsExporter) pushTraces(ctx context.Context, traces pt
 	for i, rss := 0, traces.ResourceSpans(); i < rss.Len(); i++ {
 		resource := rss.At(i).Resource()
 		resource.Attributes().PutStr(
-			collectorNameAttribute,
+			solarwindsextension.CollectorNameAttribute,
 			swiExporter.config.collectorName,
 		)
 	}

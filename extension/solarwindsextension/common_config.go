@@ -30,7 +30,7 @@ type commonConfig struct{ cfg *internal.Config }
 
 var _ CommonConfig = (*commonConfig)(nil)
 
-func newEndpointConfig(cfg *internal.Config) *commonConfig {
+func newCommonConfig(cfg *internal.Config) *commonConfig {
 	return &commonConfig{cfg: cfg}
 }
 
