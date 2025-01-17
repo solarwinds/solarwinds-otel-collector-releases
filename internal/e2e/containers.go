@@ -124,7 +124,7 @@ func runSolarWindsOTELCollector(
 	files = append(files, additionalFiles...)
 
 	req := testcontainers.ContainerRequest{
-		Image: "solarwinds-otel-collector:local",
+		Image: "solarwinds-otel-collector:latest",
 		LogConsumerCfg: &testcontainers.LogConsumerConfig{
 			Consumers: []testcontainers.LogConsumer{lc},
 		},
