@@ -210,13 +210,14 @@ func runGeneratorContainer(
 }
 
 // Starts the receiving collector, and the test collector.
-// Test collector container is started with the supplied config file.
+// Test collector container is started with the supplied config file to be tested.
 // Returns the receiving collector container instance, so tests can check the ingested data is as expected.
-func StartTheTwoCollectorContainers(
+func startCollectorContainers(
 	t *testing.T,
 	ctx context.Context,
 	config string,
-	signalType string) testcontainers.Container {
+	signalType string,
+) testcontainers.Container {
 
 	net, err := network.New(ctx)
 	require.NoError(t, err)
@@ -236,7 +237,7 @@ func StartTheTwoCollectorContainers(
 
 	cmd := []string{
 		signalType,
-		fmt.Sprintf("--%s", signalType), strconv.Itoa(samplesCount), // --logs or --metrics or --traces
+		fmt.Sprintf("--%s", signalType), strconv.Itoa(samplesCount),
 		"--otlp-insecure",
 		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
 		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),

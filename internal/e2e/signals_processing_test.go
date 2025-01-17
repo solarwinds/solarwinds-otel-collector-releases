@@ -37,13 +37,13 @@ const (
 
 func TestMetricStream(t *testing.T) {
 	ctx := context.Background()
-	rContainer := StartTheTwoCollectorContainers(t, ctx, "emitting_collector.yaml", "metrics")
+	rContainer := startCollectorContainers(t, ctx, "emitting_collector.yaml", "metrics")
 	evaluateMetricsStream(t, ctx, rContainer, samplesCount)
 }
 
 func TestTracesStream(t *testing.T) {
 	ctx := context.Background()
-	rContainer := StartTheTwoCollectorContainers(t, ctx, "emitting_collector.yaml", "traces")
+	rContainer := startCollectorContainers(t, ctx, "emitting_collector.yaml", "traces")
 
 	// Traces coming in couples.
 	expectedTracesCount := samplesCount * 2
@@ -52,7 +52,7 @@ func TestTracesStream(t *testing.T) {
 
 func TestLogsStream(t *testing.T) {
 	ctx := context.Background()
-	rContainer := StartTheTwoCollectorContainers(t, ctx, "emitting_collector.yaml", "logs")
+	rContainer := startCollectorContainers(t, ctx, "emitting_collector.yaml", "logs")
 	evaluateLogsStream(t, ctx, rContainer, samplesCount)
 }
 
