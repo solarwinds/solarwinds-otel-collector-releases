@@ -18,16 +18,21 @@ package e2e
 
 import (
 	"context"
+	"fmt"
+	"io"
+	"log"
+	"strconv"
+	"strings"
+	"testing"
+	"time"
+
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/network"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.opentelemetry.io/collector/pdata/ptrace"
-	"io"
-	"log"
-	"strings"
-	"testing"
 )
 
 const (
