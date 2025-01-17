@@ -215,7 +215,8 @@ func runGeneratorContainer(
 func StartTheTwoCollectorContainers(
 	t *testing.T,
 	ctx context.Context,
-	config string) testcontainers.Container {
+	config string,
+	signalType string) testcontainers.Container {
 
 	net, err := network.New(ctx)
 	require.NoError(t, err)
@@ -234,8 +235,8 @@ func StartTheTwoCollectorContainers(
 	testcontainers.CleanupContainer(t, eContainer)
 
 	cmd := []string{
-		"logs",
-		"--logs", strconv.Itoa(samplesCount),
+		signalType,
+		fmt.Sprintf("--%s", signalType), strconv.Itoa(samplesCount), // --logs or --metrics or --traces
 		"--otlp-insecure",
 		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
 		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),
