@@ -85,5 +85,5 @@ func evaluateHeartbeatMetricHasEntityCreationAsOff(
 
 	v, available := atts.Get("sw.otelcol.collector.entity_creation")
 	require.True(t, available, "sw.otelcol.collector.entity_creation resource attribute must be available")
-	require.Equal(t, "on", v.AsString(), "attribute value must be the same")
+	require.Equal(t, "off", v.AsString(), "attribute value must be the same")
 }
