@@ -18,53 +18,17 @@ package e2e
 
 import (
 	"context"
-	"fmt"
-	"strconv"
-	"testing"
-	"time"
-
 	"github.com/stretchr/testify/require"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/network"
 	"go.opentelemetry.io/collector/pdata/pmetric"
+	"testing"
 )
 
 func TestWithoutEntity(t *testing.T) {
 	ctx := context.Background()
-
-	net, err := network.New(ctx)
-	require.NoError(t, err)
-	testcontainers.CleanupNetwork(t, net)
-
-	certPath := t.TempDir()
-	_, err = generateCertificates(receivingContainer, certPath)
-	require.NoError(t, err)
-
-	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, net.Name)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, rContainer)
-
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name, "emitting_collector_without_entity.yaml")
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, eContainer)
-
-	cmd := []string{
-		"metrics",
-		"--metrics", strconv.Itoa(samplesCount),
-		"--otlp-insecure",
-		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
-		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),
-	}
-
-	gContainer, err := runGeneratorContainer(ctx, net.Name, cmd)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, gContainer)
-
-	<-time.After(collectorRunningPeriod)
-
+	rContainer := StartTheTwoCollectorContainers(t, ctx, "emitting_collector_without_entity.yaml")
 	ms := pmetric.NewMetrics()
 	mum := new(pmetric.JSONUnmarshaler)
-	lines, err := loadResultFile(ctx, rContainer, "/tmp/result.json")
+	lines, _ := loadResultFile(ctx, rContainer, "/tmp/result.json")
 	for _, line := range lines {
 		// Metrics to process.
 		m, err := mum.UnmarshalMetrics([]byte(line))

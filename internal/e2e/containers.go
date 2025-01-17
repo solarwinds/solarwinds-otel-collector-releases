@@ -19,13 +19,17 @@ package e2e
 import (
 	"context"
 	"errors"
+	"fmt"
+	"github.com/mdelapenya/tlscert"
+	"github.com/stretchr/testify/require"
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/network"
+	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
 	"path/filepath"
+	"strconv"
+	"testing"
 	"time"
-
-	"github.com/mdelapenya/tlscert"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 const (
@@ -120,7 +124,7 @@ func runSolarWindsOTELCollector(
 	files = append(files, additionalFiles...)
 
 	req := testcontainers.ContainerRequest{
-		Image: "solarwinds-otel-collector:latest",
+		Image: "solarwinds-otel-collector:local",
 		LogConsumerCfg: &testcontainers.LogConsumerConfig{
 			Consumers: []testcontainers.LogConsumer{lc},
 		},
@@ -203,6 +207,47 @@ func runGeneratorContainer(
 	})
 
 	return container, err
+}
+
+// Starts the receiving collector, and the test collector.
+// Test collector container is started with the supplied config file.
+// Returns the receiving collector container instance, so tests can check the ingested data is as expected.
+func StartTheTwoCollectorContainers(
+	t *testing.T,
+	ctx context.Context,
+	config string) testcontainers.Container {
+
+	net, err := network.New(ctx)
+	require.NoError(t, err)
+	testcontainers.CleanupNetwork(t, net)
+
+	certPath := t.TempDir()
+	_, err = generateCertificates(receivingContainer, certPath)
+	require.NoError(t, err)
+
+	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, net.Name)
+	require.NoError(t, err)
+	testcontainers.CleanupContainer(t, rContainer)
+
+	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name, config)
+	require.NoError(t, err)
+	testcontainers.CleanupContainer(t, eContainer)
+
+	cmd := []string{
+		"logs",
+		"--logs", strconv.Itoa(samplesCount),
+		"--otlp-insecure",
+		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
+		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),
+	}
+
+	gContainer, err := runGeneratorContainer(ctx, net.Name, cmd)
+	require.NoError(t, err)
+	testcontainers.CleanupContainer(t, gContainer)
+
+	<-time.After(collectorRunningPeriod)
+
+	return rContainer
 }
 
 type logConsumer struct {

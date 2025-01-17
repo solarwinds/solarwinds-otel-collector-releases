@@ -18,21 +18,16 @@ package e2e
 
 import (
 	"context"
-	"fmt"
-	"io"
-	"log"
-	"strconv"
-	"strings"
-	"testing"
-	"time"
-
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/network"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.opentelemetry.io/collector/pdata/ptrace"
+	"io"
+	"log"
+	"strings"
+	"testing"
 )
 
 const (
@@ -42,72 +37,13 @@ const (
 
 func TestMetricStream(t *testing.T) {
 	ctx := context.Background()
-
-	net, err := network.New(ctx)
-	require.NoError(t, err)
-	testcontainers.CleanupNetwork(t, net)
-
-	certPath := t.TempDir()
-	_, err = generateCertificates(receivingContainer, certPath)
-	require.NoError(t, err)
-
-	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, net.Name)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, rContainer)
-
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name, "emitting_collector.yaml")
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, eContainer)
-
-	cmd := []string{
-		"metrics",
-		"--metrics", strconv.Itoa(samplesCount),
-		"--otlp-insecure",
-		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
-		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),
-	}
-
-	gContainer, err := runGeneratorContainer(ctx, net.Name, cmd)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, gContainer)
-
-	<-time.After(collectorRunningPeriod)
-
+	rContainer := StartTheTwoCollectorContainers(t, ctx, "emitting_collector.yaml")
 	evaluateMetricsStream(t, ctx, rContainer, samplesCount)
 }
 
 func TestTracesStream(t *testing.T) {
 	ctx := context.Background()
-
-	net, err := network.New(ctx)
-	require.NoError(t, err)
-	testcontainers.CleanupNetwork(t, net)
-
-	certPath := t.TempDir()
-	_, err = generateCertificates(receivingContainer, certPath)
-	require.NoError(t, err)
-
-	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, net.Name)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, rContainer)
-
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name, "emitting_collector.yaml")
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, eContainer)
-
-	cmd := []string{
-		"traces",
-		"--traces", strconv.Itoa(samplesCount),
-		"--otlp-insecure",
-		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
-		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),
-	}
-
-	gContainer, err := runGeneratorContainer(ctx, net.Name, cmd)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, gContainer)
-
-	<-time.After(collectorRunningPeriod)
+	rContainer := StartTheTwoCollectorContainers(t, ctx, "emitting_collector.yaml")
 
 	// Traces coming in couples.
 	expectedTracesCount := samplesCount * 2
@@ -116,37 +52,7 @@ func TestTracesStream(t *testing.T) {
 
 func TestLogsStream(t *testing.T) {
 	ctx := context.Background()
-
-	net, err := network.New(ctx)
-	require.NoError(t, err)
-	testcontainers.CleanupNetwork(t, net)
-
-	certPath := t.TempDir()
-	_, err = generateCertificates(receivingContainer, certPath)
-	require.NoError(t, err)
-
-	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, net.Name)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, rContainer)
-
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name, "emitting_collector.yaml")
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, eContainer)
-
-	cmd := []string{
-		"logs",
-		"--logs", strconv.Itoa(samplesCount),
-		"--otlp-insecure",
-		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
-		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),
-	}
-
-	gContainer, err := runGeneratorContainer(ctx, net.Name, cmd)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, gContainer)
-
-	<-time.After(collectorRunningPeriod)
-
+	rContainer := StartTheTwoCollectorContainers(t, ctx, "emitting_collector.yaml")
 	evaluateLogsStream(t, ctx, rContainer, samplesCount)
 }
 
