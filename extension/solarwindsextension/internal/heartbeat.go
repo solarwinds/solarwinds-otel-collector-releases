@@ -30,6 +30,7 @@ import (
 
 const (
 	defaultHeartbeatInterval = 30 * time.Second
+	CollectorNameAttribute   = "sw.otelcol.collector.name"
 )
 
 type MetricsExporter interface {
@@ -162,7 +163,7 @@ func (h *Heartbeat) decorateResourceAttributes(resource pcommon.Resource) error 
 	}
 
 	if h.collectorName != "" {
-		resource.Attributes().PutStr("sw.otelcol.collector.name", h.collectorName)
+		resource.Attributes().PutStr(CollectorNameAttribute, h.collectorName)
 	}
 	resource.Attributes().PutStr("sw.otelcol.collector.version", version.Version)
 	return nil
