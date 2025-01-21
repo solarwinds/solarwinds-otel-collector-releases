@@ -18,18 +18,14 @@ package e2e
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"log"
-	"strconv"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/solarwinds/solarwinds-otel-collector/pkg/version"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/network"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.opentelemetry.io/collector/pdata/pmetric"
@@ -45,72 +41,13 @@ const (
 
 func TestMetricStream(t *testing.T) {
 	ctx := context.Background()
-
-	net, err := network.New(ctx)
-	require.NoError(t, err)
-	testcontainers.CleanupNetwork(t, net)
-
-	certPath := t.TempDir()
-	_, err = generateCertificates(receivingContainer, certPath)
-	require.NoError(t, err)
-
-	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, net.Name)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, rContainer)
-
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, eContainer)
-
-	cmd := []string{
-		"metrics",
-		"--metrics", strconv.Itoa(samplesCount),
-		"--otlp-insecure",
-		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
-		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),
-	}
-
-	gContainer, err := runGeneratorContainer(ctx, net.Name, cmd)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, gContainer)
-
-	<-time.After(collectorRunningPeriod)
-
+	rContainer := startCollectorContainers(t, ctx, "emitting_collector.yaml", Metrics, collectorRunningPeriod)
 	evaluateMetricsStream(t, ctx, rContainer, samplesCount)
 }
 
 func TestTracesStream(t *testing.T) {
 	ctx := context.Background()
-
-	net, err := network.New(ctx)
-	require.NoError(t, err)
-	testcontainers.CleanupNetwork(t, net)
-
-	certPath := t.TempDir()
-	_, err = generateCertificates(receivingContainer, certPath)
-	require.NoError(t, err)
-
-	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, net.Name)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, rContainer)
-
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, eContainer)
-
-	cmd := []string{
-		"traces",
-		"--traces", strconv.Itoa(samplesCount),
-		"--otlp-insecure",
-		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
-		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),
-	}
-
-	gContainer, err := runGeneratorContainer(ctx, net.Name, cmd)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, gContainer)
-
-	<-time.After(collectorRunningPeriod)
+	rContainer := startCollectorContainers(t, ctx, "emitting_collector.yaml", Traces, collectorRunningPeriod)
 
 	// Traces coming in couples.
 	expectedTracesCount := samplesCount * 2
@@ -119,37 +56,7 @@ func TestTracesStream(t *testing.T) {
 
 func TestLogsStream(t *testing.T) {
 	ctx := context.Background()
-
-	net, err := network.New(ctx)
-	require.NoError(t, err)
-	testcontainers.CleanupNetwork(t, net)
-
-	certPath := t.TempDir()
-	_, err = generateCertificates(receivingContainer, certPath)
-	require.NoError(t, err)
-
-	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, net.Name)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, rContainer)
-
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, eContainer)
-
-	cmd := []string{
-		"logs",
-		"--logs", strconv.Itoa(samplesCount),
-		"--otlp-insecure",
-		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
-		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),
-	}
-
-	gContainer, err := runGeneratorContainer(ctx, net.Name, cmd)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, gContainer)
-
-	<-time.After(collectorRunningPeriod)
-
+	rContainer := startCollectorContainers(t, ctx, "emitting_collector.yaml", Logs, collectorRunningPeriod)
 	evaluateLogsStream(t, ctx, rContainer, samplesCount)
 }
 
@@ -283,6 +190,10 @@ func evaluateHeartbeatMetric(
 	v2, available2 := atts.Get("custom_attribute")
 	require.True(t, available2, "custom_attribute resource attribute must be available")
 	require.Equal(t, "custom_attribute_value", v2.AsString(), "attribute value must be the same")
+
+	v3, available3 := atts.Get("sw.otelcol.collector.entity_creation")
+	require.True(t, available3, "sw.otelcol.collector.entity_creation resource attribute must be available")
+	require.Equal(t, "on", v3.AsString(), "attribute value must be the same")
 }
 
 func evaluateResourceAttributes(
