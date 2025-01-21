@@ -1,0 +1,60 @@
+package wmi
+
+import (
+	"errors"
+
+	"go.uber.org/zap"
+)
+
+var (
+	ErrWmiNoResult       = errors.New("wmi query failed: no result returned")
+	ErrWmiEmptyResult    = errors.New("wmi query failed: empty result returned")
+	ErrWmiTooManyResults = errors.New("wmi query failed: more than single results returned")
+)
+
+type Executor interface {
+	CreateQuery(interface{}, string) string
+	Query(string, interface{}) (interface{}, error)
+}
+
+// QueryResult utilizes executor to get TResult.
+func QueryResult[TResult interface{}](executor Executor) (TResult, error) {
+	var model TResult
+	query := executor.CreateQuery(&model, "")
+	result, err := executor.Query(query, &model)
+	if err != nil {
+		var nilResult TResult
+		zap.L().Error("wmi query failed.", zap.Error(err))
+		return nilResult, err
+	}
+
+	return *result.(*TResult), err
+}
+
+// QuerySingleResult utilizes executor to get single result of TResult.
+// If not exactly single result is returned from the query, error with
+// nil result is returned.
+func QuerySingleResult[TResult interface{}](executor Executor) (TResult, error) {
+	var nilResult TResult
+	res, err := QueryResult[[]TResult](executor)
+	if err != nil {
+		return nilResult, err
+	}
+
+	if res == nil {
+		zap.L().Error(ErrWmiNoResult.Error())
+		return nilResult, ErrWmiNoResult
+	}
+
+	if len(res) == 0 {
+		zap.L().Error(ErrWmiEmptyResult.Error())
+		return nilResult, ErrWmiEmptyResult
+	}
+
+	if len(res) > 1 {
+		zap.L().Error(ErrWmiTooManyResults.Error())
+		return nilResult, ErrWmiTooManyResults
+	}
+
+	return res[0], nil
+}
