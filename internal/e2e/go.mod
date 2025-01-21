@@ -4,6 +4,7 @@ go 1.23.4
 
 require (
 	github.com/mdelapenya/tlscert v0.1.0
+	github.com/solarwinds/solarwinds-otel-collector/pkg/version v0.113.0
 	github.com/stretchr/testify v1.10.0
 	github.com/testcontainers/testcontainers-go v0.34.0
 	go.opentelemetry.io/collector/pdata v1.19.0
@@ -68,3 +69,5 @@ require (
 	google.golang.org/protobuf v1.35.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/solarwinds/solarwinds-otel-collector/pkg/version => ../../pkg/version
