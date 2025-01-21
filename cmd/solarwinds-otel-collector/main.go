@@ -21,6 +21,7 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/confmap/provider/aesprovider"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/confmap/provider/s3provider"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/confmap/provider/secretsmanagerprovider"
+	"github.com/solarwinds/solarwinds-otel-collector/pkg/version"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/confmap"
 	"go.opentelemetry.io/collector/confmap/provider/envprovider"
@@ -32,10 +33,10 @@ import (
 )
 
 func main() {
-	info := component.BuildInfo{
+	var info = component.BuildInfo{
 		Command:     "solarwinds-otel-collector",
 		Description: "SolarWinds distribution for OpenTelemetry",
-		Version:     "0.113.0",
+		Version:     version.Version,
 	}
 
 	err := run(otelcol.CollectorSettings{
