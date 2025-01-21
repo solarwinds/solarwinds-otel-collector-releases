@@ -1,14 +1,14 @@
 package scope
 
-import "github.com/solarwinds-cloud/uams-otel-collector-plugin/test"
+import "github.com/solarwinds/solarwinds-otel-collector/pkg/testutil"
 
 type EmitterMock struct {
 	emitResult *Result
 	initResult error
 	name       string
-	EmitCC     test.CallsCounter
-	InitCC     test.CallsCounter
-	NameCC     test.CallsCounter
+	EmitCC     testutil.CallsCounter
+	InitCC     testutil.CallsCounter
+	NameCC     testutil.CallsCounter
 }
 
 var _ Emitter = (*EmitterMock)(nil)
@@ -22,9 +22,9 @@ func CreateEmitterMock(
 		emitResult: emitResult,
 		initResult: initResult,
 		name:       name,
-		EmitCC:     test.CallsCounter{},
-		InitCC:     test.CallsCounter{},
-		NameCC:     test.CallsCounter{},
+		EmitCC:     testutil.CallsCounter{},
+		InitCC:     testutil.CallsCounter{},
+		NameCC:     testutil.CallsCounter{},
 	}
 }
 

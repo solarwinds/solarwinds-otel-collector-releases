@@ -3,14 +3,14 @@ package features
 import (
 	"time"
 
-	"github.com/solarwinds-cloud/uams-otel-collector-plugin/test"
+	"github.com/solarwinds/solarwinds-otel-collector/pkg/testutil"
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/types"
 )
 
 type DelayedProcessingMock struct {
-	InitCC        test.CallsCounter
-	IsReadyCC     test.CallsCounter
-	UpdateCC      test.CallsCounter
+	InitCC        testutil.CallsCounter
+	IsReadyCC     testutil.CallsCounter
+	UpdateCC      testutil.CallsCounter
 	initResult    error
 	isReadyResult bool
 }
@@ -22,9 +22,9 @@ func CreateDelayedProcessingMock(
 	isReadyResult bool,
 ) *DelayedProcessingMock {
 	return &DelayedProcessingMock{
-		InitCC:        test.CallsCounter{},
-		IsReadyCC:     test.CallsCounter{},
-		UpdateCC:      test.CallsCounter{},
+		InitCC:        testutil.CallsCounter{},
+		IsReadyCC:     testutil.CallsCounter{},
+		UpdateCC:      testutil.CallsCounter{},
 		initResult:    initResult,
 		isReadyResult: isReadyResult,
 	}

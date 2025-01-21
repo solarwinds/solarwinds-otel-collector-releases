@@ -1,12 +1,12 @@
 package scraper
 
 import (
-	"github.com/solarwinds-cloud/uams-otel-collector-plugin/test"
+	"github.com/solarwinds/solarwinds-otel-collector/pkg/testutil"
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/types"
 )
 
 type SchedulerMock struct {
-	scheduleCC     test.CallsCounter
+	scheduleCC     testutil.CallsCounter
 	scheduleResult error
 	runtime        *Runtime
 }
@@ -18,7 +18,7 @@ func CreateSchedulerMock(
 	runtime *Runtime,
 ) *SchedulerMock {
 	return &SchedulerMock{
-		scheduleCC:     test.CallsCounter{},
+		scheduleCC:     testutil.CallsCounter{},
 		scheduleResult: scheduleResult,
 		runtime:        runtime,
 	}

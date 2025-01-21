@@ -3,15 +3,15 @@ package feature
 import (
 	"time"
 
-	"github.com/solarwinds-cloud/uams-otel-collector-plugin/test"
+	"github.com/solarwinds/solarwinds-otel-collector/pkg/testutil"
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/types"
 )
 
 type ManagerMock struct {
-	InitCC                    test.CallsCounter
-	InitDelayedCC             test.CallsCounter
-	IsReadyCC                 test.CallsCounter
-	UpdateLastProcessedTimeCC test.CallsCounter
+	InitCC                    testutil.CallsCounter
+	InitDelayedCC             testutil.CallsCounter
+	IsReadyCC                 testutil.CallsCounter
+	UpdateLastProcessedTimeCC testutil.CallsCounter
 	initResult                error
 	initDelayed               error
 	isReadyResult             bool
@@ -25,10 +25,10 @@ func CreateFeatureManagerMock(
 	isReadyResult bool,
 ) *ManagerMock {
 	return &ManagerMock{
-		InitCC:                    test.CallsCounter{},
-		InitDelayedCC:             test.CallsCounter{},
-		IsReadyCC:                 test.CallsCounter{},
-		UpdateLastProcessedTimeCC: test.CallsCounter{},
+		InitCC:                    testutil.CallsCounter{},
+		InitDelayedCC:             testutil.CallsCounter{},
+		IsReadyCC:                 testutil.CallsCounter{},
+		UpdateLastProcessedTimeCC: testutil.CallsCounter{},
 		initResult:                initResult,
 		initDelayed:               initDelayed,
 		isReadyResult:             isReadyResult,

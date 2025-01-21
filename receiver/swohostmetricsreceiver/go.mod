@@ -5,9 +5,9 @@ go 1.23.4
 require (
 	github.com/go-ole/go-ole v1.3.0
 	github.com/shirou/gopsutil/v3 v3.24.5
-	github.com/solarwinds-cloud/uams-otel-collector-plugin v1.12.18
 	github.com/solarwinds-cloud/uams-plugin-lib v0.15.74
 	github.com/solarwinds/solarwinds-otel-collector/pkg/version v0.133.0
+	github.com/solarwinds/solarwinds-otel-collector/pkg/testutil v0.133.0
 	github.com/stretchr/testify v1.10.0
 	github.com/yusufpapurcu/wmi v1.2.4
 	go.opentelemetry.io/collector/component v0.113.0
@@ -65,3 +65,5 @@ require (
 )
 
 replace github.com/solarwinds/solarwinds-otel-collector/pkg/version => ../../pkg/version
+
+replace github.com/solarwinds/solarwinds-otel-collector/pkg/testutil => ../../pkg/testutil
