@@ -18,21 +18,28 @@ package e2e
 
 import (
 	"context"
+	"fmt"
+	"io"
+	"log"
+	"strconv"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/solarwinds/solarwinds-otel-collector/pkg/version"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.opentelemetry.io/collector/pdata/ptrace"
-	"io"
-	"log"
-	"strings"
-	"testing"
 )
 
 const (
-	resourceAttributeName  = "resource.attributes.testing_attribute"
-	resourceAttributeValue = "testing_value"
+	resourceAttributeName       = "resource.attributes.testing_attribute"
+	resourceAttributeValue      = "testing_value"
+	collectorNameAttributeName  = "sw.otelcol.collector.name"
+	collectorNameAttributeValue = "testing_collector_name"
 )
 
 func TestMetricStream(t *testing.T) {
@@ -174,9 +181,14 @@ func evaluateHeartbeatMetric(
 ) {
 	require.GreaterOrEqual(t, ms.ResourceMetrics().Len(), 1, "there must be at least one metric")
 	atts := ms.ResourceMetrics().At(0).Resource().Attributes()
+
 	v, available := atts.Get("sw.otelcol.collector.name")
 	require.True(t, available, "sw.otelcol.collector.name resource attribute must be available")
 	require.Equal(t, "testing_collector_name", v.AsString(), "attribute value must be the same")
+
+	v, available = atts.Get("sw.otelcol.collector.version")
+	require.True(t, available, "sw.otelcol.collector.version resource attribute must be available")
+	require.Equal(t, version.Version, v.AsString(), "version attribute doesn't match")
 
 	v2, available2 := atts.Get("custom_attribute")
 	require.True(t, available2, "custom_attribute resource attribute must be available")
@@ -191,9 +203,20 @@ func evaluateResourceAttributes(
 	t *testing.T,
 	atts pcommon.Map,
 ) {
+	// Evaluate testing attribute.
 	val, ok := atts.Get(resourceAttributeName)
 	require.True(t, ok, "testing attribute must exist")
 	require.Equal(t, val.AsString(), resourceAttributeValue, "testing attribute value must be the same")
+
+	// Evaluate collector name as an attribute.
+	val, ok = atts.Get(collectorNameAttributeName)
+	require.True(t, ok, "collector name attribute must exist")
+	require.Equal(
+		t,
+		val.AsString(),
+		collectorNameAttributeValue,
+		"collector name attribute value must be as configured",
+	)
 }
 
 func loadResultFile(

@@ -20,6 +20,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/solarwinds/solarwinds-otel-collector/pkg/version"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/extension"
 	"go.opentelemetry.io/collector/pdata/pcommon"
@@ -29,6 +30,7 @@ import (
 
 const (
 	defaultHeartbeatInterval = 30 * time.Second
+	CollectorNameAttribute   = "sw.otelcol.collector.name"
 )
 
 type MetricsExporter interface {
@@ -163,12 +165,13 @@ func (h *Heartbeat) decorateResourceAttributes(resource pcommon.Resource) error 
 	}
 
 	if h.collectorName != "" {
-		resource.Attributes().PutStr("sw.otelcol.collector.name", h.collectorName)
+		resource.Attributes().PutStr(CollectorNameAttribute, h.collectorName)
 	}
 	if h.withoutEntity {
 		resource.Attributes().PutStr("sw.otelcol.collector.entity_creation", "off")
 	} else {
 		resource.Attributes().PutStr("sw.otelcol.collector.entity_creation", "on")
 	}
+	resource.Attributes().PutStr("sw.otelcol.collector.version", version.Version)
 	return nil
 }
