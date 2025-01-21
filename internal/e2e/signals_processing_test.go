@@ -18,13 +18,10 @@ package e2e
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"log"
-	"strconv"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/solarwinds/solarwinds-otel-collector/pkg/version"
 	"github.com/stretchr/testify/require"
