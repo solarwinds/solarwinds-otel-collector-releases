@@ -4,21 +4,31 @@ package lastloggeduser
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/providers"
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/providers/loggedusers"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/solarwinds-cloud/uams-plugin-lib/pkg/logger"
 )
 
 func Test_Functional(t *testing.T) {
 	t.Skip("This test should be run manually only")
 
-	_ = logger.Setup(logger.WithLogToStdout(true))
+	// Mimics previous version of logger setup.
+	zap.ReplaceGlobals(
+		zap.New(
+			zapcore.NewCore(
+				zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig()),
+				zapcore.AddSync(os.Stdout),
+				zap.NewAtomicLevelAt(zapcore.DebugLevel),
+			),
+		),
+	)
 
 	sut := NewEmitter()
 

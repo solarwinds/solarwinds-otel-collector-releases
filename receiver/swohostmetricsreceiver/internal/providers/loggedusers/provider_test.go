@@ -4,15 +4,26 @@ package loggedusers
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
-	"github.com/solarwinds-cloud/uams-plugin-lib/pkg/logger"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 func Test_Functional(t *testing.T) {
 	t.Skip("This test should be run manually")
 
-	_ = logger.Setup(logger.WithLogToStdout(true))
+	// Mimics previous version of logger setup.
+	zap.ReplaceGlobals(
+		zap.New(
+			zapcore.NewCore(
+				zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig()),
+				zapcore.AddSync(os.Stdout),
+				zap.NewAtomicLevelAt(zapcore.DebugLevel),
+			),
+		),
+	)
 
 	sut := CreateProvider()
 	result := <-sut.Provide()
