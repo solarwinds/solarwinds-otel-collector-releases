@@ -25,7 +25,7 @@ import (
 
 func TestWithoutEntity(t *testing.T) {
 	ctx := context.Background()
-	rContainer := startCollectorContainers(t, ctx, "emitting_collector_without_entity.yaml", "metrics")
+	rContainer := startCollectorContainers(t, ctx, "emitting_collector_without_entity.yaml", Metrics, collectorRunningPeriod)
 	ms := pmetric.NewMetrics()
 	mum := new(pmetric.JSONUnmarshaler)
 	lines, _ := loadResultFile(ctx, rContainer, "/tmp/result.json")

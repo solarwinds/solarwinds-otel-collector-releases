@@ -216,7 +216,8 @@ func startCollectorContainers(
 	t *testing.T,
 	ctx context.Context,
 	config string,
-	signalType string,
+	signalType SignalType,
+	waitTime time.Duration,
 ) testcontainers.Container {
 
 	net, err := network.New(ctx)
@@ -236,7 +237,7 @@ func startCollectorContainers(
 	testcontainers.CleanupContainer(t, eContainer)
 
 	cmd := []string{
-		signalType,
+		signalType.String(),
 		fmt.Sprintf("--%s", signalType), strconv.Itoa(samplesCount),
 		"--otlp-insecure",
 		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
@@ -247,7 +248,7 @@ func startCollectorContainers(
 	require.NoError(t, err)
 	testcontainers.CleanupContainer(t, gContainer)
 
-	<-time.After(collectorRunningPeriod)
+	<-time.After(waitTime)
 
 	return rContainer
 }
@@ -258,4 +259,25 @@ type logConsumer struct {
 
 func (lc *logConsumer) Accept(l testcontainers.Log) {
 	log.Printf("***%s: %s", lc.Prefix, string(l.Content))
+}
+
+type SignalType int
+
+const (
+	Logs SignalType = iota
+	Metrics
+	Traces
+)
+
+func (s SignalType) String() string {
+	switch s {
+	case Logs:
+		return "logs"
+	case Metrics:
+		return "metrics"
+	case Traces:
+		return "traces"
+	default:
+		panic("unexpected signal type")
+	}
 }
