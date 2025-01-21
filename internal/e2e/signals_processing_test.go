@@ -37,8 +37,10 @@ import (
 )
 
 const (
-	resourceAttributeName  = "resource.attributes.testing_attribute"
-	resourceAttributeValue = "testing_value"
+	resourceAttributeName       = "resource.attributes.testing_attribute"
+	resourceAttributeValue      = "testing_value"
+	collectorNameAttributeName  = "sw.otelcol.collector.name"
+	collectorNameAttributeValue = "testing_collector_name"
 )
 
 func TestMetricStream(t *testing.T) {
@@ -287,9 +289,20 @@ func evaluateResourceAttributes(
 	t *testing.T,
 	atts pcommon.Map,
 ) {
+	// Evaluate testing attribute.
 	val, ok := atts.Get(resourceAttributeName)
 	require.True(t, ok, "testing attribute must exist")
 	require.Equal(t, val.AsString(), resourceAttributeValue, "testing attribute value must be the same")
+
+	// Evaluate collector name as an attribute.
+	val, ok = atts.Get(collectorNameAttributeName)
+	require.True(t, ok, "collector name attribute must exist")
+	require.Equal(
+		t,
+		val.AsString(),
+		collectorNameAttributeValue,
+		"collector name attribute value must be as configured",
+	)
 }
 
 func loadResultFile(
