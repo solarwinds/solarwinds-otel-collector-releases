@@ -9,7 +9,7 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.uber.org/zap"
 
-	"github.com/solarwinds-cloud/uams-otel-collector-plugin/internal/build"
+	"github.com/solarwinds/solarwinds-otel-collector/pkg/version"
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/scraper/framework/metric"
 )
 
@@ -176,7 +176,7 @@ func (s *emitter) assemblyScopeMetricSlice(
 	sm := sms.AppendEmpty()
 	sm.SetSchemaUrl(semconv.SchemaURL)
 	sm.Scope().SetName(s.scopeName)
-	sm.Scope().SetVersion(build.Version)
+	sm.Scope().SetVersion(version.Version)
 
 	// Setup metrics into scope metric slice.
 	for _, m := range ms {
