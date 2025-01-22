@@ -19,13 +19,17 @@ package e2e
 import (
 	"context"
 	"errors"
+	"fmt"
+	"github.com/mdelapenya/tlscert"
+	"github.com/stretchr/testify/require"
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/network"
+	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
 	"path/filepath"
+	"strconv"
+	"testing"
 	"time"
-
-	"github.com/mdelapenya/tlscert"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 const (
@@ -74,8 +78,9 @@ func runTestedSolarWindsOTELCollector(
 	ctx context.Context,
 	certDir string,
 	networkName string,
+	configName string,
 ) (testcontainers.Container, error) {
-	configPath, err := filepath.Abs(filepath.Join(".", "testdata", "emitting_collector.yaml"))
+	configPath, err := filepath.Abs(filepath.Join(".", "testdata", configName))
 	if err != nil {
 		return nil, err
 	}
@@ -204,10 +209,75 @@ func runGeneratorContainer(
 	return container, err
 }
 
+// Starts the receiving collector, and the test collector.
+// Test collector container is started with the supplied config file to be tested.
+// Returns the receiving collector container instance, so tests can check the ingested data is as expected.
+func startCollectorContainers(
+	t *testing.T,
+	ctx context.Context,
+	config string,
+	signalType SignalType,
+	waitTime time.Duration,
+) testcontainers.Container {
+
+	net, err := network.New(ctx)
+	require.NoError(t, err)
+	testcontainers.CleanupNetwork(t, net)
+
+	certPath := t.TempDir()
+	_, err = generateCertificates(receivingContainer, certPath)
+	require.NoError(t, err)
+
+	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, net.Name)
+	require.NoError(t, err)
+	testcontainers.CleanupContainer(t, rContainer)
+
+	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name, config)
+	require.NoError(t, err)
+	testcontainers.CleanupContainer(t, eContainer)
+
+	cmd := []string{
+		signalType.String(),
+		fmt.Sprintf("--%s", signalType), strconv.Itoa(samplesCount),
+		"--otlp-insecure",
+		"--otlp-endpoint", fmt.Sprintf("%s:%d", testedContainer, port),
+		"--otlp-attributes", fmt.Sprintf("%s=\"%s\"", resourceAttributeName, resourceAttributeValue),
+	}
+
+	gContainer, err := runGeneratorContainer(ctx, net.Name, cmd)
+	require.NoError(t, err)
+	testcontainers.CleanupContainer(t, gContainer)
+
+	<-time.After(waitTime)
+
+	return rContainer
+}
+
 type logConsumer struct {
 	Prefix string
 }
 
 func (lc *logConsumer) Accept(l testcontainers.Log) {
 	log.Printf("***%s: %s", lc.Prefix, string(l.Content))
+}
+
+type SignalType int
+
+const (
+	Logs SignalType = iota
+	Metrics
+	Traces
+)
+
+func (s SignalType) String() string {
+	switch s {
+	case Logs:
+		return "logs"
+	case Metrics:
+		return "metrics"
+	case Traces:
+		return "traces"
+	default:
+		panic("unexpected signal type")
+	}
 }
