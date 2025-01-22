@@ -30,5 +30,5 @@ func Test_Discover_OnCommandFailureReturnsFalse(t *testing.T) {
 	sut := createDpkgDiscovery(cliMock)
 
 	actual := sut.Discover()
-	assert.False(t, actual, "discovery must be negatove")
+	assert.False(t, actual, "discovery must be negative")
 }
