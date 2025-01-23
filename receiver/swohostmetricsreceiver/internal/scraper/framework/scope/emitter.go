@@ -220,7 +220,7 @@ func (s *emitter) Init() error {
 
 	if err := s.initializeMetricEmitters(); err != nil {
 		message := fmt.Sprintf(
-			"initialization of metric emiters in scope emitter '%s' failed",
+			"initialization of metric emitters in scope emitter '%s' failed",
 			s.scopeName,
 		)
 		zap.L().Error(message, zap.Error(err))
@@ -302,7 +302,7 @@ func initMetricEmitter(
 	defer wg.Done()
 
 	zap.L().Sugar().Debugf(
-		"initilizing of metric emitter for metric '%s'",
+		"initializing of metric emitter for metric '%s'",
 		meName)
 
 	err := me.Init()
