@@ -33,11 +33,12 @@ import (
 )
 
 const (
-	resourceAttributeName       = "resource.attributes.testing_attribute"
-	resourceAttributeValue      = "testing_value"
-	collectorNameAttributeName  = "sw.otelcol.collector.name"
-	collectorNameAttributeValue = "on"
-	collectorEntityCreation     = "sw.otelcol.collector.entity_creation"
+	resourceAttributeName                 = "resource.attributes.testing_attribute"
+	resourceAttributeValue                = "testing_value"
+	collectorNameAttributeName            = "sw.otelcol.collector.name"
+	collectorNameAttributeValue           = "testing_collector_name"
+	collectorEntityCreationAttributeName  = "sw.otelcol.collector.entity_creation"
+	collectorEntityCreationAttributeValue = "on"
 )
 
 func TestMetricStream(t *testing.T) {
@@ -216,13 +217,13 @@ func evaluateResourceAttributes(
 		"collector name attribute value must be as configured",
 	)
 
-	// Evaluate entity_creation as an attribute.
-	val, ok = atts.Get(collectorEntityCreation)
+	// Evaluate entity_creation attribute.
+	val, ok = atts.Get(collectorEntityCreationAttributeName)
 	require.True(t, ok, "collector entity_creation attribute must exist")
 	require.Equal(
 		t,
 		val.AsString(),
-		collectorEntityCreation,
+		collectorEntityCreationAttributeValue,
 		"collector entity_creation attribute value must be as configured",
 	)
 }

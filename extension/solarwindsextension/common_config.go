@@ -46,6 +46,5 @@ func (c *commonConfig) Token() configopaque.String {
 func (c *commonConfig) CollectorName() string {
 	return c.cfg.CollectorName
 }
-func (c *commonConfig) WithoutEntity() bool {
-	return c.cfg.WithoutEntity
-}
+
+func (c *commonConfig) WithoutEntity() bool { return c.cfg.WithoutEntity }
