@@ -47,7 +47,8 @@ type Config struct {
 	// endpointURL stores the URL for exporting telemetry.
 	endpointURL string `mapstructure:"-"`
 	// collectorName is added as an attribute to telemetry.
-	collectorName string `mapstructure:"-"`
+	collectorName  string `mapstructure:"-"`
+	entityCreation string `mapstructure:"-"`
 }
 
 // extensionAsComponent tries to parse `extension` value of the form 'type/name'

@@ -109,7 +109,13 @@ func (swiExporter *solarwindsExporter) initCommonCfgFromExtension(
 
 	// Get collector name from the extension.
 	collectorName := commonCfg.CollectorName()
+	withoutEntity := commonCfg.WithoutEntity()
 	swiExporter.config.collectorName = collectorName
+	if withoutEntity {
+		swiExporter.config.entityCreation = "off"
+	} else {
+		swiExporter.config.entityCreation = "on"
+	}
 
 	return nil
 }
@@ -237,6 +243,10 @@ func (swiExporter *solarwindsExporter) pushMetrics(ctx context.Context, metrics 
 			solarwindsextension.CollectorNameAttribute,
 			swiExporter.config.collectorName,
 		)
+		resource.Attributes().PutStr(
+			solarwindsextension.EntityCreation,
+			swiExporter.config.entityCreation,
+		)
 	}
 
 	return swiExporter.metrics.ConsumeMetrics(ctx, metrics)
@@ -254,6 +264,10 @@ func (swiExporter *solarwindsExporter) pushLogs(ctx context.Context, logs plog.L
 			solarwindsextension.CollectorNameAttribute,
 			swiExporter.config.collectorName,
 		)
+		resource.Attributes().PutStr(
+			solarwindsextension.EntityCreation,
+			swiExporter.config.entityCreation,
+		)
 	}
 
 	return swiExporter.logs.ConsumeLogs(ctx, logs)
@@ -270,6 +284,10 @@ func (swiExporter *solarwindsExporter) pushTraces(ctx context.Context, traces pt
 		resource.Attributes().PutStr(
 			solarwindsextension.CollectorNameAttribute,
 			swiExporter.config.collectorName,
+		)
+		resource.Attributes().PutStr(
+			solarwindsextension.EntityCreation,
+			swiExporter.config.entityCreation,
 		)
 	}
 

@@ -31,6 +31,7 @@ import (
 const (
 	defaultHeartbeatInterval = 30 * time.Second
 	CollectorNameAttribute   = "sw.otelcol.collector.name"
+	EntityCreation           = "sw.otelcol.collector.entity_creation"
 )
 
 type MetricsExporter interface {
