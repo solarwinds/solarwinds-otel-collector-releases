@@ -39,6 +39,7 @@ const (
 
 var (
 	ErrSwiExtensionNotFound = errors.New("solarwinds extension not found")
+	EntityCreationOnValue   = "on"
 )
 
 type solarwindsExporter struct {
@@ -109,13 +110,8 @@ func (swiExporter *solarwindsExporter) initCommonCfgFromExtension(
 
 	// Get collector name from the extension.
 	collectorName := commonCfg.CollectorName()
-	withoutEntity := commonCfg.WithoutEntity()
 	swiExporter.config.collectorName = collectorName
-	if withoutEntity {
-		swiExporter.config.entityCreation = "off"
-	} else {
-		swiExporter.config.entityCreation = "on"
-	}
+	swiExporter.config.withoutEntity = commonCfg.WithoutEntity()
 
 	return nil
 }
@@ -243,10 +239,12 @@ func (swiExporter *solarwindsExporter) pushMetrics(ctx context.Context, metrics 
 			solarwindsextension.CollectorNameAttribute,
 			swiExporter.config.collectorName,
 		)
-		resource.Attributes().PutStr(
-			solarwindsextension.EntityCreation,
-			swiExporter.config.entityCreation,
-		)
+		if !swiExporter.config.withoutEntity {
+			resource.Attributes().PutStr(
+				solarwindsextension.EntityCreation,
+				EntityCreationOnValue,
+			)
+		}
 	}
 
 	return swiExporter.metrics.ConsumeMetrics(ctx, metrics)
@@ -264,10 +262,12 @@ func (swiExporter *solarwindsExporter) pushLogs(ctx context.Context, logs plog.L
 			solarwindsextension.CollectorNameAttribute,
 			swiExporter.config.collectorName,
 		)
-		resource.Attributes().PutStr(
-			solarwindsextension.EntityCreation,
-			swiExporter.config.entityCreation,
-		)
+		if !swiExporter.config.withoutEntity {
+			resource.Attributes().PutStr(
+				solarwindsextension.EntityCreation,
+				EntityCreationOnValue,
+			)
+		}
 	}
 
 	return swiExporter.logs.ConsumeLogs(ctx, logs)
@@ -285,10 +285,12 @@ func (swiExporter *solarwindsExporter) pushTraces(ctx context.Context, traces pt
 			solarwindsextension.CollectorNameAttribute,
 			swiExporter.config.collectorName,
 		)
-		resource.Attributes().PutStr(
-			solarwindsextension.EntityCreation,
-			swiExporter.config.entityCreation,
-		)
+		if !swiExporter.config.withoutEntity {
+			resource.Attributes().PutStr(
+				solarwindsextension.EntityCreation,
+				EntityCreationOnValue,
+			)
+		}
 	}
 
 	return swiExporter.traces.ConsumeTraces(ctx, traces)
