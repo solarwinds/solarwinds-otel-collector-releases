@@ -18,12 +18,14 @@ package main
 
 import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/fileexporter"
+	"github.com/spf13/cobra"
 	"go.opentelemetry.io/collector/exporter/debugexporter"
 	"go.opentelemetry.io/collector/exporter/nopexporter"
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
 
 	"github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexporter"
 	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension"
+
 	// extensions
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/ackextension"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/asapauthextension"
@@ -403,4 +405,7 @@ func components() (otelcol.Factories, error) {
 	}
 
 	return factories, nil
+}
+
+func addCommand(cmd *cobra.Command) {
 }

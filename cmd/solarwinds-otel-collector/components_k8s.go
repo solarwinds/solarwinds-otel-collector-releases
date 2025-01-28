@@ -23,12 +23,14 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/receivercreator"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/simpleprometheusreceiver"
+	"github.com/spf13/cobra"
 	"go.opentelemetry.io/collector/exporter/debugexporter"
 	"go.opentelemetry.io/collector/exporter/nopexporter"
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
 
 	"github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexporter"
 	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension"
+	"github.com/solarwinds/solarwinds-otel-collector/k8sconnectioncheck"
 
 	"go.opentelemetry.io/collector/connector"
 	"go.opentelemetry.io/collector/connector/forwardconnector"
@@ -134,4 +136,8 @@ func components() (otelcol.Factories, error) {
 	}
 
 	return factories, nil
+}
+
+func addCommand(cmd *cobra.Command) {
+	cmd.AddCommand(k8sconnectioncheck.NewCommand())
 }

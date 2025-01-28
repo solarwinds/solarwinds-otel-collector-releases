@@ -65,6 +65,7 @@ func main() {
 
 func run(params otelcol.CollectorSettings) error {
 	cmd := otelcol.NewCommand(params)
+	addCommand(cmd)
 	err := cmd.Execute()
 	return err
 }
