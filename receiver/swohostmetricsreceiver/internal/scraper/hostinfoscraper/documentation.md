@@ -28,7 +28,7 @@ metrics:
 
 Metric provides firewall profiles statuses. This metric is supported only on Windows.
 
-status values can be 0 or 1, where value 1 means a firewall profile is `enabled` and value 0 means a firewall profile is `disabled`
+status values can be 0 or 1, where value 1 means a firewall profile is `enabled` and value 0 means a firewall profile is `disabled`.
 
 | Unit | Metric Type | Value Type |
 | ---- | ----------- | ---------- |
@@ -38,7 +38,7 @@ status values can be 0 or 1, where value 1 means a firewall profile is `enabled`
 
 | Name | Description | Values |
 | ---- | ----------- | ------ |
-| firewall.profile.name | Firewall's profile name | Any Str |
+| firewall.profile.name | Firewall's profile name. | Any Str |
 
 ### swo.hostinfo.uptime
 
@@ -54,27 +54,27 @@ Host uptime in seconds.
 | ---- | ----------- | ------ |
 | hostdetails.domain | Host domain | Any Str |
 | hostdetails.domain.fqdn | Fully Qualified Domain Name | Any Str |
-| hostdetails.domain.role | Domain role | Any Int |
-| hostdetails.model.serialnumber | Model serial number | Any Str |
-| hostdetails.model.manufacturer | Model manufacturer | Any Str |
-| hostdetails.model.name | Model name | Any Str |
-| hostdetails.timezone.bias | Difference in minutes of between the local time and UTC | Any Int |
-| hostdetails.timezone.caption | Caption of the local time zone | Any Str |
-| hostdetails.timezone.standardname | Standard name of the local time zone | Any Str |
-| osdetails.hostname | Host name | Any Str |
-| osdetails.boottime | Host boottime in unix format | Any Int |
-| osdetails.os | Operating system | Any Str |
-| osdetails.platform | Operating system platform | Any Str |
-| osdetails.platform.family | Operating system platform family | Any Str |
-| osdetails.platform.version | Operation system platform version | Any Str |
-| osdetails.kernel.version | Kernel version | Any Str |
-| osdetails.kernel.architecture | Kernel architecture | Any Str |
-| osdetails.virtualization.system | Virtualization system | Any Str |
-| osdetails.virtualization.role | Virtualization role | Any Str |
-| osdetails.host.id | Host ID | Any Str |
-| osdetails.language.lcid | Locale ID | Any Int |
-| osdetails.language.name | LANGUAGE environment variable | Any Str |
-| osdetails.language.displayname | Language display name | Any Str |
+| hostdetails.domain.role | Domain role. Available on Windows only. | Any Int |
+| hostdetails.model.serialnumber | Model serial number. Available on Windows only. | Any Str |
+| hostdetails.model.manufacturer | Model manufacturer. Available on Windows only. | Any Str |
+| hostdetails.model.name | Model name. Available on Windows only. | Any Str |
+| hostdetails.timezone.bias | Difference in minutes of between the local time and UTC. Available on Windows only. | Any Int |
+| hostdetails.timezone.caption | Caption of the local time zone. | Any Str |
+| hostdetails.timezone.standardname | Standard name of the local time zone. Available on Windows only. | Any Str |
+| osdetails.hostname | Host name. | Any Str |
+| osdetails.boottime | Host boottime in unix format. | Any Int |
+| osdetails.os | Operating system. | Any Str |
+| osdetails.platform | Operating system platform. | Any Str |
+| osdetails.platform.family | Operating system platform family. | Any Str |
+| osdetails.platform.version | Operation system platform version. | Any Str |
+| osdetails.kernel.version | Kernel version. | Any Str |
+| osdetails.kernel.architecture | Kernel architecture. | Any Str |
+| osdetails.virtualization.system | Virtualization system. | Any Str |
+| osdetails.virtualization.role | Virtualization role. | Any Str |
+| osdetails.host.id | Host ID. | Any Str |
+| osdetails.language.lcid | Locale ID. Available on Windows only. | Any Int |
+| osdetails.language.name | LANGUAGE environment variable. | Any Str |
+| osdetails.language.displayname | Language display name. Available on Windows only. | Any Str |
 
 ### swo.hostinfo.user.lastLogged
 
@@ -88,5 +88,5 @@ Host last logged-in user. Supported for Windows and Linux.
 
 | Name | Description | Values |
 | ---- | ----------- | ------ |
-| user.name | user name with domain | Any Str |
-| user.displayname | user display name | Any Str |
+| user.name | user name with domain. | Any Str |
+| user.displayname | user display name. | Any Str |

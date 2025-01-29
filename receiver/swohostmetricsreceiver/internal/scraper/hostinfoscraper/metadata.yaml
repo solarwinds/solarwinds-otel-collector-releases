@@ -12,76 +12,76 @@ attributes:
     description: Fully Qualified Domain Name
     type: string
   hostdetails.domain.role:
-    description: Domain role
+    description: Domain role. Available on Windows only.
     type: int
   hostdetails.model.serialnumber:
-    description: Model serial number
+    description: Model serial number. Available on Windows only.
     type: string
   hostdetails.model.manufacturer:
-    description: Model manufacturer
+    description: Model manufacturer. Available on Windows only.
     type: string  
   hostdetails.model.name:
-    description: Model name
+    description: Model name. Available on Windows only.
     type: string
   hostdetails.timezone.bias:
-    description: Difference in minutes of between the local time and UTC
+    description: Difference in minutes of between the local time and UTC. Available on Windows only.
     type: int
   hostdetails.timezone.caption:
-    description: Caption of the local time zone
+    description: Caption of the local time zone.
     type: string
   hostdetails.timezone.standardname:
-    description: Standard name of the local time zone
+    description: Standard name of the local time zone. Available on Windows only.
     type: string
   osdetails.hostname:
-    description: Host name
+    description: Host name.
     type: string
   osdetails.boottime:
-    description: Host boottime in unix format
+    description: Host boottime in unix format.
     type: int
   osdetails.os:
-    description: Operating system
+    description: Operating system.
     type: string
   osdetails.platform:
-    description: Operating system platform
+    description: Operating system platform.
     type: string
   osdetails.platform.family:
-    description: Operating system platform family
+    description: Operating system platform family.
     type: string
   osdetails.platform.version:
-    description: Operation system platform version
+    description: Operation system platform version.
     type: string
   osdetails.kernel.version:
-    description: Kernel version
+    description: Kernel version.
     type: string
   osdetails.kernel.architecture:
-    description: Kernel architecture
+    description: Kernel architecture.
     type: string
   osdetails.virtualization.system:
-    description: Virtualization system
+    description: Virtualization system.
     type: string
   osdetails.virtualization.role:
-    description: Virtualization role
+    description: Virtualization role.
     type: string
   osdetails.host.id:
-    description: Host ID
+    description: Host ID.
     type: string
   osdetails.language.lcid:
-    description: Locale ID
+    description: Locale ID. Available on Windows only.
     type: int
   osdetails.language.name:
-    description: LANGUAGE environment variable
+    description: LANGUAGE environment variable.
     type: string
   osdetails.language.displayname:
-    description: Language display name
+    description: Language display name. Available on Windows only.
     type: string
   user.name:
-    description: user name with domain
+    description: user name with domain.
     type: string
   user.displayname:
-    description: user display name
+    description: user display name.
     type: string
   firewall.profile.name:
-    description: Firewall's profile name
+    description: Firewall's profile name.
     type: string
   # CPU attributes here
 
@@ -112,7 +112,7 @@ metrics:
   swo.hostinfo.firewall:
     enabled: false
     description: Metric provides firewall profiles statuses. This metric is supported only on Windows.
-    extended_documentation: status values can be 0 or 1, where value 1 means a firewall profile is `enabled` and value 0 means a firewall profile is `disabled`
+    extended_documentation: status values can be 0 or 1, where value 1 means a firewall profile is `enabled` and value 0 means a firewall profile is `disabled`.
     unit: "status"
     gauge:
       value_type: int
