@@ -45,11 +45,11 @@ require (
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
 	github.com/tklauser/numcpus v0.9.0 // indirect
-	go.opentelemetry.io/collector/config/configtelemetry v0.117.0 // indirect
+	go.opentelemetry.io/collector/config/configtelemetry v0.113.0 // indirect
 	go.opentelemetry.io/collector/consumer/consumererror v0.113.0 // indirect
 	go.opentelemetry.io/collector/consumer/consumerprofiles v0.113.0 // indirect
 	go.opentelemetry.io/collector/pdata/pprofile v0.113.0 // indirect
-	go.opentelemetry.io/collector/pipeline v0.117.0 // indirect
+	go.opentelemetry.io/collector/pipeline v0.113.0 // indirect
 	go.opentelemetry.io/collector/receiver/receiverprofiles v0.113.0 // indirect
 	go.opentelemetry.io/otel/metric v1.32.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.32.0 // indirect

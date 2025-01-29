@@ -73,8 +73,8 @@ github.com/yusufpapurcu/wmi v1.2.4 h1:zFUKzehAFReQwLys1b/iSMl+JQGSCSjtVqQn9bBrPo
 github.com/yusufpapurcu/wmi v1.2.4/go.mod h1:SBZ9tNy3G9/m5Oi98Zks0QjeHVDvuK0qfxQmPyzfmi0=
 go.opentelemetry.io/collector/component v0.113.0 h1:/nx+RvZgxUEXP+YcTj69rEtuSEGkfaCyp/ad5zQGLjU=
 go.opentelemetry.io/collector/component v0.113.0/go.mod h1:2T779hIGHU9i7xbXbV3q1/JnRw2FyzUYXW2vq47A6EU=
-go.opentelemetry.io/collector/config/configtelemetry v0.117.0 h1:xsMfc89VByIF2fJzWuxs/2eqy44DWfNBAysReG4TAr8=
-go.opentelemetry.io/collector/config/configtelemetry v0.117.0/go.mod h1:SlBEwQg0qly75rXZ6W1Ig8jN25KBVBkFIIAUI1GiAAE=
+go.opentelemetry.io/collector/config/configtelemetry v0.113.0 h1:hweTRrVddnUeA3k7HzRY4oUR9lRdMa7of3mHNUS5YyA=
+go.opentelemetry.io/collector/config/configtelemetry v0.113.0/go.mod h1:R0MBUxjSMVMIhljuDHWIygzzJWQyZHXXWIgQNxcFwhc=
 go.opentelemetry.io/collector/confmap v1.19.0 h1:TQ0lZpAKqgsE0EKk+u4JA+uBbPYeFRmWP3GH43w40CY=
 go.opentelemetry.io/collector/confmap v1.19.0/go.mod h1:GgNu1ElPGmLn9govqIfjaopvdspw4PJ9KeDtWC4E2Q4=
 go.opentelemetry.io/collector/consumer v0.113.0 h1:KJSiK5vSIY9dgPxwKfQ3gOgKtQsqc+7IB7mGhUAL5c8=
@@ -91,8 +91,8 @@ go.opentelemetry.io/collector/pdata/pprofile v0.113.0 h1:VRf4p0VhfuaR+Epy/nMIlu/
 go.opentelemetry.io/collector/pdata/pprofile v0.113.0/go.mod h1:5aDejksdXh5PdJN/OhpzATGT3kbNL0RMmw2Q0Q6E/o0=
 go.opentelemetry.io/collector/pdata/testdata v0.113.0 h1:vRfn85jicO2F4eOTgsWtzmU/K3E/uZUtM1HEefvvJD8=
 go.opentelemetry.io/collector/pdata/testdata v0.113.0/go.mod h1:sR+6eR+YEJhYZu9StbqzeWcCmHpfBAgX/qjP82HY9Gw=
-go.opentelemetry.io/collector/pipeline v0.117.0 h1:CSv0Dd3n9AQNQ73e7PdEkgexkSMRZliKATxkoZKUFcY=
-go.opentelemetry.io/collector/pipeline v0.117.0/go.mod h1:qE3DmoB05AW0C3lmPvdxZqd/H4po84NPzd5MrqgtL74=
+go.opentelemetry.io/collector/pipeline v0.113.0 h1:vSRzRe3717jV0btCNPhVkhg2lu0uFxcm2VO+vhad/eE=
+go.opentelemetry.io/collector/pipeline v0.113.0/go.mod h1:4vOvjVsoYTHVGTbfFwqfnQOSV2K3RKUHofh3jNRc2Mg=
 go.opentelemetry.io/collector/receiver v0.113.0 h1:vraAbkPy8Pz9x5X39gV+j9t6x23PNsY2aJ6gQMugRbQ=
 go.opentelemetry.io/collector/receiver v0.113.0/go.mod h1:IUa8/lNw8Qh4L5Q3jOeRWKW0ebQPoNcfhytxN5Puq2A=
 go.opentelemetry.io/collector/receiver/receiverprofiles v0.113.0 h1:uVxuzjGe2t1sbwahSBowVHYnGzpzn8brmfn8z1UHvQg=
