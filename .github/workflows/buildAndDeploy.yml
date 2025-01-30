@@ -101,7 +101,7 @@ jobs:
           docker save --output solarwinds-otel-collector-windows-k8s-ltsc2022.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2022-k8s
           docker save --output solarwinds-otel-collector-windows-k8s-ltsc2019.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2019-k8s
       
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref, 'swo-k8s-collector')
         with:
           name: image
@@ -177,7 +177,7 @@ jobs:
       name: production
       url: https://hub.docker.com/repository/docker/solarwinds/solarwinds-otel-collector
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: image
 
