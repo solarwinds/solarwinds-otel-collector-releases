@@ -54,7 +54,10 @@ jobs:
 
   build_and_test_windows:
     runs-on: windows-2022
-    #if: startsWith(github.ref, 'refs/tags/')
+    # this job takes a long time to run (30-40 minutes), so run it on release and 
+    # run it on main and release branches to have some continuous check that build on windows 
+    # still works. Also run it on workflow_dispatch to allow manual runs.
+    if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') || github.event_name == 'workflow_dispatch'
     outputs:
       image_tag: ${{ steps.generate-tag.outputs.value }}
     steps:
