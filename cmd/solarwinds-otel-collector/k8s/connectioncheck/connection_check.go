@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// The goal of this k8sconnectioncheck is be able to perform GRPC endpoint check.
+// The goal of this connectioncheck is be able to perform GRPC endpoint check.
 // This feature is mainly intended for kubernetes use
-package k8sconnectioncheck
+package connectioncheck
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -29,15 +28,16 @@ import (
 	otellog "go.opentelemetry.io/otel/log"
 	sdklog "go.opentelemetry.io/otel/sdk/log"
 	"go.opentelemetry.io/otel/sdk/resource"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"github.com/solarwinds/solarwinds-otel-collector/pkg/version"
 )
 
-func sendTestMessage(endpoint, apiToken, clusterUid string, insecure bool) {
+func sendTestMessage(logger *zap.Logger, endpoint, apiToken, clusterUid string, insecure bool) {
 	ctx := context.Background()
-	otel.SetErrorHandler(new(OtelErrorHandler))
+	otel.SetErrorHandler(&OtelErrorHandler{logger: logger})
 
 	exporterOptions := []otlploggrpc.Option{
 		otlploggrpc.WithEndpoint(endpoint),
@@ -51,7 +51,7 @@ func sendTestMessage(endpoint, apiToken, clusterUid string, insecure bool) {
 
 	exporter, err := otlploggrpc.New(ctx, exporterOptions...)
 	if err != nil {
-		log.Fatalf("ERROR: Failed to create log exporter\nDETAILS: %s", err)
+		logger.Fatal("Failed to create log exporter", zap.Error(err))
 	}
 
 	loggerProvider := sdklog.NewLoggerProvider(
@@ -60,31 +60,33 @@ func sendTestMessage(endpoint, apiToken, clusterUid string, insecure bool) {
 	)
 	defer loggerProvider.Shutdown(ctx)
 
-	logger := loggerProvider.Logger("solarwinds-otel-collector", otellog.WithInstrumentationVersion(version.Version))
+	otelLogger := loggerProvider.Logger("solarwinds-otel-collector", otellog.WithInstrumentationVersion(version.Version))
 
 	record := otellog.Record{}
 	record.SetSeverityText("INFO")
 	record.SetBody(otellog.StringValue("otel-endpoint-check successful"))
 	record.SetTimestamp(time.Now())
 
-	logger.Emit(ctx, record)
-	log.Print("Connection check was successful")
+	otelLogger.Emit(ctx, record)
+	logger.Info("Connection check was successful")
 }
 
-type OtelErrorHandler struct{}
+type OtelErrorHandler struct {
+	logger *zap.Logger
+}
 
 func (d *OtelErrorHandler) Handle(err error) {
 	switch status.Code(err) {
 	case codes.Unauthenticated:
-		log.Fatalf("ERROR: A valid token is not set\nDETAILS: %s", err)
+		d.logger.Fatal("ERROR: A valid token is not set", zap.Error(err))
 	case codes.Unavailable:
-		log.Fatalf("ERROR: The target endpoint is not available\nDETAILS: %s", err)
+		d.logger.Fatal("ERROR: The target endpoint is not available", zap.Error(err))
 	default:
-		log.Fatalf("ERROR: %s", err)
+		d.logger.Fatal("ERROR", zap.Error(err))
 	}
 }
 
-func NewCommand() *cobra.Command {
+func NewCommand(logger *zap.Logger) *cobra.Command {
 	var clusterUid, endpoint, apiToken string
 	var insecure bool
 
@@ -93,7 +95,7 @@ func NewCommand() *cobra.Command {
 		Short: "Sends a single log to the provided endpoint",
 		Args:  cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
-			sendTestMessage(endpoint, apiToken, clusterUid, insecure)
+			sendTestMessage(logger, endpoint, apiToken, clusterUid, insecure)
 		},
 	}
 	testCommand.Flags().StringVar(&clusterUid, "clusteruid", "", "")

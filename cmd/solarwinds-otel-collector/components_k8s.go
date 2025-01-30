@@ -27,10 +27,11 @@ import (
 	"go.opentelemetry.io/collector/exporter/debugexporter"
 	"go.opentelemetry.io/collector/exporter/nopexporter"
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
+	"go.uber.org/zap"
 
 	"github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexporter"
 	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension"
-	"github.com/solarwinds/solarwinds-otel-collector/k8sconnectioncheck"
+	"github.com/solarwinds/solarwinds-otel-collector/k8s/connectioncheck"
 
 	"go.opentelemetry.io/collector/connector"
 	"go.opentelemetry.io/collector/connector/forwardconnector"
@@ -138,6 +139,6 @@ func components() (otelcol.Factories, error) {
 	return factories, nil
 }
 
-func addCommand(cmd *cobra.Command) {
-	cmd.AddCommand(k8sconnectioncheck.NewCommand())
+func addCommands(cmd *cobra.Command, logger *zap.Logger) {
+	cmd.AddCommand(connectioncheck.NewCommand(logger))
 }

@@ -22,6 +22,7 @@ import (
 	"go.opentelemetry.io/collector/exporter/debugexporter"
 	"go.opentelemetry.io/collector/exporter/nopexporter"
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
+	"go.uber.org/zap"
 
 	"github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexporter"
 	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension"
@@ -407,5 +408,5 @@ func components() (otelcol.Factories, error) {
 	return factories, nil
 }
 
-func addCommand(cmd *cobra.Command) {
+func addCommands(cmd *cobra.Command, logger *zap.Logger) {
 }
