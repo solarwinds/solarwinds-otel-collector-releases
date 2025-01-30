@@ -21,11 +21,20 @@ import (
 	"go.opentelemetry.io/collector/receiver"
 	"go.opentelemetry.io/collector/receiver/scraperhelper"
 
+	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/scraper/assetscraper/internal/metadata"
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/scraper/framework/scraper"
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/types"
 )
 
+func NewFactory() *Factory {
+	return &Factory{}
+}
+
 type Factory struct{}
+
+func (f *Factory) Type() component.Type {
+	return metadata.Type
+}
 
 var _ types.ScraperFactory = (*Factory)(nil)
 
@@ -46,7 +55,7 @@ func (*Factory) CreateScraper(
 	cfg component.Config,
 ) (scraperhelper.Scraper, error) {
 	return scraper.CreateScraper[Config, AssetScraper](
-		ScraperType(),
+		NewFactory().Type(),
 		cfg,
 		NewAssetScraper,
 	)
