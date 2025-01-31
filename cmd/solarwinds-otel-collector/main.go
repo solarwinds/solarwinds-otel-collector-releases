@@ -70,7 +70,7 @@ func main() {
 	}
 }
 
-func run(params otelcol.CollectorSettings, logger *zap.Logger) error {
+func runInteractive(params otelcol.CollectorSettings, logger *zap.Logger) error {
 	cmd := otelcol.NewCommand(params)
 	addCommands(cmd, logger)
 	err := cmd.Execute()
