@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package version
+//go:build !windows
 
-const Version = "0.113.7"
+package main
+
+import "go.opentelemetry.io/collector/otelcol"
+
+func run(params otelcol.CollectorSettings) error {
+	return runInteractive(params)
+}
