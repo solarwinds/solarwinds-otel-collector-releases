@@ -63,7 +63,7 @@ func main() {
 	}
 }
 
-func run(params otelcol.CollectorSettings) error {
+func runInteractive(params otelcol.CollectorSettings) error {
 	cmd := otelcol.NewCommand(params)
 	err := cmd.Execute()
 	return err
