@@ -1,0 +1,29 @@
+FROM docker.io/library/golang:1.23.4-nanoserver-ltsc2022@sha256:3339084b38f4052b815c7a1a32740796ed5cccb41119268938d2a6b57cc726c9 AS base
+
+COPY ./ /src
+WORKDIR /src
+
+FROM base AS builder
+
+ARG CGO_ENABLED=0
+ARG GOEXPERIMENT=boringcrypto
+
+RUN cd /src/cmd/solarwinds-otel-collector && go build -tags k8s -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
+
+FROM base AS wrapper
+WORKDIR /src/cmd/wrapper
+
+ARG CGO_ENABLED=0
+ARG GOEXPERIMENT=boringcrypto
+
+RUN go build -a -o /src/bin/wrapper.exe
+
+FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
+
+COPY --from=builder /src/bin/solarwinds-otel-collector /solarwinds-otel-collector.exe
+COPY --from=wrapper /src/bin/wrapper.exe /wrapper.exe
+
+ENTRYPOINT ["wrapper.exe"]
+CMD ["solarwinds-otel-collector.exe", "--config=/opt/default-config.yaml"]
+
+
