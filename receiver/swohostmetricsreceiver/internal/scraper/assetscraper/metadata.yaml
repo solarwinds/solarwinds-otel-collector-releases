@@ -1,8 +1,9 @@
-type: assets
-status:
-  class: receiver
-  stability:
-    development: [metrics]
+type: swohostmetricsreceiver/assets
+
+parent: swohostmetrics
+
+sem_conv_version: 1.9.0
+
 attributes:
   installedupdate.caption:
     description: "A short textual description of the update."
@@ -31,9 +32,10 @@ attributes:
   installedsoftware.version:
     description: "The version of the installed software."
     type: string
+
 metrics:
   swo.asset.installedsoftware:
-    enabled: false
+    enabled: true
     description: Currently installed software.
     unit: s
     sum:
@@ -45,6 +47,7 @@ metrics:
       - installedsoftware.name
       - installedsoftware.publisher
       - installedsoftware.version
+  
   swo.asset.installedupdates:
     enabled: false
     description: Currently installed OS updates.

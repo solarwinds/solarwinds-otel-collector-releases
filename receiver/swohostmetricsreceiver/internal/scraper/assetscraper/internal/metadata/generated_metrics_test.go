@@ -59,6 +59,7 @@ func TestMetricsBuilder(t *testing.T) {
 			defaultMetricsCount := 0
 			allMetricsCount := 0
 
+			defaultMetricsCount++
 			allMetricsCount++
 			mb.RecordSwoAssetInstalledsoftwareDataPoint(ts, 1, "installedsoftware.date-val", "installedsoftware.name-val", "installedsoftware.publisher-val", "installedsoftware.version-val")
 

@@ -26,14 +26,12 @@ import (
 	"go.opentelemetry.io/collector/receiver"
 )
 
-func Test_AllMetricsAreDisabledByDefault(t *testing.T) {
+func Test_SpecificMetricIsEnabledByDefault(t *testing.T) {
+	enabledMetric := "swo.hardwareinventory.cpu"
+
 	sut := NewFactory()
-
 	defaultConfig := sut.CreateDefaultConfig().(*Config)
-
-	for metricName, metric := range defaultConfig.Metrics {
-		require.Falsef(t, metric.Enabled, "%s is enabled by default, but should be disabled.", metricName)
-	}
+	require.Truef(t, defaultConfig.Metrics[enabledMetric].Enabled, enabledMetric+" is disabled by default, but should be enabled.")
 }
 
 func Test_ScraperIsSuccessfullyCreated(t *testing.T) {

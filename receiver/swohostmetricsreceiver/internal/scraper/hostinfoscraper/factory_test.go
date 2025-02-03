@@ -12,16 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build !integration
-
-package assetscraper
+package hostinfoscraper
 
 import (
 	"context"
 	"testing"
 
-	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/scraper/assetscraper/metrics/installedsoftware"
-	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/scraper/assetscraper/metrics/installedupdates"
+	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/scraper/hostinfoscraper/metrics/uptime"
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/types"
 	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/collector/component"
@@ -29,20 +26,17 @@ import (
 )
 
 func Test_SpecificMetricIsEnabledByDefault(t *testing.T) {
-	enabledMetric := installedsoftware.Name
+	enabledMetric := uptime.MetricName
 
 	sut := NewFactory()
-	defaultConfig := sut.CreateDefaultConfig().(*Config)
+	defaultConfig := sut.CreateDefaultConfig().(*types.ScraperConfig)
 	require.Truef(t, defaultConfig.Metrics[enabledMetric].Enabled, enabledMetric+" is disabled by default, but should be enabled.")
 }
 
 func Test_ScraperIsSuccessfullyCreated(t *testing.T) {
-	config := &Config{
-		ScraperConfig: types.ScraperConfig{
-			Metrics: map[string]types.MetricSettingsConfig{
-				installedsoftware.Name: {Enabled: true},
-				installedupdates.Name:  {Enabled: true},
-			},
+	config := &types.ScraperConfig{
+		Metrics: map[string]types.MetricSettingsConfig{
+			uptime.MetricName: {Enabled: true},
 		},
 	}
 	receiverConfig := receiver.Settings{}
@@ -51,5 +45,5 @@ func Test_ScraperIsSuccessfullyCreated(t *testing.T) {
 	scraper, err := sut.CreateScraper(context.TODO(), receiverConfig, config)
 
 	require.NoErrorf(t, err, "Scraper should be created without any error")
-	require.Equalf(t, component.MustNewType("asset"), scraper.ID().Type(), "Scraper type should be 'asset'")
+	require.Equalf(t, component.MustNewType("hostinfo"), scraper.ID().Type(), "Scraper type should be 'hostinfo'")
 }

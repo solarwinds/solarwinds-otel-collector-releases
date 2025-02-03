@@ -25,6 +25,13 @@ import (
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/types"
 )
 
+//nolint:gochecknoglobals // Private, read-only.
+var scraperType component.Type = component.MustNewType("asset")
+
+func ScraperType() component.Type {
+	return scraperType
+}
+
 type factory struct{}
 
 var _ types.ScraperFactory = (*factory)(nil)
