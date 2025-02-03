@@ -15,6 +15,9 @@
 package hardwareinventoryscraper
 
 import (
+	"time"
+
+	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/scraper/hardwareinventoryscraper/metrics/cpu"
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/types"
 	"go.opentelemetry.io/collector/component"
 )
@@ -27,3 +30,18 @@ type Config struct {
 
 // Config implements component.Config interface.
 var _ component.Config = (*Config)(nil)
+
+func CreateDefaultConfig() component.Config {
+	return &Config{
+		DelayedProcessingConfig: types.DelayedProcessingConfig{
+			CollectionInterval: time.Duration(90 * time.Second),
+		},
+		ScraperConfig: types.ScraperConfig{
+			Metrics: map[string]types.MetricSettingsConfig{
+				cpu.Name: {
+					Enabled: true,
+				},
+			},
+		},
+	}
+}

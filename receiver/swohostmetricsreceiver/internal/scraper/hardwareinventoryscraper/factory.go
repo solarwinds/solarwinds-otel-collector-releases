@@ -25,20 +25,21 @@ import (
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/types"
 )
 
-type Factory struct{}
+type factory struct{}
 
-var _ types.ScraperFactory = (*Factory)(nil)
+var _ types.ScraperFactory = (*factory)(nil)
+
+func NewFactory() types.ScraperFactory {
+	return new(factory)
+}
 
 // CreateDefaultConfig implements types.ScraperFactory.
-func (*Factory) CreateDefaultConfig() component.Config {
-	return &Config{
-		DelayedProcessingConfig: types.DelayedProcessingConfig{},
-		ScraperConfig:           *types.CreateDefaultScraperConfig(),
-	}
+func (*factory) CreateDefaultConfig() component.Config {
+	return CreateDefaultConfig()
 }
 
 // CreateScraper implements types.ScraperFactory.
-func (*Factory) CreateScraper(
+func (*factory) CreateScraper(
 	_ context.Context,
 	_ receiver.Settings,
 	cfg component.Config,

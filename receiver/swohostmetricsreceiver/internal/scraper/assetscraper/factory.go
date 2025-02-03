@@ -21,41 +21,31 @@ import (
 	"go.opentelemetry.io/collector/receiver"
 	"go.opentelemetry.io/collector/receiver/scraperhelper"
 
-	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/scraper/assetscraper/internal/metadata"
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/scraper/framework/scraper"
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/types"
 )
 
-func NewFactory() *Factory {
-	return &Factory{}
+type factory struct{}
+
+var _ types.ScraperFactory = (*factory)(nil)
+
+func NewFactory() types.ScraperFactory {
+	return new(factory)
 }
-
-type Factory struct{}
-
-func (f *Factory) Type() component.Type {
-	return metadata.Type
-}
-
-var _ types.ScraperFactory = (*Factory)(nil)
 
 // CreateDefaultConfig implements types.ScraperFactory.
-func (*Factory) CreateDefaultConfig() component.Config {
-	// in fact returns asset's scraper configuration covered by component.Config
-	// type
-	return &Config{
-		DelayedProcessingConfig: types.DelayedProcessingConfig{},
-		ScraperConfig:           *types.CreateDefaultScraperConfig(),
-	}
+func (f *factory) CreateDefaultConfig() component.Config {
+	return CreateDefaultConfig()
 }
 
 // CreateScraper implements types.ScraperFactory.
-func (*Factory) CreateScraper(
+func (*factory) CreateScraper(
 	_ context.Context,
 	_ receiver.Settings,
 	cfg component.Config,
 ) (scraperhelper.Scraper, error) {
 	return scraper.CreateScraper[Config, AssetScraper](
-		NewFactory().Type(),
+		ScraperType(),
 		cfg,
 		NewAssetScraper,
 	)

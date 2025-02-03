@@ -20,11 +20,19 @@ import (
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/scraper/framework/metric"
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/scraper/framework/scope"
 	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver/internal/scraper/framework/scraper"
+	"go.opentelemetry.io/collector/component"
 )
 
 const (
 	scopeMetricsName = "otelcol/swohostmetricsreceiver/asset"
 )
+
+//nolint:gochecknoglobals // Private, read-only.
+var scraperType component.Type = component.MustNewType("asset")
+
+func ScraperType() component.Type {
+	return scraperType
+}
 
 type AssetScraper struct {
 	scraper.Manager
@@ -37,7 +45,7 @@ func NewAssetScraper(
 	config *Config,
 ) (*AssetScraper, error) {
 	descriptor := &scraper.Descriptor{
-		Type: T(),
+		Type: ScraperType(),
 		ScopeDescriptors: map[string]scope.Descriptor{
 			scopeMetricsName: {
 				ScopeName: scopeMetricsName,

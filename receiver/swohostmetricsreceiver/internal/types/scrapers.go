@@ -22,11 +22,10 @@ import (
 	"go.opentelemetry.io/collector/receiver/scraperhelper"
 )
 
-// Interface prescibing what scraper factory needs to implement.
+// Interface prescribing what scraper factory needs to implement.
 type ScraperFactory interface {
-	// Creates default scraper configuration.
+	// Creates default configuration for the scraper.
 	CreateDefaultConfig() component.Config
-
 	// Creates scraper object, in case of failure error is returned.
 	CreateScraper(ctx context.Context, settings receiver.Settings, cfg component.Config) (scraperhelper.Scraper, error)
 }

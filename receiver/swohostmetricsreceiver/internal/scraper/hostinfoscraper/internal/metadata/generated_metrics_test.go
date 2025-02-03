@@ -62,6 +62,7 @@ func TestMetricsBuilder(t *testing.T) {
 			allMetricsCount++
 			mb.RecordSwoHostinfoFirewallDataPoint(ts, 1, "firewall.profile.name-val")
 
+			defaultMetricsCount++
 			allMetricsCount++
 			mb.RecordSwoHostinfoUptimeDataPoint(ts, 1, "hostdetails.domain-val", "hostdetails.domain.fqdn-val", 23, "hostdetails.model.serialnumber-val", "hostdetails.model.manufacturer-val", "hostdetails.model.name-val", 25, "hostdetails.timezone.caption-val", "hostdetails.timezone.standardname-val", "osdetails.hostname-val", 18, "osdetails.os-val", "osdetails.platform-val", "osdetails.platform.family-val", "osdetails.platform.version-val", "osdetails.kernel.version-val", "osdetails.kernel.architecture-val", "osdetails.virtualization.system-val", "osdetails.virtualization.role-val", "osdetails.host.id-val", 23, "osdetails.language.name-val", "osdetails.language.displayname-val")
 

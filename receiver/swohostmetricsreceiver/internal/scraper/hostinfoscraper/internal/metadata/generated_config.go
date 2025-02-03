@@ -38,7 +38,7 @@ func DefaultMetricsConfig() MetricsConfig {
 			Enabled: false,
 		},
 		SwoHostinfoUptime: MetricConfig{
-			Enabled: false,
+			Enabled: true,
 		},
 		SwoHostinfoUserLastLogged: MetricConfig{
 			Enabled: false,

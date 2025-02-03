@@ -14,32 +14,6 @@ metrics:
     enabled: false
 ```
 
-## Optional Metrics
-
-The following metrics are not emitted by default. Each of them can be enabled by applying the following configuration:
-
-```yaml
-metrics:
-  <metric_name>:
-    enabled: true
-```
-
-### swo.hostinfo.firewall
-
-Metric provides firewall profiles statuses. This metric is supported only on Windows.
-
-status values can be 0 or 1, where value 1 means a firewall profile is `enabled` and value 0 means a firewall profile is `disabled`.
-
-| Unit | Metric Type | Value Type |
-| ---- | ----------- | ---------- |
-| status | Gauge | Int |
-
-#### Attributes
-
-| Name | Description | Values |
-| ---- | ----------- | ------ |
-| firewall.profile.name | Firewall's profile name. | Any Str |
-
 ### swo.hostinfo.uptime
 
 Host uptime in seconds.
@@ -75,6 +49,32 @@ Host uptime in seconds.
 | osdetails.language.lcid | Locale ID. Available on Windows only. | Any Int |
 | osdetails.language.name | LANGUAGE environment variable. | Any Str |
 | osdetails.language.displayname | Language display name. Available on Windows only. | Any Str |
+
+## Optional Metrics
+
+The following metrics are not emitted by default. Each of them can be enabled by applying the following configuration:
+
+```yaml
+metrics:
+  <metric_name>:
+    enabled: true
+```
+
+### swo.hostinfo.firewall
+
+Metric provides firewall profiles statuses. This metric is supported only on Windows.
+
+status values can be 0 or 1, where value 1 means a firewall profile is `enabled` and value 0 means a firewall profile is `disabled`.
+
+| Unit | Metric Type | Value Type |
+| ---- | ----------- | ---------- |
+| status | Gauge | Int |
+
+#### Attributes
+
+| Name | Description | Values |
+| ---- | ----------- | ------ |
+| firewall.profile.name | Firewall's profile name. | Any Str |
 
 ### swo.hostinfo.user.lastLogged
 

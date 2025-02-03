@@ -87,7 +87,7 @@ attributes:
 
 metrics:
   swo.hostinfo.uptime:
-    enabled: false
+    enabled: true
     description: Host uptime in seconds.
     unit: s
     sum:

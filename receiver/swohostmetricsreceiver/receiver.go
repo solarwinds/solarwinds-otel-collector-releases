@@ -49,9 +49,9 @@ func ComponentType() component.Type {
 
 func scraperFactories() map[string]types.ScraperFactory {
 	return map[string]types.ScraperFactory{
-		assetscraper.ScraperType().String():             &assetscraper.Factory{},
-		hardwareinventoryscraper.ScraperType().String(): &hardwareinventoryscraper.Factory{},
-		hostinfoscraper.ScraperType().String():          &hostinfoscraper.Factory{},
+		assetscraper.ScraperType().String():             assetscraper.NewFactory(),
+		hardwareinventoryscraper.ScraperType().String(): hardwareinventoryscraper.NewFactory(),
+		hostinfoscraper.ScraperType().String():          hostinfoscraper.NewFactory(),
 	}
 }
 
@@ -68,6 +68,11 @@ func createDefaultConfig() component.Config {
 	return &ReceiverConfig{
 		ControllerConfig: scraperhelper.ControllerConfig{
 			CollectionInterval: 30 * time.Second,
+		},
+		Scrapers: map[string]component.Config{
+			hostinfoscraper.ScraperType().String():          hostinfoscraper.CreateDefaultConfig(),
+			assetscraper.ScraperType().String():             assetscraper.CreateDefaultConfig(),
+			hardwareinventoryscraper.ScraperType().String(): hardwareinventoryscraper.CreateDefaultConfig(),
 		},
 	}
 }

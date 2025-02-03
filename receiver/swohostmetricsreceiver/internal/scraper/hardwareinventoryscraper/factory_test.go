@@ -27,7 +27,7 @@ import (
 )
 
 func Test_AllMetricsAreDisabledByDefault(t *testing.T) {
-	sut := &Factory{}
+	sut := NewFactory()
 
 	defaultConfig := sut.CreateDefaultConfig().(*Config)
 
@@ -47,7 +47,7 @@ func Test_ScraperIsSuccessfullyCreated(t *testing.T) {
 	}
 	receiverConfig := receiver.Settings{}
 
-	sut := &Factory{}
+	sut := NewFactory()
 	scraper, err := sut.CreateScraper(context.TODO(), receiverConfig, config)
 
 	require.NoErrorf(t, err, "Scraper should be created without any error")
