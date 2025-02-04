@@ -9,13 +9,13 @@ receivers:
   # Following setup contains only some of implemented functionality.
   # Just to be sure tht receiver works as a whole.
   swohostmetrics:
-    collection_interval: 10s
+    collection_interval: 5s
     scrapers:
       # asset scraper is not configured on purpose due to absence of packaging system
       # in testing image => no metrics is available during evaluation.
       hostinfo:
       hardwareinventory:
-        delayed_collection_interval: 10s
+        delayed_collection_interval: 5s
       
 
 extensions:
