@@ -50,6 +50,27 @@ func Test_SwohostmetricsreceiverRuns(t *testing.T) {
 	evaluateSWOHostMetrics(t, ctx, rContainer, expectedMetrics)
 }
 
+func Test_SwohostmetricsreceiverDefaultConfig(t *testing.T) {
+	expectedDefaultMetrics := []string{
+		"swo.hostinfo.uptime",
+		"swo.hardwareinventory.cpu",
+	}
+
+	ctx := context.Background()
+
+	net, err := network.New(ctx)
+	require.NoError(t, err)
+	testcontainers.CleanupNetwork(t, net)
+
+	configName := "swohostmetricsreceiver_default.yaml"
+	rContainer, err := runConnectedSolarWindsOTELCollectors(t, ctx, net.Name, configName)
+	require.NoError(t, err)
+
+	<-time.After(15 * time.Second)
+
+	evaluateSWOHostMetrics(t, ctx, rContainer, expectedDefaultMetrics)
+}
+
 func evaluateSWOHostMetrics(
 	t *testing.T,
 	ctx context.Context,
