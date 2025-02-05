@@ -1,0 +1,9 @@
+ARG WINBASE
+
+FROM ${WINBASE}
+
+COPY /solarwinds-otel-collector.exe /solarwinds-otel-collector.exe
+COPY /wrapper.exe /wrapper.exe
+
+ENTRYPOINT ["wrapper.exe"]
+CMD ["solarwinds-otel-collector.exe", "--config=/opt/default-config.yaml"]

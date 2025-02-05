@@ -52,6 +52,66 @@ jobs:
         working-directory: internal/e2e
         run: make e2e-tests
 
+  build_and_test_windows:
+    runs-on: windows-2022
+    # this job takes a long time to run (30-40 minutes), so run it on release and 
+    # run it on main and release branches to have some continuous check that build on windows 
+    # still works. Also run it on workflow_dispatch to allow manual runs.
+    if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') || github.event_name == 'workflow_dispatch'
+    outputs:
+      image_tag: ${{ steps.generate-tag.outputs.value }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate docker image tag
+        id: generate-tag
+        run: echo "::set-output name=value::v${{ github.run_number }}-$(git rev-parse --short HEAD)"
+
+      - name: Build Full
+        run: |
+          docker build -t solarwinds-otel-collector:${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2022 -f build/docker/Dockerfile.Windows-2022 . 
+          
+      - name: Build K8s
+        run: |
+          docker build -t solarwinds-otel-collector:${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2022-k8s -f build/docker/Dockerfile.k8s.Windows-2022 . 
+          
+      - name: CP assets
+        run: |
+          docker create --name assets solarwinds-otel-collector:${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2022
+          docker cp assets:/solarwinds-otel-collector.exe solarwinds-otel-collector.exe
+          docker create --name assets-k8s solarwinds-otel-collector:k8s-${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2022
+          docker cp assets-k8s:/solarwinds-otel-collector.exe solarwinds-otel-collector-k8s.exe
+          docker cp assets-k8s:/wrapper.exe wrapper.exe
+
+      - name: Build 2019 Full
+        run: |
+          docker build -t solarwinds-otel-collector:${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2019 --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019 -f build/docker/Dockerfile.Windows-Runtime . 
+
+      - name: Build 2019 K8s
+        run: |
+          Move-Item -Path solarwinds-otel-collector-k8s.exe -Destination solarwinds-otel-collector.exe -Force
+          docker build -t solarwinds-otel-collector:k8s-${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2019 --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019 -f build/docker/Dockerfile.k8s.Windows-Runtime . 
+            
+      - name: Save image
+        if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref, 'swo-k8s-collector')
+        run: |
+          docker save --output solarwinds-otel-collector-windows-ltsc2022.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2022
+          docker save --output solarwinds-otel-collector-windows-ltsc2019.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2019
+          docker save --output solarwinds-otel-collector-windows-k8s-ltsc2022.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2022-k8s
+          docker save --output solarwinds-otel-collector-windows-k8s-ltsc2019.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2019-k8s
+      
+      - uses: actions/upload-artifact@v4
+        if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref, 'swo-k8s-collector')
+        with:
+          name: image
+          path: |
+            solarwinds-otel-collector-windows-ltsc2022.tar
+            solarwinds-otel-collector-windows-ltsc2019.tar
+            solarwinds-otel-collector-windows-k8s-ltsc2022.tar
+            solarwinds-otel-collector-windows-k8s-ltsc2019.tar
+          retention-days: 2
+ 
   build_k8s:
     runs-on: ubuntu-latest
     outputs:
@@ -68,7 +128,6 @@ jobs:
         run: >
           docker build . --file build/docker/Dockerfile.k8s
           --tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-k8s
-
 
   deploy_dockerhub:
     runs-on: ubuntu-latest
@@ -93,8 +152,8 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.OPENTELEMETRY_DOCKER_HUB_CI_USER }}
-          password: ${{ secrets.OPENTELEMETRY_DOCKER_HUB_CI_PASSWORD }}
+          username: ${{ vars.DOCKER_SOLARWINDS_ORG_LOGIN }}
+          password: ${{ secrets.ENOPS5919_OPENTELEMETRYCOLLECTOR_DOCKER_HUB_CI_OAT }}
 
       - name: Build and Push - Full
         uses: docker/build-push-action@v6
@@ -109,10 +168,55 @@ jobs:
             ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}
             ${{ env.DOCKERHUB_IMAGE }}:latest
 
+  deploy_dockerhub_windows:
+    runs-on: windows-2022
+    needs: build_and_test_windows
+    name: Deploy to docker hub Windows
+    if: startsWith(github.ref, 'refs/tags/')
+    environment:
+      name: production
+      url: https://hub.docker.com/repository/docker/solarwinds/solarwinds-otel-collector
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: image
+
+      - name: Get image tag
+        id: vars
+        run: echo "tag=$env:GITHUB_REF_NAME" >> $ENV:GITHUB_OUTPUT
+
+      - name: Load image
+        run: |
+          docker load --input solarwinds-otel-collector-windows-ltsc2022.tar
+          docker load --input solarwinds-otel-collector-windows-ltsc2019.tar
+          docker load --input solarwinds-otel-collector-windows-k8s-ltsc2022.tar
+          docker load --input solarwinds-otel-collector-windows-k8s-ltsc2019.tar
+
+      - name: Tag images
+        run: |
+          docker tag solarwinds-otel-collector:${{ needs.build_and_test_windows.outputs.image_tag }}-nanoserver-ltsc2022 ${{ env.DOCKERHUB_IMAGE }}:${{ steps.vars.outputs.tag }}-nanoserver-ltsc2022
+          docker tag solarwinds-otel-collector:${{ needs.build_and_test_windows.outputs.image_tag }}-nanoserver-ltsc2019 ${{ env.DOCKERHUB_IMAGE }}:${{ steps.vars.outputs.tag }}-nanoserver-ltsc2019
+          docker tag solarwinds-otel-collector:${{ needs.build_and_test_windows.outputs.image_tag }}-nanoserver-ltsc2022-k8s ${{ env.DOCKERHUB_IMAGE }}:${{ steps.vars.outputs.tag }}-nanoserver-ltsc2022-k8s
+          docker tag solarwinds-otel-collector:${{ needs.build_and_test_windows.outputs.image_tag }}-nanoserver-ltsc2019-k8s ${{ env.DOCKERHUB_IMAGE }}:${{ steps.vars.outputs.tag }}-nanoserver-ltsc2019-k8s
+
+      - name: Docker login
+        env:
+          OPENTELEMETRY_DOCKER_HUB_CI_PASSWORD: ${{ secrets.OPENTELEMETRY_DOCKER_HUB_CI_PASSWORD }}
+          OPENTELEMETRY_DOCKER_HUB_CI_USER: ${{ secrets.OPENTELEMETRY_DOCKER_HUB_CI_USER }}
+        run: echo "$env:OPENTELEMETRY_DOCKER_HUB_CI_PASSWORD" | docker login -u "$env:OPENTELEMETRY_DOCKER_HUB_CI_USER" --password-stdin
+
+      - name: Push as specific
+        run: | 
+          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ steps.vars.outputs.tag }}-nanoserver-ltsc2022
+          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ steps.vars.outputs.tag }}-nanoserver-ltsc2019
+          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ steps.vars.outputs.tag }}-nanoserver-ltsc2022-k8s
+          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ steps.vars.outputs.tag }}-nanoserver-ltsc2019-k8s
+
   create_and_push_docker_manifest:
     runs-on: ubuntu-latest
     needs:
       - deploy_dockerhub
+      - deploy_dockerhub_windows
     name: Create Multi-platform Docker Manifest
     steps:
       - name: Checkout
@@ -125,8 +229,8 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.OPENTELEMETRY_DOCKER_HUB_CI_USER }}
-          password: ${{ secrets.OPENTELEMETRY_DOCKER_HUB_CI_PASSWORD }}
+          username: ${{ vars.DOCKER_SOLARWINDS_ORG_LOGIN }}
+          password: ${{ secrets.ENOPS5919_OPENTELEMETRYCOLLECTOR_DOCKER_HUB_CI_OAT }}
 
       - name: Get Manifest for Full Image
         run: |
@@ -135,12 +239,30 @@ jobs:
       - name: Create Multi-arch Manifest for Full Image
         run: |
           docker manifest create ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}  \
+            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-nanoserver-ltsc2022 \
+            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-nanoserver-ltsc2019 \
             --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-full.json) \
             --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-full.json)
 
-      - name: Push multi-arch manifest
+      - name: Get Manifest for K8s Image
+        run: |
+          docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-k8s > manifest-k8s.json
+          
+      - name: Create Multi-arch Manifest for K8s Image
+        run: |
+          docker manifest create ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-k8s  \
+            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-nanoserver-ltsc2022-k8s \
+            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-nanoserver-ltsc2019-k8s \
+            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-full.json) \
+            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-full.json)
+
+      - name: Push multi-arch full manifest
         run: |
           docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}
+
+      - name: Push multi-arch k8s manifest
+        run: |
+          docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-k8s
 
   create_release:
     runs-on: ubuntu-latest

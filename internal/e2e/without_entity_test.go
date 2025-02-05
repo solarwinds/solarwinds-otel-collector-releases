@@ -37,17 +37,16 @@ func TestWithoutEntity(t *testing.T) {
 			continue
 		}
 	}
-	evaluateHeartbeatMetricHasEntityCreationAsOff(t, ms)
+	evaluateHeartbeatMetricDoesNotHaveEntityCreationAttribute(t, ms)
 }
 
-func evaluateHeartbeatMetricHasEntityCreationAsOff(
+func evaluateHeartbeatMetricDoesNotHaveEntityCreationAttribute(
 	t *testing.T,
 	ms pmetric.Metrics,
 ) {
 	require.GreaterOrEqual(t, ms.ResourceMetrics().Len(), 1, "there must be at least one metric")
 	atts := ms.ResourceMetrics().At(0).Resource().Attributes()
 
-	v, available := atts.Get("sw.otelcol.collector.entity_creation")
-	require.True(t, available, "sw.otelcol.collector.entity_creation resource attribute must be available")
-	require.Equal(t, "off", v.AsString(), "attribute value must be the same")
+	_, available := atts.Get("sw.otelcol.collector.entity_creation")
+	require.False(t, available, "sw.otelcol.collector.entity_creation resource attribute must be unavailable")
 }
