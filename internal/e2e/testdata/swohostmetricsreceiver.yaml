@@ -18,6 +18,7 @@ receivers:
           os.cpu.numcores:
             enabled: true
       hardwareinventory:
+        delayed_collection_interval: 5s
         metrics:
           swo.hardwareinventory.cpu:
             enabled: true

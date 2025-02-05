@@ -3,7 +3,7 @@ service:
   pipelines:
     metrics:
       receivers: [swohostmetrics]
-      exporters: [debug]
+      exporters: [solarwinds]
 
 receivers:
   # Following setup contains only some of implemented functionality.
@@ -15,7 +15,7 @@ receivers:
       # in testing image => no metrics is available during evaluation.
       hostinfo:
       hardwareinventory:
-        delayed_collection_interval: 5s
+        delayed_collection_interval: 3s
       
 
 extensions:

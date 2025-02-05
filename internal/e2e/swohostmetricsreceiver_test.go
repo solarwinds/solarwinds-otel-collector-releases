@@ -66,7 +66,7 @@ func Test_SwohostmetricsreceiverDefaultConfig(t *testing.T) {
 	rContainer, err := runConnectedSolarWindsOTELCollectors(t, ctx, net.Name, configName)
 	require.NoError(t, err)
 
-	<-time.After(15 * time.Second)
+	<-time.After(9 * time.Second)
 
 	evaluateSWOHostMetrics(t, ctx, rContainer, expectedDefaultMetrics)
 }
