@@ -3,7 +3,7 @@ service:
   pipelines:
     metrics:
       receivers: [swohostmetrics]
-      exporters: [solarwinds]
+      exporters: [debug]
 
 receivers:
   # Following setup contains only some of implemented functionality.
@@ -26,3 +26,5 @@ extensions:
 
 exporters:
   solarwinds:
+  debug:
+    verbosity: detailed
