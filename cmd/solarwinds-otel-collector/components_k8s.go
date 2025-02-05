@@ -56,6 +56,7 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor"
+	"go.opentelemetry.io/collector/processor/batchprocessor"
 	"go.opentelemetry.io/collector/processor/memorylimiterprocessor"
 
 	"go.opentelemetry.io/collector/exporter"
@@ -110,6 +111,7 @@ func components() (otelcol.Factories, error) {
 		resourceprocessor.NewFactory(),
 		transformprocessor.NewFactory(),
 		memorylimiterprocessor.NewFactory(),
+		batchprocessor.NewFactory(),
 	)
 
 	if err != nil {
