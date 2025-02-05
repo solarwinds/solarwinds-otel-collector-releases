@@ -15,6 +15,9 @@ receivers:
       # in testing image => no metrics is available during evaluation.
       hostinfo:
       hardwareinventory:
+        # Delayed processing for hardwareinventory is 90s by default. Just to be sure
+        # scraper is processed together with hostinfo scraper, period needs to be shorter
+        # (not even the same).
         delayed_collection_interval: 3s
       
 
