@@ -30,16 +30,23 @@ import (
 	"go.opentelemetry.io/collector/confmap/provider/httpsprovider"
 	"go.opentelemetry.io/collector/confmap/provider/yamlprovider"
 	"go.opentelemetry.io/collector/otelcol"
+	"go.uber.org/zap"
 )
 
 func main() {
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatalf("Failed to create logger: %v", err)
+	}
+	defer logger.Sync()
+
 	var info = component.BuildInfo{
 		Command:     "solarwinds-otel-collector",
 		Description: "SolarWinds distribution for OpenTelemetry",
 		Version:     version.Version,
 	}
 
-	err := run(otelcol.CollectorSettings{
+	err = run(otelcol.CollectorSettings{
 		BuildInfo: info,
 		Factories: components,
 		ConfigProviderSettings: otelcol.ConfigProviderSettings{
@@ -56,15 +63,16 @@ func main() {
 				},
 			},
 		},
-	})
+	}, logger)
 
 	if err != nil {
-		log.Fatalf("collector server run finished with error: %v", err)
+		logger.Fatal("collector server run finished with error", zap.Error(err))
 	}
 }
 
-func runInteractive(params otelcol.CollectorSettings) error {
+func runInteractive(params otelcol.CollectorSettings, logger *zap.Logger) error {
 	cmd := otelcol.NewCommand(params)
+	addCommands(cmd, logger)
 	err := cmd.Execute()
 	return err
 }
