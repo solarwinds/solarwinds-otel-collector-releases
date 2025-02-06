@@ -1,0 +1,33 @@
+service:
+  extensions: [solarwinds]
+  pipelines:
+    metrics:
+      receivers: [swohostmetrics]
+      exporters: [solarwinds]
+
+receivers:
+  # Following setup contains only some of implemented functionality.
+  # Just to be sure tht receiver works as a whole.
+  swohostmetrics:
+    collection_interval: 5s
+    scrapers:
+      # asset scraper is not configured on purpose due to absence of packaging system
+      # in testing image => no metrics is available during evaluation.
+      hostinfo:
+      hardwareinventory:
+        # Delayed processing for hardwareinventory is 90s by default. Just to be sure
+        # scraper is processed together with hostinfo scraper, period needs to be shorter
+        # (not even the same).
+        delayed_collection_interval: 3s
+      
+
+extensions:
+  solarwinds:
+    token: <no-matter-in-test>
+    collector_name: "testing_collector_name"
+    endpoint_url_override: receiver:17016
+
+exporters:
+  solarwinds:
+  debug:
+    verbosity: detailed

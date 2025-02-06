@@ -162,6 +162,7 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/windowsperfcountersreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zipkinreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zookeeperreceiver"
+	"github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver"
 	"go.opentelemetry.io/collector/receiver/nopreceiver"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
 
@@ -319,6 +320,7 @@ func components() (otelcol.Factories, error) {
 		sqlserverreceiver.NewFactory(),
 		sshcheckreceiver.NewFactory(),
 		statsdreceiver.NewFactory(),
+		swohostmetricsreceiver.NewFactory(),
 		syslogreceiver.NewFactory(),
 		systemdreceiver.NewFactory(),
 		tcplogreceiver.NewFactory(),

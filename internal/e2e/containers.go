@@ -20,16 +20,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/mdelapenya/tlscert"
-	"github.com/stretchr/testify/require"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/network"
-	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
 	"path/filepath"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/mdelapenya/tlscert"
+	"github.com/stretchr/testify/require"
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/network"
+	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 const (
@@ -224,17 +225,8 @@ func startCollectorContainers(
 	require.NoError(t, err)
 	testcontainers.CleanupNetwork(t, net)
 
-	certPath := t.TempDir()
-	_, err = generateCertificates(receivingContainer, certPath)
+	rContainer, err := runConnectedSolarWindsOTELCollectors(t, ctx, net.Name, config)
 	require.NoError(t, err)
-
-	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, net.Name)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, rContainer)
-
-	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, net.Name, config)
-	require.NoError(t, err)
-	testcontainers.CleanupContainer(t, eContainer)
 
 	cmd := []string{
 		signalType.String(),
@@ -251,6 +243,33 @@ func startCollectorContainers(
 	<-time.After(waitTime)
 
 	return rContainer
+}
+
+func runConnectedSolarWindsOTELCollectors(
+	t *testing.T,
+	ctx context.Context,
+	networkName string,
+	emittingCollectorConfig string,
+) (testcontainers.Container, error) {
+	certPath := t.TempDir()
+	_, err := generateCertificates(receivingContainer, certPath)
+	if err != nil {
+		return nil, err
+	}
+
+	rContainer, err := runReceivingSolarWindsOTELCollector(ctx, certPath, networkName)
+	if err != nil {
+		return nil, err
+	}
+	testcontainers.CleanupContainer(t, rContainer)
+
+	eContainer, err := runTestedSolarWindsOTELCollector(ctx, certPath, networkName, emittingCollectorConfig)
+	if err != nil {
+		return nil, err
+	}
+	testcontainers.CleanupContainer(t, eContainer)
+
+	return rContainer, nil
 }
 
 type logConsumer struct {
