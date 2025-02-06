@@ -34,7 +34,7 @@ var _ component.Config = (*Config)(nil)
 func CreateDefaultConfig() component.Config {
 	return &Config{
 		DelayedProcessingConfig: types.DelayedProcessingConfig{
-			CollectionInterval: time.Duration(90 * time.Second),
+			CollectionInterval: 90 * time.Second,
 		},
 		ScraperConfig: types.ScraperConfig{
 			Metrics: map[string]types.MetricSettingsConfig{
