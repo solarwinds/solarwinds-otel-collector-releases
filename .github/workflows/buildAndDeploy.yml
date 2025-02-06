@@ -80,7 +80,7 @@ jobs:
         run: |
           docker create --name assets solarwinds-otel-collector:${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2022
           docker cp assets:/solarwinds-otel-collector.exe solarwinds-otel-collector.exe
-          docker create --name assets-k8s solarwinds-otel-collector:k8s-${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2022
+          docker create --name assets-k8s solarwinds-otel-collector:${{ steps.generate-tag.outputs.value }}-nanoserver-ltsc2022-k8s
           docker cp assets-k8s:/solarwinds-otel-collector.exe solarwinds-otel-collector-k8s.exe
           docker cp assets-k8s:/wrapper.exe wrapper.exe
 
