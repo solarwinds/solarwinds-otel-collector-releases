@@ -1,0 +1,196 @@
+name: Deploy Images
+
+on:
+  push:
+    paths:
+      - 'pkg/version/version.go'
+    branches:
+      - main
+      - 'release/**'
+
+  workflow_dispatch:
+
+env:
+  DOCKERHUB_IMAGE: solarwinds/solarwinds-otel-collector
+
+jobs:
+  get_current_tag:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.get-tag.outputs.value }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get Current Tag
+        id: get-tag
+        run: echo "tag=v$(grep -oP '(?<=const Version = ")[^"]+' "../../pkg/version/version.go")" >> $GITHUB_OUTPUT
+
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check licenses
+        run: make ci-check-licenses
+
+  build_and_test:
+    uses: ./.github/workflows/buildAndTest.yml
+
+  deploy_dockerhub:
+    runs-on: ubuntu-latest
+    needs:
+      - build_and_test
+      - get_current_tag
+    name: Deploy to Docker Hub
+    environment:
+      name: production
+      url: https://hub.docker.com/repository/docker/solarwinds/solarwinds-otel-collector
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_SOLARWINDS_ORG_LOGIN }}
+          password: ${{ secrets.ENOPS5919_OPENTELEMETRYCOLLECTOR_DOCKER_HUB_CI_OAT }}
+
+      - name: Build and Push - Full
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: build/docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          provenance: false
+          sbom: false
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}
+            ${{ env.DOCKERHUB_IMAGE }}:latest
+
+  deploy_dockerhub_windows:
+    runs-on: windows-2022
+    needs:
+      - build_and_test
+      - get_current_tag
+    name: Deploy to docker hub Windows
+    environment:
+      name: production
+      url: https://hub.docker.com/repository/docker/solarwinds/solarwinds-otel-collector
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: image
+
+      - name: Generate docker image tag
+        id: generate-tag
+        run: echo "tag=v${{ github.run_number }}-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Load image
+        run: |
+          docker load --input solarwinds-otel-collector-windows-ltsc2022.tar
+          docker load --input solarwinds-otel-collector-windows-ltsc2019.tar
+          docker load --input solarwinds-otel-collector-windows-k8s-ltsc2022.tar
+          docker load --input solarwinds-otel-collector-windows-k8s-ltsc2019.tar
+
+      - name: Tag images
+        run: |
+          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022 ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2022
+          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019 ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2019
+          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2022-k8s
+          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2019-k8s
+
+      - name: Docker login
+        env:
+          OPENTELEMETRY_DOCKER_HUB_CI_PASSWORD: ${{ secrets.OPENTELEMETRY_DOCKER_HUB_CI_PASSWORD }}
+          OPENTELEMETRY_DOCKER_HUB_CI_USER: ${{ secrets.OPENTELEMETRY_DOCKER_HUB_CI_USER }}
+        run: echo "$env:OPENTELEMETRY_DOCKER_HUB_CI_PASSWORD" | docker login -u "$env:OPENTELEMETRY_DOCKER_HUB_CI_USER" --password-stdin
+
+      - name: Push as specific
+        run: | 
+          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2022
+          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2019
+          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2022-k8s
+          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2019-k8s
+
+  create_and_push_docker_manifest:
+    runs-on: ubuntu-latest
+    needs:
+      - deploy_dockerhub
+      - deploy_dockerhub_windows
+      - get_current_tag
+    name: Create Multi-platform Docker Manifest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_SOLARWINDS_ORG_LOGIN }}
+          password: ${{ secrets.ENOPS5919_OPENTELEMETRYCOLLECTOR_DOCKER_HUB_CI_OAT }}
+
+      - name: Get Manifest for Full Image
+        run: |
+          docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }} > manifest-full.json
+
+      - name: Create Multi-arch Manifest for Full Image
+        run: |
+          docker manifest create ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}  \
+            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2022 \
+            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2019 \
+            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-full.json) \
+            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-full.json)
+
+      - name: Get Manifest for K8s Image
+        run: |
+          docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-k8s > manifest-k8s.json
+          
+      - name: Create Multi-arch Manifest for K8s Image
+        run: |
+          docker manifest create ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-k8s  \
+            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2022-k8s \
+            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2019-k8s \
+            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-full.json) \
+            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-full.json)
+
+      - name: Push multi-arch full manifest
+        run: |
+          docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}
+
+      - name: Push multi-arch k8s manifest
+        run: |
+          docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-k8s
+
+  create_release:
+    runs-on: ubuntu-latest
+    name: Create GitHub Release
+    needs:
+      - create_and_push_docker_manifest
+      - get_current_tag
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find Previous Tag
+        run: |
+          PREVIOUS_TAG=$(git tag --sort=version:refname | grep -B1 "^${{ needs.get_current_tag.outputs.image_tag }}$" | head -n 1)
+          echo "Previous tag: $PREVIOUS_TAG"
+          echo "PREVIOUS_TAG=$PREVIOUS_TAG" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        env:
+          # for gh cli
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ needs.get_current_tag.outputs.image_tag }} \
+            --title ${{ needs.get_current_tag.outputs.image_tag }} \
+            --latest=false \
+            --generate-notes \
+            --notes-start-tag ${{ env.PREVIOUS_TAG }}
