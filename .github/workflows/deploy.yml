@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKERHUB_IMAGE: solarwinds/solarwinds-otel-collector
+  DOCKERHUB_IMAGE: pstran/solarwinds-otel-collector
 
 jobs:
   get_current_tag:
@@ -42,9 +42,6 @@ jobs:
       - build_and_test
       - get_current_tag
     name: Deploy to Docker Hub
-    environment:
-      name: production
-      url: https://hub.docker.com/repository/docker/solarwinds/solarwinds-otel-collector
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -67,7 +64,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           provenance: false
           sbom: false
-          push: true
+          push: false
           tags: |
             ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}
             ${{ env.DOCKERHUB_IMAGE }}:latest
@@ -78,9 +75,6 @@ jobs:
       - build_and_test
       - get_current_tag
     name: Deploy to docker hub Windows
-    environment:
-      name: production
-      url: https://hub.docker.com/repository/docker/solarwinds/solarwinds-otel-collector
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -112,10 +106,11 @@ jobs:
 
       - name: Push as specific
         run: | 
-          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2022
-          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2019
-          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2022-k8s
-          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2019-k8s
+          echo "Pushing images to Docker Hub - docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2022"
+          echo "Pushing images to Docker Hub - docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2022"
+          echo "Pushing images to Docker Hub - docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2019"
+          echo "Pushing images to Docker Hub - docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2022-k8s"
+          echo "Pushing images to Docker Hub - docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-nanoserver-ltsc2019-k8s"
 
   create_and_push_docker_manifest:
     runs-on: ubuntu-latest
@@ -160,11 +155,11 @@ jobs:
 
       - name: Push multi-arch full manifest
         run: |
-          docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}
+          echo "Pushing manifests to Docker Hub - docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}"
 
       - name: Push multi-arch k8s manifest
         run: |
-          docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-k8s
+          echo "Pushing manifests to Docker Hub - docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}-k8s"
 
   create_release:
     runs-on: ubuntu-latest
@@ -189,8 +184,4 @@ jobs:
           # for gh cli
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create ${{ needs.get_current_tag.outputs.image_tag }} \
-            --title ${{ needs.get_current_tag.outputs.image_tag }} \
-            --latest=false \
-            --generate-notes \
-            --notes-start-tag ${{ env.PREVIOUS_TAG }}
+          echo "gh release create ${{ needs.get_current_tag.outputs.image_tag }} --title ${{ needs.get_current_tag.outputs.image_tag }} --latest=false --generate-notes --notes-start-tag ${{ env.PREVIOUS_TAG }}"
