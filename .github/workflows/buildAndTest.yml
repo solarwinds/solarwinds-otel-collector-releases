@@ -62,7 +62,7 @@ jobs:
 
       - name: Generate docker image tag
         id: generate-tag
-        run: echo "tag=v${{ github.run_number }}-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "tag=v${{ github.run_number }}-$(git rev-parse --short HEAD)" >> $env:GITHUB_OUTPUT
 
       - name: Build Full
         run: |
@@ -84,7 +84,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: image
+          name: windows-image-full
           path: |
             solarwinds-otel-collector-windows-ltsc2022.tar
             solarwinds-otel-collector-windows-ltsc2019.tar
@@ -116,7 +116,7 @@ jobs:
 
       - name: Generate docker image tag
         id: generate-tag
-        run: echo "tag=v${{ github.run_number }}-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "tag=v${{ github.run_number }}-$(git rev-parse --short HEAD)" >> $env:GITHUB_OUTPUT
 
       - name: Build K8s
         run: |
@@ -139,7 +139,7 @@ jobs:
       
       - uses: actions/upload-artifact@v4
         with:
-          name: image
+          name: windows-image-k8s
           path: |
             solarwinds-otel-collector-windows-k8s-ltsc2022.tar
             solarwinds-otel-collector-windows-k8s-ltsc2019.tar
