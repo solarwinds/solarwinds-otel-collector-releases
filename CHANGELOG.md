@@ -3,7 +3,10 @@
 ## vNext
 
 ## v0.113.8
-Updates Go build toolchain to 1.23.5.
+- Updates Go build toolchain to 1.23.5.
+- Adds [SWO Host Metrics Receiver](./receiver/swohostmetricsreceiver/README.md) for additional Host metrics monitoring.
+- Adds connection check functionality to K8s distribution startup.
+- Adds Windows architecture for Docker builds.
 
 ## v0.113.7
 - adding `without_entity` to [SolarWinds Extension](./extension/solarwindsextension/README.md#getting-started) configuration, so users can opt out of collector entity creation.
