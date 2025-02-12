@@ -77,10 +77,12 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: image
+          pattern: windows-image-*
+          merge-multiple: true
 
       - name: Generate docker image tag
         id: generate-tag
-        run: echo "tag=v${{ github.run_number }}-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "tag=v${{ github.run_number }}-$(git rev-parse --short HEAD)" >> $env:GITHUB_OUTPUT
 
       - name: Load image
         run: |
