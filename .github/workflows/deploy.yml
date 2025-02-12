@@ -64,6 +64,15 @@ jobs:
             ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}
             ${{ env.DOCKERHUB_IMAGE }}:latest
 
+      - name: Docker scout
+        id: docker-scout
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: docker/scout-action@v1
+        with:
+          command: compare,cves
+          to-latest: true
+          image: ${{ env.DOCKERHUB_IMAGE }}:${{ needs.get_current_tag.outputs.image_tag }}
+
   deploy_dockerhub_windows:
     runs-on: windows-2022
     needs:
@@ -186,3 +195,4 @@ jobs:
             --latest=false \
             --generate-notes \
             --notes-start-tag ${{ env.PREVIOUS_TAG }}
+
