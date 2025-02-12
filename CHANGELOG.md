@@ -1,6 +1,7 @@
 # Changelog
 
 ## vNext
+Updates Go build toolchain to 1.23.5.
 
 ## v0.113.7
 - adding `without_entity` to [SolarWinds Extension](./extension/solarwindsextension/README.md#getting-started) configuration, so users can opt out of collector entity creation.
