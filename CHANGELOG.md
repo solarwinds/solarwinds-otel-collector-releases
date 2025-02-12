@@ -1,6 +1,8 @@
 # Changelog
 
 ## vNext
+
+## v0.113.8
 Updates Go build toolchain to 1.23.5.
 
 ## v0.113.7
