@@ -36,7 +36,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: is there
-        run: ls /home/runner/work/solarwinds-otel-collector/solarwinds-otel-collector/.github/workflows/dockerScoutScan
+        run: ls /home/runner/work/solarwinds-otel-collector/solarwinds-otel-collector/.github/actions/dockerScoutScan
+
+      - name: Docker scout image scan
+        uses: ./.github/actions/dockerScoutScan/action.yml
+        with:
+          image: solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}
+          compare-to: solarwinds/solarwinds-otel-collector:latest
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
+          token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
 
       - name: Generate Docker Image Tag
         id: generate-tag
@@ -62,7 +71,7 @@ jobs:
         run: ls ./.github/workflows/dockerScoutScan
 
       - name: Docker scout image scan
-        uses: ./.github/workflows/dockerScoutScan/action.yml
+        uses: ./.github/actions/dockerScoutScan/action.yml
         with:
           image: solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}
           compare-to: solarwinds/solarwinds-otel-collector:latest
