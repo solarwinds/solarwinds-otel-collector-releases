@@ -52,6 +52,12 @@ jobs:
       - name: whereami
         run: ls -la
 
+      - name: whereami github
+        run: ls ./.github/workflows
+
+      - name: whereami github
+        run: ls ./.github/workflows/dockerScoutScan
+
       - name: Docker scout image scan
         uses: ./.github/workflows/dockerScoutScan/action.yml
         with:
