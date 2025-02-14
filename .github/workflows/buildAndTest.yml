@@ -6,8 +6,6 @@ on:
       - main
       - 'release/**'
   push:
-    paths-ignore:
-      - 'pkg/version/version.go'
     branches:
       - main
       - 'release/**'
@@ -78,11 +76,13 @@ jobs:
           docker build -t solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019 --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019 -f build/docker/Dockerfile.Windows-Runtime . 
 
       - name: Save image
+        if: github.event_name != 'push'
         run: |
           docker save --output solarwinds-otel-collector-windows-ltsc2022.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022
           docker save --output solarwinds-otel-collector-windows-ltsc2019.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019
 
       - uses: actions/upload-artifact@v4
+        if: github.event_name != 'push'
         with:
           name: windows-image-full
           path: |
@@ -133,11 +133,13 @@ jobs:
           docker build -t solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019 -f build/docker/Dockerfile.k8s.Windows-Runtime . 
             
       - name: Save image
+        if: github.event_name != 'push'
         run: |
           docker save --output solarwinds-otel-collector-windows-k8s-ltsc2022.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s
           docker save --output solarwinds-otel-collector-windows-k8s-ltsc2019.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s
       
       - uses: actions/upload-artifact@v4
+        if: github.event_name != 'push'
         with:
           name: windows-image-k8s
           path: |
