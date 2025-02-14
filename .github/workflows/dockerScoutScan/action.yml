@@ -1,0 +1,38 @@
+name: Docker scout scan
+description: Comparison of Docker images using Docker Scout
+
+inputs:
+  username:
+    description: Username for logging into the Docker Scout
+    required: true
+  token:
+    description: PAT token for logging into the Docker Scout
+    required: true
+  github-token:
+    description: GitHub token for commenting the PR
+    required: true
+  image:
+    description: Image to be compared
+    required: true
+  compare-to:
+    description: Image to compare to
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Log into registry with PAT to use SCOUT.
+      uses: docker/login-action@v3
+      with:
+        username: ${{ inputs.username }}
+        password: ${{ inputs.token }}
+
+    - name: Docker scout
+      id: docker-scout
+      uses: docker/scout-action@v1
+      with:
+        command: compare
+        image: ${{ inputs.image }}
+        to: ${{ inputs.compare-to }}
+        write-comment: true
+        github-token: ${{ inputs.github-token }}
