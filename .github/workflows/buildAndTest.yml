@@ -39,7 +39,7 @@ jobs:
         run: ls /home/runner/work/solarwinds-otel-collector/solarwinds-otel-collector/.github/actions/dockerScoutScan
 
       - name: Docker scout image scan
-        uses: ./.github/actions/dockerScoutScan/action.yml
+        uses: ./.github/actions/dockerScoutScan
         with:
           image: solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}
           compare-to: solarwinds/solarwinds-otel-collector:latest
