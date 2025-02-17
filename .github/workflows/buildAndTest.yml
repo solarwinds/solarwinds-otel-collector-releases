@@ -89,28 +89,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Generate docker image tag
-        id: generate-tag
-        run: echo "tag=v${{ github.run_number }}-$(git rev-parse --short HEAD)" >> $env:GITHUB_OUTPUT
-
       - name: Build Full
         run: |
-          docker build -t solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022 -f build/docker/Dockerfile.Windows-2022 . 
+          docker build -t solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022 -f build/docker/Dockerfile.Windows-2022 . 
 
       - name: CP assets
         run: |
-          docker create --name assets solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022
+          docker create --name assets solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022
           docker cp assets:/solarwinds-otel-collector.exe solarwinds-otel-collector.exe
 
       - name: Build 2019 Full
         run: |
-          docker build -t solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019 --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019 -f build/docker/Dockerfile.Windows-Runtime . 
+          docker build -t solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019 --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019 -f build/docker/Dockerfile.Windows-Runtime . 
 
       - name: Save image
         if: github.event_name != 'push'
         run: |
-          docker save --output solarwinds-otel-collector-windows-ltsc2022.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022
-          docker save --output solarwinds-otel-collector-windows-ltsc2019.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019
+          docker save --output solarwinds-otel-collector-windows-ltsc2022.tar solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022
+          docker save --output solarwinds-otel-collector-windows-ltsc2019.tar solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019
 
       - uses: actions/upload-artifact@v4
         if: github.event_name != 'push'
@@ -128,19 +124,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Generate Docker Image Tag
-        id: generate-tag
-        run: echo "tag=v${{ github.run_number }}-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
       - name: Build - k8s Image
         run: >
           docker build . --file build/docker/Dockerfile.k8s
-          --tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-k8s
+          --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-k8s
 
       - name: Docker scout image scan
         uses: ./.github/actions/dockerScoutScan
         with:
-          image: solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-k8s
+          image: solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-k8s
           compare-to: solarwinds/solarwinds-otel-collector:${{ needs.get_latest.outputs.tag }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
@@ -156,29 +148,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Generate docker image tag
-        id: generate-tag
-        run: echo "tag=v${{ github.run_number }}-$(git rev-parse --short HEAD)" >> $env:GITHUB_OUTPUT
-
       - name: Build K8s
         run: |
-          docker build -t solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s -f build/docker/Dockerfile.k8s.Windows-2022 . 
+          docker build -t solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-k8s -f build/docker/Dockerfile.k8s.Windows-2022 . 
           
       - name: CP assets
         run: |
-          docker create --name assets-k8s solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s
+          docker create --name assets-k8s solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-k8s
           docker cp assets-k8s:/solarwinds-otel-collector.exe solarwinds-otel-collector.exe
           docker cp assets-k8s:/wrapper.exe wrapper.exe
 
       - name: Build 2019 K8s
         run: |
-          docker build -t solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019 -f build/docker/Dockerfile.k8s.Windows-Runtime . 
+          docker build -t solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-k8s --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019 -f build/docker/Dockerfile.k8s.Windows-Runtime . 
             
       - name: Save image
         if: github.event_name != 'push'
         run: |
-          docker save --output solarwinds-otel-collector-windows-k8s-ltsc2022.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s
-          docker save --output solarwinds-otel-collector-windows-k8s-ltsc2019.tar solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s
+          docker save --output solarwinds-otel-collector-windows-k8s-ltsc2022.tar solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-k8s
+          docker save --output solarwinds-otel-collector-windows-k8s-ltsc2019.tar solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-k8s
       
       - uses: actions/upload-artifact@v4
         if: github.event_name != 'push'
