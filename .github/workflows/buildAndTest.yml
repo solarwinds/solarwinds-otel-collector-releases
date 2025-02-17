@@ -44,7 +44,7 @@ jobs:
   get_latest:
     runs-on: ubuntu-latest
     outputs:
-      image_tag: ${{ steps.get_latest.outputs.tag }}
+      image_tag: ${{ steps.get_latest.outputs.image_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
