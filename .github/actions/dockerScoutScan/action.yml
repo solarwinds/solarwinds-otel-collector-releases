@@ -33,6 +33,6 @@ runs:
       with:
         command: compare
         image: ${{ inputs.image }}
-        to: ${{ inputs.compare-to }}
+        to-latest: true
         write-comment: true
         github-token: ${{ inputs.github-token }}
