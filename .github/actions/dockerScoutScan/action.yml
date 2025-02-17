@@ -36,3 +36,4 @@ runs:
         to-latest: true
         write-comment: true
         github-token: ${{ inputs.github-token }}
+        organization: solarwinds
