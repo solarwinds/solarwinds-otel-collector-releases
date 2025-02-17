@@ -51,9 +51,9 @@ runs:
       id: docker-scout
       uses: docker/scout-action@v1
       with:
-        command: compare
+        command: compare,quickview
         image: ${{ inputs.current-image }}:${{ inputs.current-tag }}
         to: ${{ inputs.compare-to-image }}:${{ inputs.compare-to-tag || steps.get-latest.outputs.tag }}
         write-comment: true
         github-token: ${{ inputs.github-token }}
-
+        keep-previous-comments: true
