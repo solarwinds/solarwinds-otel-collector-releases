@@ -51,7 +51,7 @@ jobs:
 
       - name: Get latest tag
         id: get-latest
-        run: curl -s "https://registry.hub.docker.com/v2/repositories/solarwinds/solarwinds-otel-collector/tags/" | jq -r '.results[].name' | grep -E '[0-9]+\.[0-9]+\.[0-9]+-k8s$' | sort -r | head -n 1
+        run: echo "tag=$(curl -s 'https://registry.hub.docker.com/v2/repositories/solarwinds/solarwinds-otel-collector/tags/' | jq -r '.results[].name' | grep -E '[0-9]+\.[0-9]+\.[0-9]+-k8s$' | sort -r | head -n 1)" >> $GITHUB_OUTPUT
 
   build_and_test:
     runs-on: ubuntu-latest
