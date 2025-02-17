@@ -44,7 +44,7 @@ jobs:
   get_latest:
     runs-on: ubuntu-latest
     outputs:
-      image_tag: ${{ steps.get-latest.outputs.image_tag }}
+      tag: ${{ steps.get-latest.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -141,7 +141,7 @@ jobs:
         uses: ./.github/actions/dockerScoutScan
         with:
           image: solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-k8s
-          compare-to: ${{ needs.get_latest.outputs.image_tag }}
+          compare-to: solarwinds/solarwinds-otel-collector:${{ needs.get_latest.outputs.tag }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
           token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
