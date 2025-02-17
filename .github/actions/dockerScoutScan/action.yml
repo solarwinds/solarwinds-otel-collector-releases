@@ -33,7 +33,7 @@ runs:
       with:
         command: compare
         image: ${{ inputs.image }}
-        to-latest: true
+        to: ${{ inputs.compare-to }}
         write-comment: true
         github-token: ${{ inputs.github-token }}
-        organization: solarwinds
+
