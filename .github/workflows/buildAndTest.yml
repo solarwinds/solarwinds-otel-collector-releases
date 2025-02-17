@@ -32,7 +32,7 @@ jobs:
   generate_tag:
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.generate_tag.outputs.tag }}
+      tag: ${{ steps.generate-tag.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,7 +44,7 @@ jobs:
   get_latest:
     runs-on: ubuntu-latest
     outputs:
-      image_tag: ${{ steps.get_latest.outputs.image_tag }}
+      image_tag: ${{ steps.get-latest.outputs.image_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -63,7 +63,7 @@ jobs:
       - name: Build and Test - Full Image
         run: >
           docker build . --file build/docker/Dockerfile
-          --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}
+          --tag solarwinds-otel-collector:${{ needs.generate-tag.outputs.tag }}
           --tag solarwinds-otel-collector:latest
 
       - name: E2E Tests
@@ -73,7 +73,7 @@ jobs:
       - name: Docker scout image scan
         uses: ./.github/actions/dockerScoutScan
         with:
-          image: solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}
+          image: solarwinds-otel-collector:${{ needs.generate-tag.outputs.tag }}
           compare-to: solarwinds/solarwinds-otel-collector:latest
           github-token: ${{ secrets.GITHUB_TOKEN }}
           username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
@@ -141,7 +141,7 @@ jobs:
         uses: ./.github/actions/dockerScoutScan
         with:
           image: solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-k8s
-          compare-to: ${{ needs.get_latest.outputs.image_tag }}
+          compare-to: ${{ needs.get-latest.outputs.image_tag }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
           token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
