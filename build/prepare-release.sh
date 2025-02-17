@@ -27,7 +27,7 @@ if [ ! -f "$CHANGELOG_FILE" ]; then
     exit 1
 fi
 if ! grep -q "## v$VERSION" "$CHANGELOG_FILE"; then
-    sed -i -E "s/^## vNext/## vNext\n\n## v$VERSION/" "$CHANGELOG_FILE"
+    sed -E -i "" "s/^## vNext/## vNext\n\n## v$VERSION/" "$CHANGELOG_FILE"
     echo "CHANGELOG.md updated with version v$VERSION"
 else
     echo "CHANGELOG.md already contains 'v$VERSION', no update made."
@@ -46,5 +46,5 @@ if [ ! -f "$GO_VERSION_FILE" ]; then
     echo "version.go not found!"
     exit 1
 fi
-sed -i -E "s|^(const Version =) \"[0-9]+\.[0-9]+\.[0-9]+\"$|\1 \"$VERSION\"|" "$GO_VERSION_FILE"
+sed -E -i "" "s|^(const Version =) \"[0-9]+\.[0-9]+\.[0-9]+\"$|\1 \"$VERSION\"|" "$GO_VERSION_FILE"
 echo "Version.go updated with version $VERSION"
