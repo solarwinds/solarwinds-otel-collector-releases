@@ -49,6 +49,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: try docker scout
+        run: |
+          $ docker run -it \
+          -e DOCKER_SCOUT_HUB_USER=${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }} \
+          -e DOCKER_SCOUT_HUB_PASSWORD=${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}  \
+          docker/scout-cli compare solarwinds/solarwinds-otel-collector:latest solarwinds/solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-k8s --format markdown
+  
+
       - name: Build and Test - Full Image
         run: >
           docker build . --file build/docker/Dockerfile
