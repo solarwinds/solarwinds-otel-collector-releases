@@ -44,6 +44,7 @@ jobs:
   build_and_test:
     runs-on: ubuntu-latest
     needs: generate_tag
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -155,6 +156,16 @@ jobs:
           current-tag: ${{ needs.generate_tag.outputs.tag }}-k8s
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
           compare-to-regex: '[0-9]+\.[0-9]+\.[0-9]+-k8s$'
+
+      - name: Create docker scout file
+        run: |
+          docker scout compare ${{ needs.generate_tag.outputs.tag }}-k8s --to solarwinds/solarwinds-otel-collector:latest --ignore-unchanged --format markdown  > k8s-output.md
+
+      - name: Save docker scout output as manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: k8s-docker-scout-compare
+          path: k8s-output.md
 
   build_windows_k8s:
     runs-on: windows-2022
