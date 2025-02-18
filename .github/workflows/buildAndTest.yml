@@ -96,6 +96,28 @@ jobs:
           --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019
 
+      - name: Docker scout image scan for Windows 2019
+        uses: ./.github/actions/dockerScoutScan
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
+          token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
+          current-image: solarwinds-otel-collector
+          current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019
+          compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
+          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2019$'
+
+      - name: Docker scout image scan for Windows 2022
+        uses: ./.github/actions/dockerScoutScan
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
+          token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
+          current-image: solarwinds-otel-collector
+          current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022
+          compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
+          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2022$'
+
       - name: Save image
         if: github.event_name != 'push'
         run: |
@@ -158,7 +180,29 @@ jobs:
         run: |
           docker build . --file build/docker/Dockerfile.k8s.Windows-Runtime
           --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019
-          --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-k8s  
+          --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-k8s
+
+      - name: Docker scout image scan for Windows 2019
+        uses: ./.github/actions/dockerScoutScan
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
+          token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
+          current-image: solarwinds-otel-collector
+          current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-k8s
+          compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
+          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2019-k8s$'
+
+      - name: Docker scout image scan for Windows 2022
+        uses: ./.github/actions/dockerScoutScan
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
+          token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
+          current-image: solarwinds-otel-collector
+          current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-k8s
+          compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
+          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2022-k8s$'
             
       - name: Save image
         if: github.event_name != 'push'
