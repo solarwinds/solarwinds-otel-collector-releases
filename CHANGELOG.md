@@ -2,8 +2,6 @@
 
 ## vNext
 
-## v0.119.0
-
 ## v0.113.8
 - Updates Go build toolchain to 1.23.5.
 - Adds [SWO Host Metrics Receiver](./receiver/swohostmetricsreceiver/README.md) for additional Host metrics monitoring.
