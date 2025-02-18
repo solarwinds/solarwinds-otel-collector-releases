@@ -18,7 +18,7 @@ To run the image utilize following command:
 See [complete docker documentation](./build/docker/README.md).
 
 ### Binary
-Build the binary in `cmd/solarwinds-otel-collector` with `go build .`
+Build the binary in `cmd/solarwinds-otel-collector` with `go build -tags full .`
 
 After successful build, `solarwinds-otel-collector` should be present in `cmd/solarwinds-otel-collector`.
 
