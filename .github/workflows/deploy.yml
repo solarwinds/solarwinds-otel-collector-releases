@@ -224,3 +224,16 @@ jobs:
             --latest=false \
             --generate-notes \
             --notes-start-tag ${{ env.PREVIOUS_TAG }}
+      - name: Tag Go packages on GitHub
+        run: |
+          folders=("./exporter" "./extension" "./pkg" "./receiver")
+
+          for folder in "${folders[@]}"; do
+              for package_folder in $folder/*/; do
+                  if [ -f "$package_folder/go.mod" ]; then
+                      git tag ${package_folder#./}v${{ needs.release_checks.outputs.image_tag }}
+                      git push origin ${package_folder#./}v${{ needs.release_checks.outputs.image_tag }}
+                      echo "Pushed tag ${package_folder#./}v${{ needs.release_checks.outputs.image_tag }}"
+                  fi
+              done
+          done
