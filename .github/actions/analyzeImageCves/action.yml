@@ -1,0 +1,20 @@
+name: Docker scout cve analysis
+description: Analyze CVEs with Docker Scout and push it to sarif file
+
+inputs:
+  username:
+    description: Username for logging into the Docker Scout
+    required: false
+  token:
+    description: PAT token for logging into the Docker Scout
+    required: false
+  current-image:
+    description: Image to be compared
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Print action
+      run: echo "Running Docker Scout CVE analysis for ${{ inputs.current-image }}"
+      shell: bash

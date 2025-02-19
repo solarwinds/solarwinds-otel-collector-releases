@@ -10,9 +10,16 @@ on:
         type: string
 
 jobs:
-  print-username:
+  run-composite-action-in-parallel:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        argument: ${{ fromJson(inputs.tags) }}  # Convert the input string to an array
     steps:
-      - name: Print the input name to STDOUT
-        run: echo The username is ${{ inputs.tags }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run composite action
+        uses: ./.github/actions/analyzeImageCves
+        with:
+          current-image: ${{ matrix.argument }}
