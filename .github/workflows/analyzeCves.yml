@@ -1,0 +1,17 @@
+name: Analyze CVEs for image
+
+on:
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: Array of tags
+        required: true
+        default: '[]'
+
+jobs:
+  example-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Arguments
+        run: |
+          echo "Received Arguments: ${{ inputs.tags }}"
