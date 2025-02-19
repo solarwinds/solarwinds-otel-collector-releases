@@ -28,7 +28,7 @@ inputs:
     required: false
 
 runs:
-  using: "composite"
+  using: composite
   steps:
     - name: Ensure `compare-to-tag` or `compare-to-regex` is provided
       if: ${{ !inputs.compare-to-tag && !inputs.compare-to-regex }}
@@ -54,6 +54,3 @@ runs:
         command: compare,quickview
         image: ${{ inputs.current-image }}:${{ inputs.current-tag }}
         to: ${{ inputs.compare-to-image }}:${{ inputs.compare-to-tag || steps.get-latest.outputs.tag }}
-        write-comment: true
-        github-token: ${{ inputs.github-token }}
-        keep-previous-comments: true
