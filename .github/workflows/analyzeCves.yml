@@ -1,17 +1,17 @@
 name: Analyze CVEs for image
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       tags:
-        description: Array of tags
+        description: 'A username passed from the caller workflow'
         required: true
         default: '[]'
 
 jobs:
-  example-job:
+  print-username:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Print Arguments
-        run: |
-          echo "Received Arguments: ${{ inputs.tags }}"
+      - name: Print the input name to STDOUT
+        run: echo The username is ${{ inputs.username }}

@@ -18,13 +18,9 @@ env:
 
 jobs:
   test_cve_action:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Child Workflow
-        uses: ./.github/workflows/analyzeCves.yml
-        with:
-          inputs: |
-            tags: '["arg1", "arg2", "arg3"]'
+    uses: ./.github/workflows/analyzeCves.yml
+    with:
+      tags: '["arg1", "arg2", "arg3"]'
 
   checks:
     runs-on: ubuntu-latest
