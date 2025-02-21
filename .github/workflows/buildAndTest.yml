@@ -223,7 +223,7 @@ jobs:
 
   write_docker_scout_info_comment:
     runs-on: ubuntu-latest
-    needs: ['build_k8s', 'build_windows', 'build_windows_k8s']
+    needs: ['build_k8s']
     if: |
       !contains(needs.*.result, 'failure') &&
       github.event_name == 'pull_request'
