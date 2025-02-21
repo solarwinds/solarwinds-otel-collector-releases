@@ -227,6 +227,11 @@ jobs:
     if: |
       needs.build_k8s.result == 'success' &&
       github.event_name == 'pull_request'
-    uses: ./.github/actions/dockerScoutComment
-    with:
-      github-token: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Write Docker Scout Info Comment
+        uses: ./.github/actions/dockerScoutComment
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
