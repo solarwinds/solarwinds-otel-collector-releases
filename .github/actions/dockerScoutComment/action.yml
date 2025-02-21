@@ -18,7 +18,7 @@ runs:
         COMMENT_ID=$(curl -s $COMMENT_API_URL | \
         jq -r --arg search_for "$SEARCH_FOR" '.[] | select(.body | contains($search_for)) | .id' | head -n 1)
         
-        echo "comment_id=$COMMENT_ID" >> $GITHUB_ENV
+        echo "comment_id=$COMMENT_ID" >> $GITHUB_OUTPUT
 
     - name: Add new Docker scout comment
       if: ${{ steps.find_comment.outputs.comment_id == '' }}
