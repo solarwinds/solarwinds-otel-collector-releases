@@ -15,7 +15,7 @@ runs:
       run: |
         SEARCH_FOR="Github run ID: "
         COMMENT_API_URL="https://api.github.com/repos/solarwinds/solarwinds-otel-collector/issues/${{ github.event.number }}/comments"
-        COMMENT_ID=$(curl -s -H "Authorization: Bearer ${{ inputs.github-token }}" $COMMENT_API_URL | \
+        COMMENT_ID=$(curl -s $COMMENT_API_URL | \
         jq -r --arg search_for "$SEARCH_FOR" '.[] | select(.body | contains($search_for)) | .id' | head -n 1)
         
         echo "::set-output name=comment_id::$COMMENT_ID"
