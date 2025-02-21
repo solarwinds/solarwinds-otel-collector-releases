@@ -36,8 +36,9 @@ runs:
       if: ${{ steps.find_comment.outputs.comment_id != '' }}
       shell: bash
       run: |
+        echo "Updating comment with ID ${{ steps.find_comment.outputs.comment_id }}"
         curl -X PATCH \
-          -H "Authorization: Bearer ${{ inputs.github_token }}" \
+          -H "Authorization: Bearer ${{ inputs.github-token }}" \
           -H "Content-Type: application/json" \
           -d '{"body": "See the [Docker Scout comparison](https://github.com/solarwinds/solarwinds-otel-collector/actions/runs/${{ github.run_id }}) for Docker images.\n\nGithub run ID: ${{ github.run_id }}."}' \
           "https://api.github.com/repos/solarwinds/solarwinds-otel-collector/issues/${{ github.event.number }}/comments/${{ steps.find_comment.outputs.comment_id }}"
