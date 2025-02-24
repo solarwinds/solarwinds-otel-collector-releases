@@ -86,7 +86,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Full
-        run: |
+        run: >
           docker build . --file build/docker/Dockerfile.Windows-2022
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022 
 
@@ -180,7 +180,7 @@ jobs:
           docker cp assets-k8s:/wrapper.exe wrapper.exe
 
       - name: Build 2019 K8s
-        run: |
+        run: >
           docker build . --file build/docker/Dockerfile.k8s.Windows-Runtime
           --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-k8s
