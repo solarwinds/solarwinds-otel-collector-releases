@@ -1,0 +1,41 @@
+on:
+  workflow_run:
+    workflows:
+#      - Deploy Images
+      - Build and Test Images
+    types:
+      - completed
+jobs:
+  generate-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.generate-tag.outputs.tag }}
+    steps:
+      - name: Generate Docker Image Tag
+        id: generate-tag
+        run: echo "tag=v${{ github.run_number }}-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+  upload_sarif_files:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tag:
+          - '${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019'
+          - '${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022'
+          - '${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s'
+          - '${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s'
+    steps:
+#      - uses: actions/download-artifact@v4
+#        with:
+#          pattern: sarif-${{ matrix.tag }}.output.json
+
+      - name: print matrix tags
+        run: echo ${{ matrix.tag }}
+        shell: bash
+#
+#      - name: Upload SARIF results
+#        id: upload-sarif
+#        if: ${{ github.event_name != 'pull_request_target' }}
+#        uses: github/codeql-action/upload-sarif@v3
+#        with:
+#          sarif_file: sarif-${{ matrix.tag }}.output.json

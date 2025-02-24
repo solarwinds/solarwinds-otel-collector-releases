@@ -26,9 +26,10 @@ runs:
         summary: true
         exit-code: true
 
-    - name: Upload SARIF result
-      id: upload-sarif
+    - name: Save sarif file as an artifact
       if: ${{ github.event_name != 'pull_request_target' }}
-      uses: github/codeql-action/upload-sarif@v3
+      uses: actions/upload-artifact@v4
       with:
-        sarif_file: sarif-${{ inputs.tag }}.output.json
+        name: sarif-${{ inputs.tag }}.output.json
+        path: sarif-${{ inputs.tag }}.output.json
+

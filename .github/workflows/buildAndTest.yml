@@ -17,11 +17,6 @@ env:
   DOCKERHUB_IMAGE: solarwinds/solarwinds-otel-collector
 
 jobs:
-  test_cve_action:
-    uses: ./.github/workflows/analyzeCves.yml
-    with:
-      tags: '["arg1", "arg2", "arg3"]'
-
   checks:
     runs-on: ubuntu-latest
     steps:
@@ -50,6 +45,7 @@ jobs:
   build_and_test:
     runs-on: ubuntu-latest
     needs: generate_tag
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -222,7 +218,7 @@ jobs:
 
   write_docker_scout_info_comment:
     runs-on: ubuntu-latest
-    needs: ['build_and_test', 'build_k8s']
+    needs: ['build_k8s'] # add build and test
     if: |
       !contains(needs.*.result, 'failure') &&
       github.event_name == 'pull_request'
