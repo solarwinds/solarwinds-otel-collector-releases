@@ -51,6 +51,7 @@ runs:
       id: docker-scout
       uses: docker/scout-action@v1
       with:
-        command: compare,quickview
+        command: compare
         image: ${{ inputs.current-image }}:${{ inputs.current-tag }}
         to: ${{ inputs.compare-to-image }}:${{ inputs.compare-to-tag || steps.get-latest.outputs.tag }}
+        write-comment: false
