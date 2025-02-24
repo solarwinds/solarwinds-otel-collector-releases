@@ -1,5 +1,5 @@
-name: Docker scout scan
-description: Comparison of Docker images using Docker Scout
+name: Docker Scout comment
+description: Adds a PR comment about docker scout overview presence
 
 inputs:
   github-token:
