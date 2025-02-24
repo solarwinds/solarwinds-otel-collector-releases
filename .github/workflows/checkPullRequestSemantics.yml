@@ -15,8 +15,6 @@ jobs:
   check_semantics:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
       - name: Validate PR title format
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
@@ -44,7 +42,7 @@ jobs:
         run: |
           ISSUE_NUMBER=$(echo "$PR_TITLE" | grep -oP '^([[:word:]]+):[[:space:]]#\K[[:digit:]]+' || echo "")
           if [ -n "$ISSUE_NUMBER" ]; then
-            ISSUE_URL=$(gh issue view "$ISSUE_NUMBER" --json url -q .url || echo "")
+            ISSUE_URL=$(gh issue view "$ISSUE_NUMBER" --repo ${{ github.repository }} --json url -q .url || echo "")
             if [[ ! "$ISSUE_URL" =~ .*/issues/[[:digit:]]+$ ]]; then
               echo "::error::Referenced issue #$ISSUE_NUMBER does not exist."
               exit 1
