@@ -1,3 +1,5 @@
+name: Upload SARIF Files
+
 on:
   workflow_run:
     workflows:

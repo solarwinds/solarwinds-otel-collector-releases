@@ -230,8 +230,3 @@ jobs:
         uses: ./.github/actions/dockerScoutComment
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-  upload_sarif_files:
-    name: Sarif files
-    uses: ./.github/workflows/uploadSarifFiles.yml
-
