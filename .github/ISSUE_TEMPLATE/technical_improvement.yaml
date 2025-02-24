@@ -1,6 +1,7 @@
 name: Technical improvement
 description: Suggest a general technical improvement for this project
 labels: ["enhancement", "maintenance", "needs triage"]
+type: Task
 body:
   - type: textarea
     attributes:
