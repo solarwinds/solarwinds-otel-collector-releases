@@ -160,7 +160,7 @@ jobs:
         with:
           username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
           token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
-          tag: ${{ needs.generate-tag.outputs.tag }}-k8s
+          tag: ${{ needs.generate_tag.outputs.tag }}-k8s
 
   build_windows_k8s:
     runs-on: windows-2022
