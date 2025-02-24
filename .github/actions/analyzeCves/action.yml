@@ -21,6 +21,7 @@ runs:
       uses: docker/scout-action@v1
       with:
         command: cves
+        only-severities: critical,high
         image: solarwinds-otel-collector:${{ inputs.tag }}
         sarif-file: sarif-${{ inputs.tag }}.output.json
         summary: true
