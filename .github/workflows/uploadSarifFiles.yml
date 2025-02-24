@@ -6,7 +6,6 @@ on:
       - Build and Test Images
     types:
       - completed
-  workflow_call:
 
 jobs:
   generate-tag:
