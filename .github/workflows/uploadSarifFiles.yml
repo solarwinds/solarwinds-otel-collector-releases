@@ -3,7 +3,7 @@ name: Upload SARIF Files
 on:
   workflow_run:
     workflows:
-      - Build and Test Images
+      - Deploy Images
     types:
       - completed
 
@@ -31,17 +31,13 @@ jobs:
           - ${{ needs.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s
           - ${{ needs.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s
     steps:
-#      - uses: actions/download-artifact@v4
-#        with:
-#          pattern: sarif-${{ matrix.tag }}.output.json
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: sarif-${{ matrix.tag }}.output.json
 
-      - name: print matrix tags
-        run: echo ${{ matrix.tag }}
-        shell: bash
-#
-#      - name: Upload SARIF results
-#        id: upload-sarif
-#        if: ${{ github.event_name != 'pull_request_target' }}
-#        uses: github/codeql-action/upload-sarif@v3
-#        with:
-#          sarif_file: sarif-${{ matrix.tag }}.output.json
+      - name: Upload SARIF results
+        id: upload-sarif
+        if: ${{ github.event_name != 'pull_request_target' }}
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: sarif-${{ matrix.tag }}.output.json
