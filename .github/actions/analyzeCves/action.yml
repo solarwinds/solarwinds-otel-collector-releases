@@ -26,6 +26,7 @@ runs:
         sarif-file: sarif-${{ inputs.tag }}.output.json
         summary: true
         exit-code: true
+        write-comment: false
 
     - name: Save sarif file as an artifact
       if: ${{ github.event_name != 'pull_request_target' }}
