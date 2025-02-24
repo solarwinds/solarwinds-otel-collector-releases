@@ -1,5 +1,5 @@
-name: Docker scout cve analysis
-description: Analyse CVEs with Docker Scout and push it to sarif file
+name: Docker scout CVE analysis
+description: Analyse CVEs with Docker Scout and store it as an artifact
 
 inputs:
   username:
@@ -17,7 +17,6 @@ runs:
   steps:
     - name: Analyze for CVEs
       id: docker-scout-cves
-      if: ${{ github.event_name != 'pull_request_target' }}
       uses: docker/scout-action@v1
       with:
         command: cves
@@ -26,10 +25,8 @@ runs:
         sarif-file: sarif-${{ inputs.tag }}.output.json
         summary: true
         exit-code: true
-        write-comment: false
 
     - name: Save sarif file as an artifact
-      if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/upload-artifact@v4
       with:
         name: sarif-${{ inputs.tag }}.output.json
