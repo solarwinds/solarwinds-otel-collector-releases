@@ -1,6 +1,7 @@
 name: Bug report
 description: Create a report to help us improve
 labels: ["bug", "needs triage"]
+type: Bug
 body:
   - type: markdown
     attributes:
@@ -18,6 +19,7 @@ body:
         - cmd/solarwinds-otel-collector
         - exporter/solarwindsexporter
         - extension/solarwindsextension
+        - receiver/swohostmetricsreceiver
   - type: textarea
     attributes:
       label: Description
