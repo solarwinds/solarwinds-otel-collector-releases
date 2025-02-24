@@ -1,0 +1,34 @@
+name: Docker scout cve analysis
+description: Analyse CVEs with Docker Scout and push it to sarif file
+
+inputs:
+  username:
+    description: Username for logging into the Docker Scout
+    required: false
+  token:
+    description: PAT token for logging into the Docker Scout
+    required: false
+  tag:
+    description: Image tag
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Analyze for CVEs
+      id: docker-scout-cves
+      if: ${{ github.event_name != 'pull_request_target' }}
+      uses: docker/scout-action@v1
+      with:
+        command: cves
+        image: solarwinds-otel-collector:${{ inputs.tag }}
+        sarif-file: sarif-${{ inputs.tag }}.output.json
+        summary: true
+        exit-code: true
+
+    - name: Upload SARIF result
+      id: upload-sarif
+      if: ${{ github.event_name != 'pull_request_target' }}
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: sarif-${{ inputs.tag }}.output.json
