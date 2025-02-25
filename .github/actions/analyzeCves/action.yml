@@ -2,12 +2,6 @@ name: Docker scout CVE analysis
 description: Analyse CVEs with Docker Scout and store it as an artifact
 
 inputs:
-  username:
-    description: Username for logging into the Docker Scout
-    required: false
-  token:
-    description: PAT token for logging into the Docker Scout
-    required: false
   tag:
     description: Image tag
     required: true
