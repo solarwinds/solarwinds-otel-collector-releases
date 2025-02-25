@@ -21,7 +21,7 @@ inputs:
     description: Image name to compare to
     required: true
   compare-to-tag:
-    description: Image to compare to, required if `compare-to-regex` is not provided, if both provided, this is prioritized
+    description: Tag to compare to, required if `compare-to-regex` is not provided, if both provided, this is prioritized
     required: false
   compare-to-regex:
     description: Regex to find latest image in the registry to compare to, required if `compare-to` is not provided
