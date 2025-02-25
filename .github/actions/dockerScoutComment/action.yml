@@ -1,11 +1,6 @@
 name: Docker Scout comment
 description: Adds a PR comment about docker scout overview presence
 
-inputs:
-  github-token:
-    description: GitHub token for commenting the PR
-    required: true
-
 runs:
   using: composite
   steps:
@@ -40,10 +35,12 @@ runs:
 
     - name: Update existing comment
       if: ${{ steps.find_comment.outputs.comment_id != '' }}
-      shell: bash
-      run: |
-        curl -X PATCH \
-          -H "Authorization: Bearer ${{ inputs.github-token }}" \
-          -H "Content-Type: application/json" \
-          -d '{"body": "${{ steps.set_comment_body.outputs.comment_body }}"}' \
-          "https://api.github.com/repos/solarwinds/solarwinds-otel-collector/issues/comments/${{ steps.find_comment.outputs.comment_id }}"
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.updateComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            comment_id: "${{ steps.find_comment.outputs.comment_id }}",
+            body: "${{ steps.set_comment_body.outputs.comment_body }}"
+          })
