@@ -2,6 +2,7 @@ name: Docker Scout comment
 description: Adds a PR comment about docker scout overview presence
 
 runs:
+  if: ${{ github.event_name == 'pull_request' }}
   using: composite
   steps:
     - name: Find an existing comment
