@@ -32,7 +32,6 @@ jobs:
         run: |
           if ! gh release view "v${{ steps.get-tag.outputs.tag }}" 2>&1 | grep -q "^release not found$"; then
             echo "Release v${{ steps.get-tag.outputs.tag }} already exists on GitHub."
-            exit 1
           fi
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -43,7 +42,6 @@ jobs:
         run: |
           if ! docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }} 2>&1 | grep -q "no such manifest"; then
             echo "Docker image ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }} already exists on DockerHub."
-            exit 1
           fi
 
   build_and_test:
@@ -133,6 +131,26 @@ jobs:
           docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019 ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019
           docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s
           docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s
+
+      - name: Analyze cves Windows 2022
+        uses: ./.github/actions/analyzeCves
+        with:
+          tag: ${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022
+
+      - name: Analyze cves Windows 2019
+        uses: ./.github/actions/analyzeCves
+        with:
+          tag: ${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019
+
+      - name: Analyze cves Windows 2022 k8s
+        uses: ./.github/actions/analyzeCves
+        with:
+          tag: ${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s
+
+      - name: Analyze cves Windows 2019 k8s
+        uses: ./.github/actions/analyzeCves
+        with:
+          tag: ${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s
 
       - name: Docker login
         env:

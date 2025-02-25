@@ -1,0 +1,57 @@
+name: Docker scout scan
+description: Comparison of Docker images using Docker Scout
+
+inputs:
+  username:
+    description: Username for logging into the Docker Scout
+    required: true
+  token:
+    description: PAT token for logging into the Docker Scout
+    required: true
+  github-token:
+    description: GitHub token for commenting the PR
+    required: true
+  current-image:
+    description: Image to be compared
+    required: true
+  current-tag:
+    description: Tag of the image to be compared
+    required: true
+  compare-to-image:
+    description: Image name to compare to
+    required: true
+  compare-to-tag:
+    description: Tag to compare to, required if `compare-to-regex` is not provided, if both provided, this is prioritized
+    required: false
+  compare-to-regex:
+    description: Regex to find latest image in the registry to compare to, required if `compare-to` is not provided
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Ensure `compare-to-tag` or `compare-to-regex` is provided
+      if: ${{ !inputs.compare-to-tag && !inputs.compare-to-regex }}
+      shell: bash
+      run: exit 1
+
+    - name: Log into registry with PAT to use SCOUT.
+      uses: docker/login-action@v3
+      with:
+        username: ${{ inputs.username }}
+        password: ${{ inputs.token }}
+
+    - name: Get latest tag
+      if: ${{ inputs.compare-to-regex }}
+      id: get-latest
+      shell: bash
+      run: echo "tag=$(curl -s 'https://registry.hub.docker.com/v2/repositories/solarwinds/solarwinds-otel-collector/tags/' | jq -r '.results[].name' | grep -E '${{ inputs.compare-to-regex }}' | sort -r | head -n 1)" >> $GITHUB_OUTPUT
+
+    - name: Docker scout
+      id: docker-scout
+      uses: docker/scout-action@v1
+      with:
+        command: compare
+        image: ${{ inputs.current-image }}:${{ inputs.current-tag }}
+        to: ${{ inputs.compare-to-image }}:${{ inputs.compare-to-tag || steps.get-latest.outputs.tag }}
+        write-comment: false

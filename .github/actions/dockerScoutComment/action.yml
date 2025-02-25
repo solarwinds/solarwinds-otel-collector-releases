@@ -1,0 +1,46 @@
+name: Docker Scout comment
+description: Adds a PR comment about docker scout overview presence
+
+runs:
+  using: composite
+  steps:
+    - name: Find an existing comment
+      id: find_comment
+      shell: bash
+      run: |
+        SEARCH_FOR="Github run ID: "
+        COMMENT_API_URL="https://api.github.com/repos/solarwinds/solarwinds-otel-collector/issues/${{ github.event.number }}/comments"
+        COMMENT_ID=$(curl -s $COMMENT_API_URL | \
+        jq -r --arg search_for "$SEARCH_FOR" '.[] | select(.body | contains($search_for)) | .id' | head -n 1)
+        
+        echo "comment_id=$COMMENT_ID" >> $GITHUB_OUTPUT
+
+    - name: Set comment body
+      id: set_comment_body
+      shell: bash
+      run: |
+        echo "comment_body=See the [Docker Scout comparison](https://github.com/solarwinds/solarwinds-otel-collector/actions/runs/${{ github.run_id }}) for Docker images.\n\nGithub run ID: ${{ github.run_id }}." >> $GITHUB_OUTPUT
+
+    - name: Add new Docker scout comment
+      if: ${{ steps.find_comment.outputs.comment_id == '' }}
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: "${{ steps.set_comment_body.outputs.comment_body }}"
+          })
+
+    - name: Update existing comment
+      if: ${{ steps.find_comment.outputs.comment_id != '' }}
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.updateComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            comment_id: "${{ steps.find_comment.outputs.comment_id }}",
+            body: "${{ steps.set_comment_body.outputs.comment_body }}"
+          })
