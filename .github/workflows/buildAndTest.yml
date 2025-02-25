@@ -220,7 +220,7 @@ jobs:
     needs: ['build_and_test', 'build_k8s']
     if: |
       !contains(needs.*.result, 'failure') &&
-      github.ref_name != 'main'
+      github.event_name == 'pull_request'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
