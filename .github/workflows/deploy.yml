@@ -135,29 +135,21 @@ jobs:
       - name: Analyze cves Windows 2022
         uses: ./.github/actions/analyzeCves
         with:
-          username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
-          token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
           tag: ${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022
 
       - name: Analyze cves Windows 2019
         uses: ./.github/actions/analyzeCves
         with:
-          username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
-          token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
           tag: ${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019
 
       - name: Analyze cves Windows 2022 k8s
         uses: ./.github/actions/analyzeCves
         with:
-          username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
-          token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
           tag: ${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s
 
       - name: Analyze cves Windows 2019 k8s
         uses: ./.github/actions/analyzeCves
         with:
-          username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
-          token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
           tag: ${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s
 
       - name: Docker login
