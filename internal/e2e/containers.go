@@ -34,12 +34,13 @@ import (
 )
 
 const (
-	receivingContainer     = "receiver"
-	testedContainer        = "sut"
-	generatingContainer    = "generator"
-	port                   = 17016
-	collectorRunningPeriod = 35 * time.Second
-	samplesCount           = 10
+	receivingContainer            = "receiver"
+	testedContainer               = "sut"
+	generatingContainer           = "generator"
+	port                          = 17016
+	collectorRunningPeriod        = 35 * time.Second
+	samplesCount                  = 10
+	receivingContainerResultsPath = "/tmp/result.json"
 )
 
 func runReceivingSolarWindsOTELCollector(
