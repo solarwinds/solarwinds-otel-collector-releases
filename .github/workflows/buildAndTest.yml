@@ -172,7 +172,6 @@ jobs:
         run: |
           docker create --name assets-k8s solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-k8s
           docker cp assets-k8s:/solarwinds-otel-collector.exe solarwinds-otel-collector.exe
-          docker cp assets-k8s:/wrapper.exe wrapper.exe
 
       - name: Build 2019 K8s
         run: >
