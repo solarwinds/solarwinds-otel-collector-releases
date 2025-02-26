@@ -18,35 +18,18 @@ package e2e
 
 import (
 	"context"
-	"github.com/stretchr/testify/require"
-	"go.opentelemetry.io/collector/pdata/pmetric"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestWithoutEntity(t *testing.T) {
 	ctx := context.Background()
 	rContainer := startCollectorContainers(t, ctx, "emitting_collector_without_entity.yaml", Metrics, collectorRunningPeriod)
-	ms := pmetric.NewMetrics()
-	mum := new(pmetric.JSONUnmarshaler)
-	lines, _ := loadResultFile(ctx, rContainer, "/tmp/result.json")
-	for _, line := range lines {
-		// Metrics to process.
-		m, err := mum.UnmarshalMetrics([]byte(line))
-		if err == nil && m.ResourceMetrics().Len() != 0 {
-			m.ResourceMetrics().MoveAndAppendTo(ms.ResourceMetrics())
-			continue
-		}
-	}
-	evaluateHeartbeatMetricDoesNotHaveEntityCreationAttribute(t, ms)
-}
 
-func evaluateHeartbeatMetricDoesNotHaveEntityCreationAttribute(
-	t *testing.T,
-	ms pmetric.Metrics,
-) {
-	require.GreaterOrEqual(t, ms.ResourceMetrics().Len(), 1, "there must be at least one metric")
-	atts := ms.ResourceMetrics().At(0).Resource().Attributes()
+	lines, err := loadResultFile(ctx, rContainer, receivingContainerResultsPath)
+	require.NoError(t, err)
 
-	_, available := atts.Get("sw.otelcol.collector.entity_creation")
-	require.False(t, available, "sw.otelcol.collector.entity_creation resource attribute must be unavailable")
+	heartbeatMetrics := getHeartbeatMetrics(lines)
+	assertHeartbeatMetrics(t, heartbeatMetrics, "emitting_collector_without_entity_heartbeat.json")
 }

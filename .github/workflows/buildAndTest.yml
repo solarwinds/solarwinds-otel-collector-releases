@@ -62,7 +62,6 @@ jobs:
       - name: Docker scout image scan
         uses: ./.github/actions/dockerScoutScan
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
           token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
           current-image: solarwinds-otel-collector
@@ -99,7 +98,6 @@ jobs:
       - name: Docker scout image scan for Windows 2019
         uses: ./.github/actions/dockerScoutScan
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
           token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
           current-image: solarwinds-otel-collector
@@ -110,7 +108,6 @@ jobs:
       - name: Docker scout image scan for Windows 2022
         uses: ./.github/actions/dockerScoutScan
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
           token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
           current-image: solarwinds-otel-collector
@@ -146,7 +143,6 @@ jobs:
       - name: Docker scout image scan
         uses: ./.github/actions/dockerScoutScan
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
           token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
           current-image: solarwinds-otel-collector
@@ -182,7 +178,6 @@ jobs:
       - name: Docker scout image scan for Windows 2019
         uses: ./.github/actions/dockerScoutScan
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
           token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
           current-image: solarwinds-otel-collector
@@ -193,7 +188,6 @@ jobs:
       - name: Docker scout image scan for Windows 2022
         uses: ./.github/actions/dockerScoutScan
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
           token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
           current-image: solarwinds-otel-collector
