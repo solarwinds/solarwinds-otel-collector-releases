@@ -25,7 +25,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/network"
-	"go.opentelemetry.io/collector/pdata/pmetric"
 )
 
 func Test_SwohostmetricsreceiverRuns(t *testing.T) {
@@ -77,36 +76,22 @@ func evaluateSWOHostMetrics(
 	rContainer testcontainers.Container,
 	expectedMetrics []string,
 ) {
-	heartbeatMetricName := "sw.otelcol.uptime"
+	expectedMetricsMap := make(map[string]int, len(expectedMetrics))
+	for _, m := range expectedMetrics {
+		expectedMetricsMap[m] = 0
+	}
 
-	lines, err := loadResultFile(ctx, rContainer, "/tmp/result.json")
+	lines, err := loadResultFile(ctx, rContainer, receivingContainerResultsPath)
 	require.NoError(t, err)
 
-	expectedMetricsMap := initiateFocusedMetricMap(expectedMetrics)
+	nonHeartbeatMetrics := getNonHeartbeatMetrics(lines)
 
-	jum := new(pmetric.JSONUnmarshaler)
-	for _, line := range lines {
-		m, err := jum.UnmarshalMetrics([]byte(line))
-		if err != nil {
-			continue
-		}
-
-		rmCount := m.ResourceMetrics().Len()
-		for rmi := 0; rmi < rmCount; rmi++ {
-
-			smCount := m.ResourceMetrics().At(rmi).ScopeMetrics().Len()
-			for smi := 0; smi < smCount; smi++ {
-
-				mCount := m.ResourceMetrics().At(rmi).ScopeMetrics().At(smi).Metrics().Len()
-				for mi := 0; mi < mCount; mi++ {
+	for _, m := range nonHeartbeatMetrics {
+		for rmi := 0; rmi < m.ResourceMetrics().Len(); rmi++ {
+			for smi := 0; smi < m.ResourceMetrics().At(rmi).ScopeMetrics().Len(); smi++ {
+				for mi := 0; mi < m.ResourceMetrics().At(rmi).ScopeMetrics().At(smi).Metrics().Len(); mi++ {
 					mName := m.ResourceMetrics().At(rmi).ScopeMetrics().At(smi).Metrics().At(mi).Name()
 
-					// Heart beat metric is filtered out.
-					if mName == heartbeatMetricName {
-						continue
-					}
-
-					// Only occurrence on focussed metrics is recorded.
 					if _, found := expectedMetricsMap[mName]; found {
 						expectedMetricsMap[mName]++
 					}
@@ -123,14 +108,4 @@ func evaluateSWOHostMetrics(
 		}
 	}
 	require.False(t, somethingMissed, "all required metrics must arrive")
-}
-
-func initiateFocusedMetricMap(
-	expectedMetrics []string,
-) map[string]int {
-	mm := make(map[string]int, len(expectedMetrics))
-	for _, m := range expectedMetrics {
-		mm[m] = 0
-	}
-	return mm
 }
