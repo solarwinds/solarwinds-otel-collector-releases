@@ -47,6 +47,7 @@ jobs:
   build_and_test:
     name: Build and Test images
     uses: ./.github/workflows/buildAndTest.yml
+    secrets: inherit
 
   deploy_dockerhub:
     runs-on: ubuntu-latest
