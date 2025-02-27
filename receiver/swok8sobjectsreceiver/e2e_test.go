@@ -3,7 +3,7 @@
 
 //go:build e2e
 
-package k8sobjectsreceiver
+package swok8sobjectsreceiver
 
 import (
 	"context"

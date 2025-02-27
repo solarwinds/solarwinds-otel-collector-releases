@@ -249,6 +249,14 @@ github.com/onsi/gomega v0.0.0-20170829124025-dcabb60a477c/go.mod h1:C1qb7wdrVGGV
 github.com/onsi/gomega v1.7.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
 github.com/onsi/gomega v1.19.0 h1:4ieX6qQjPP/BfC3mpsAtIGGlxTWPeA3Inl/7DtXw1tw=
 github.com/onsi/gomega v1.19.0/go.mod h1:LY+I3pBVzYsTBU1AnDwOSxaYi9WoWiqgwooUqq9yPro=
+github.com/open-telemetry/opentelemetry-collector-contrib/pkg/golden v0.119.0 h1:Nc1rvF/hxp8TwYOSsA2qmvIQlS+8lougZsyxcTN6U78=
+github.com/open-telemetry/opentelemetry-collector-contrib/pkg/golden v0.119.0/go.mod h1:7ePS4L6s7UcWxxgIQkAiI5db/OxwRAV9+kziKVIO3Y8=
+github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest v0.119.0 h1:2ztsxw6DH2CbXbykCGgPSZmHHRilNuD06VOfI/z9xGs=
+github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest v0.119.0/go.mod h1:q5LK/pXBToCu4W+tSVWM2ST5jOWqvDMVVCB7TQqhsbY=
+github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatautil v0.119.0 h1:qSnBSa1zO4szSQOrVyinm/9Bg68oYv6NarcaV4Rusr8=
+github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatautil v0.119.0/go.mod h1:udnlBYxPMO+odronKnPfYY8M+BnxfaQFXuJgfI5miUw=
+github.com/open-telemetry/opentelemetry-collector-contrib/pkg/xk8stest v0.119.0 h1:ptDhiLTpUJY+NIq2FoERwipKcZbNW5m62Sd8VXzbt/g=
+github.com/open-telemetry/opentelemetry-collector-contrib/pkg/xk8stest v0.119.0/go.mod h1:qAg6wgkUiX8Ue6cLLsZS//d5TvRPmj8j7ieJbtnpHgY=
 github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
 github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
 github.com/opencontainers/image-spec v1.1.0-rc4 h1:oOxKUJWnFC4YGHCCMNql1x4YaDfYBTS5Y4x/Cgeo1E0=

@@ -1,7 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package k8sobjectsreceiver
+package swok8sobjectsreceiver
 
 import (
 	"path/filepath"
@@ -15,8 +15,8 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	apiWatch "k8s.io/apimachinery/pkg/watch"
 
-	"github.com/open-telemetry/opentelemetry-collector-contrib/internal/k8sconfig"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8sobjectsreceiver/internal/metadata"
+	"github.com/solarwinds/solarwinds-otel-collector/internal/k8sconfig"
+	"github.com/solarwinds/solarwinds-otel-collector/receiver/swok8sobjectsreceiver/internal/metadata"
 )
 
 func TestLoadConfig(t *testing.T) {

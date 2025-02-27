@@ -1,7 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package k8sobjectsreceiver // import "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8sobjectsreceiver"
+package swok8sobjectsreceiver // import "github.com/solarwinds/solarwinds-otel-collector/receiver/swok8sobjectsreceiver"
 
 import (
 	"errors"
@@ -14,7 +14,7 @@ import (
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/dynamic"
 
-	"github.com/open-telemetry/opentelemetry-collector-contrib/internal/k8sconfig"
+	"github.com/solarwinds/solarwinds-otel-collector/internal/k8sconfig"
 )
 
 type mode string

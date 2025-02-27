@@ -1,7 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package k8sobjectsreceiver // import "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8sobjectsreceiver"
+package swok8sobjectsreceiver // import "github.com/solarwinds/solarwinds-otel-collector/receiver/swok8sobjectsreceiver"
 
 import (
 	"context"
@@ -10,8 +10,8 @@ import (
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/receiver"
 
-	"github.com/open-telemetry/opentelemetry-collector-contrib/internal/k8sconfig"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8sobjectsreceiver/internal/metadata"
+	"github.com/solarwinds/solarwinds-otel-collector/internal/k8sconfig"
+	"github.com/solarwinds/solarwinds-otel-collector/receiver/swok8sobjectsreceiver/internal/metadata"
 )
 
 func NewFactory() receiver.Factory {

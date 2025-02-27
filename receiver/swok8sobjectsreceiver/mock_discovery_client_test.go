@@ -1,7 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package k8sobjectsreceiver
+package swok8sobjectsreceiver
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
