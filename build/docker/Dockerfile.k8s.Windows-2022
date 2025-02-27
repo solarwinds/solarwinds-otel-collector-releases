@@ -10,20 +10,11 @@ ARG GOEXPERIMENT=boringcrypto
 
 RUN cd /src/cmd/solarwinds-otel-collector && go build -tags k8s -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
 
-FROM base AS wrapper
-WORKDIR /src/cmd/wrapper
-
-ARG CGO_ENABLED=0
-ARG GOEXPERIMENT=boringcrypto
-
-RUN go build -a -o /src/bin/wrapper.exe
-
 FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
 
 COPY --from=builder /src/bin/solarwinds-otel-collector /solarwinds-otel-collector.exe
-COPY --from=wrapper /src/bin/wrapper.exe /wrapper.exe
 
-ENTRYPOINT ["wrapper.exe"]
-CMD ["solarwinds-otel-collector.exe", "--config=/opt/default-config.yaml"]
+ENTRYPOINT ["solarwinds-otel-collector.exe"]
+CMD ["--config=/opt/default-config.yaml"]
 
 

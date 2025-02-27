@@ -18,23 +18,16 @@ package e2e
 
 import (
 	"context"
-	"io"
-	"log"
-	"strings"
 	"testing"
 
-	"github.com/solarwinds/solarwinds-otel-collector/pkg/version"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest/plogtest"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest/pmetrictest"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest/ptracetest"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
-	"go.opentelemetry.io/collector/pdata/pcommon"
-	"go.opentelemetry.io/collector/pdata/plog"
-	"go.opentelemetry.io/collector/pdata/pmetric"
-	"go.opentelemetry.io/collector/pdata/ptrace"
 )
 
 const (
-	resourceAttributeName                 = "resource.attributes.testing_attribute"
-	resourceAttributeValue                = "testing_value"
 	collectorNameAttributeName            = "sw.otelcol.collector.name"
 	collectorNameAttributeValue           = "testing_collector_name"
 	collectorEntityCreationAttributeName  = "sw.otelcol.collector.entity_creation"
@@ -44,206 +37,82 @@ const (
 func TestMetricStream(t *testing.T) {
 	ctx := context.Background()
 	rContainer := startCollectorContainers(t, ctx, "emitting_collector.yaml", Metrics, collectorRunningPeriod)
-	evaluateMetricsStream(t, ctx, rContainer, samplesCount)
+	evaluateMetricsStream(t, ctx, rContainer)
 }
 
 func TestTracesStream(t *testing.T) {
 	ctx := context.Background()
 	rContainer := startCollectorContainers(t, ctx, "emitting_collector.yaml", Traces, collectorRunningPeriod)
-
-	// Traces coming in couples.
-	expectedTracesCount := samplesCount * 2
-	evaluateTracesStream(t, ctx, rContainer, expectedTracesCount)
+	evaluateTracesStream(t, ctx, rContainer)
 }
 
 func TestLogsStream(t *testing.T) {
 	ctx := context.Background()
 	rContainer := startCollectorContainers(t, ctx, "emitting_collector.yaml", Logs, collectorRunningPeriod)
-	evaluateLogsStream(t, ctx, rContainer, samplesCount)
+	evaluateLogsStream(t, ctx, rContainer)
 }
 
 func evaluateMetricsStream(
 	t *testing.T,
 	ctx context.Context,
 	container testcontainers.Container,
-	expectedCount int,
 ) {
-	// Obtain result from container.
-	lines, err := loadResultFile(ctx, container, "/tmp/result.json")
+	lines, err := loadResultFile(ctx, container, receivingContainerResultsPath)
 	require.NoError(t, err)
 
-	gms := pmetric.NewMetrics()
-	hbms := pmetric.NewMetrics()
-	jum := new(pmetric.JSONUnmarshaler)
-	for _, line := range lines {
-		m, err := jum.UnmarshalMetrics([]byte(line))
-		if err != nil || m.ResourceMetrics().Len() == 0 {
-			continue
-		}
+	heartbeatMetrics := getHeartbeatMetrics(lines)
+	assertHeartbeatMetrics(t, heartbeatMetrics, "emitting_collector_heartbeat.json")
 
-		if m.ResourceMetrics().At(0).ScopeMetrics().Len() == 0 ||
-			m.ResourceMetrics().At(0).ScopeMetrics().At(0).Metrics().Len() == 0 {
-			continue
-		}
+	nonHeartbeatMetrics := getNonHeartbeatMetrics(lines)
+	expectedMetrics := loadExpectedMetrics(t, "test_metrics_stream.json")
 
-		heartbeatMetricName := "sw.otelcol.uptime"
-		generatedMetricName := "gen"
-		metricName := m.ResourceMetrics().At(0).ScopeMetrics().At(0).Metrics().At(0).Name()
-
-		switch metricName {
-		case generatedMetricName:
-			evaluateResourceAttributes(t, m.ResourceMetrics().At(0).Resource().Attributes())
-			m.ResourceMetrics().MoveAndAppendTo(gms.ResourceMetrics())
-		case heartbeatMetricName:
-			m.ResourceMetrics().MoveAndAppendTo(hbms.ResourceMetrics())
-		default:
-			continue
-		}
+	require.Equal(t, len(expectedMetrics), len(nonHeartbeatMetrics), "expected metrics count doesn't match")
+	for i, metric := range nonHeartbeatMetrics {
+		err := pmetrictest.CompareMetrics(expectedMetrics[i], metric, pmetrictest.IgnoreTimestamp(), pmetrictest.IgnoreMetricValues())
+		require.NoError(t, err)
 	}
-	require.Equal(t, gms.MetricCount(), expectedCount)
-	evaluateHeartbeatMetric(t, hbms)
 }
 
 func evaluateTracesStream(
 	t *testing.T,
 	ctx context.Context,
 	container testcontainers.Container,
-	expectedCount int,
 ) {
-	// Obtain result from container.
-	lines, err := loadResultFile(ctx, container, "/tmp/result.json")
+	lines, err := loadResultFile(ctx, container, receivingContainerResultsPath)
 	require.NoError(t, err)
 
-	trs := ptrace.NewTraces()
-	ms := pmetric.NewMetrics()
-	tum := new(ptrace.JSONUnmarshaler)
-	mum := new(pmetric.JSONUnmarshaler)
-	for _, line := range lines {
-		// Traces to process.
-		tr, err := tum.UnmarshalTraces([]byte(line))
-		if err == nil && tr.ResourceSpans().Len() != 0 {
-			evaluateResourceAttributes(t, tr.ResourceSpans().At(0).Resource().Attributes())
-			tr.ResourceSpans().MoveAndAppendTo(trs.ResourceSpans())
-			continue
-		}
+	metrics := getMetrics(lines)
+	assertHeartbeatMetrics(t, metrics, "emitting_collector_heartbeat.json")
 
-		// Metrics to process.
-		m, err := mum.UnmarshalMetrics([]byte(line))
-		if err == nil && m.ResourceMetrics().Len() != 0 {
-			m.ResourceMetrics().MoveAndAppendTo(ms.ResourceMetrics())
-			continue
-		}
+	traces := getTraces(lines)
+	expectedTraces := loadExpectedTraces(t, "test_traces_stream.json")
+
+	require.Equal(t, len(expectedTraces), len(traces), "expected traces count doesn't match")
+	for i, trace := range traces {
+		maskParentSpanID(expectedTraces[i])
+		maskParentSpanID(trace)
+		err := ptracetest.CompareTraces(expectedTraces[i], trace, ptracetest.IgnoreStartTimestamp(), ptracetest.IgnoreEndTimestamp(), ptracetest.IgnoreSpanID(), ptracetest.IgnoreTraceID())
+		require.NoError(t, err)
 	}
-
-	evaluateHeartbeatMetric(t, ms)
-	require.Equal(t, expectedCount, trs.SpanCount())
 }
 
 func evaluateLogsStream(
 	t *testing.T,
 	ctx context.Context,
 	container testcontainers.Container,
-	expectedCount int,
 ) {
-	// Obtain result from container.
-	lines, err := loadResultFile(ctx, container, "/tmp/result.json")
+	lines, err := loadResultFile(ctx, container, receivingContainerResultsPath)
 	require.NoError(t, err)
 
-	lgs := plog.NewLogs()
-	ms := pmetric.NewMetrics()
-	lum := new(plog.JSONUnmarshaler)
-	mum := new(pmetric.JSONUnmarshaler)
-	for _, line := range lines {
-		// Logs to process.
-		lg, err := lum.UnmarshalLogs([]byte(line))
-		if err == nil && lg.ResourceLogs().Len() != 0 {
-			evaluateResourceAttributes(t, lg.ResourceLogs().At(0).Resource().Attributes())
-			lg.ResourceLogs().MoveAndAppendTo(lgs.ResourceLogs())
-			continue
-		}
+	metrics := getMetrics(lines)
+	assertHeartbeatMetrics(t, metrics, "emitting_collector_heartbeat.json")
 
-		// Metrics to process.
-		m, err := mum.UnmarshalMetrics([]byte(line))
-		if err == nil && m.ResourceMetrics().Len() != 0 {
-			m.ResourceMetrics().MoveAndAppendTo(ms.ResourceMetrics())
-			continue
-		}
+	logs := getLogs(lines)
+	expectedLogs := loadExpectedLogs(t, "test_logs_stream.json")
+
+	require.Equal(t, len(expectedLogs), len(logs), "expected logs count doesn't match")
+	for i, log := range logs {
+		err := plogtest.CompareLogs(expectedLogs[i], log, plogtest.IgnoreTimestamp())
+		require.NoError(t, err)
 	}
-
-	evaluateHeartbeatMetric(t, ms)
-	require.Equal(t, expectedCount, lgs.LogRecordCount())
-}
-
-func evaluateHeartbeatMetric(
-	t *testing.T,
-	ms pmetric.Metrics,
-) {
-	require.GreaterOrEqual(t, ms.ResourceMetrics().Len(), 1, "there must be at least one metric")
-	atts := ms.ResourceMetrics().At(0).Resource().Attributes()
-
-	v, available := atts.Get("sw.otelcol.collector.name")
-	require.True(t, available, "sw.otelcol.collector.name resource attribute must be available")
-	require.Equal(t, "testing_collector_name", v.AsString(), "attribute value must be the same")
-
-	v, available = atts.Get("sw.otelcol.collector.version")
-	require.True(t, available, "sw.otelcol.collector.version resource attribute must be available")
-	require.Equal(t, version.Version, v.AsString(), "version attribute doesn't match")
-
-	v2, available2 := atts.Get("custom_attribute")
-	require.True(t, available2, "custom_attribute resource attribute must be available")
-	require.Equal(t, "custom_attribute_value", v2.AsString(), "attribute value must be the same")
-
-	v3, available3 := atts.Get("sw.otelcol.collector.entity_creation")
-	require.True(t, available3, "sw.otelcol.collector.entity_creation resource attribute must be available")
-	require.Equal(t, "on", v3.AsString(), "attribute value must be the same")
-}
-
-func evaluateResourceAttributes(
-	t *testing.T,
-	atts pcommon.Map,
-) {
-	// Evaluate testing attribute.
-	val, ok := atts.Get(resourceAttributeName)
-	require.True(t, ok, "testing attribute must exist")
-	require.Equal(t, val.AsString(), resourceAttributeValue, "testing attribute value must be the same")
-
-	// Evaluate collector name as an attribute.
-	val, ok = atts.Get(collectorNameAttributeName)
-	require.True(t, ok, "collector name attribute must exist")
-	require.Equal(
-		t,
-		val.AsString(),
-		collectorNameAttributeValue,
-		"collector name attribute value must be as configured",
-	)
-
-	// Evaluate entity_creation attribute.
-	val, ok = atts.Get(collectorEntityCreationAttributeName)
-	require.True(t, ok, "collector entity_creation attribute must exist")
-	require.Equal(
-		t,
-		val.AsString(),
-		collectorEntityCreationAttributeValue,
-		"collector entity_creation attribute value must be as configured",
-	)
-}
-
-func loadResultFile(
-	ctx context.Context,
-	container testcontainers.Container,
-	resultFilePath string,
-) ([]string, error) {
-	r, err := container.CopyFileFromContainer(ctx, resultFilePath)
-	if err != nil {
-		return make([]string, 0), err
-	}
-
-	content, err := io.ReadAll(r)
-	if err != nil {
-		return make([]string, 0), err
-	}
-
-	log.Print("*** raw result content:\n" + string(content) + "\n")
-	lines := strings.Split(string(content), "\n")
-	return lines, nil
 }
