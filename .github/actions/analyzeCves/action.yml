@@ -14,7 +14,7 @@ runs:
       uses: docker/scout-action@v1
       with:
         command: cves
-        image: solarwinds-otel-collector:${{ inputs.tag }}
+        image: ${{ env.DOCKERHUB_IMAGE }}:${{ inputs.tag }}
         sarif-file: sarif-${{ inputs.tag }}.output.json
         summary: true
 
