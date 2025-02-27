@@ -142,22 +142,22 @@ jobs:
       - name: Analyze cves Windows 2022
         uses: ./.github/actions/analyzeCves
         with:
-          tag: ${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022
+          tag: ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022
 
       - name: Analyze cves Windows 2019
         uses: ./.github/actions/analyzeCves
         with:
-          tag: ${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019
+          tag: ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019
 
       - name: Analyze cves Windows 2022 k8s
         uses: ./.github/actions/analyzeCves
         with:
-          tag: ${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s
+          tag: ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s
 
       - name: Analyze cves Windows 2019 k8s
         uses: ./.github/actions/analyzeCves
         with:
-          tag: ${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s
+          tag: ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s
 
       - name: Login to Docker to use Docker Hub
         uses: docker/login-action@v3

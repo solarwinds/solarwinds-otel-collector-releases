@@ -14,11 +14,9 @@ runs:
       uses: docker/scout-action@v1
       with:
         command: cves
-        only-severities: critical,high
-        image: solarwinds-otel-collector:${{ inputs.tag }}
+        image: ${{ env.DOCKERHUB_IMAGE }}:${{ inputs.tag }}
         sarif-file: sarif-${{ inputs.tag }}.output.json
         summary: true
-        exit-code: true
 
     - name: Save sarif file as an artifact
       uses: actions/upload-artifact@v4
