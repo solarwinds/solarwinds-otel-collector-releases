@@ -1,4 +1,4 @@
-k8sobjects:
+swok8sobjects:
   objects:
     - name: pods
       mode: pull
@@ -9,14 +9,14 @@ k8sobjects:
       group: events.k8s.io
       namespaces: [default]
       exclude_watch_type: [DELETED]
-k8sobjects/pull_with_resource:
+swok8sobjects/pull_with_resource:
   objects:
     - name: pods
       mode: pull
       resource_version: "1"
     - name: events
       mode: pull
-k8sobjects/watch_with_resource:
+swok8sobjects/watch_with_resource:
   objects:
     - name: events
       mode: watch
@@ -27,11 +27,11 @@ k8sobjects/watch_with_resource:
       group: events.k8s.io
       namespaces: [default]
       resource_version: "2"
-k8sobjects/invalid_resource:
+swok8sobjects/invalid_resource:
   objects:
     - name: fake_resource
       mode: watch
-k8sobjects/exclude_deleted_with_pull:
+swok8sobjects/exclude_deleted_with_pull:
   objects:
     - name: events
       mode: pull

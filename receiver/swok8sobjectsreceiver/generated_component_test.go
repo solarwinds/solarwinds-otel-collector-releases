@@ -16,7 +16,7 @@ import (
 )
 
 func TestComponentFactoryType(t *testing.T) {
-	require.Equal(t, "k8sobjects", NewFactory().Type().String())
+	require.Equal(t, "swok8sobjects", NewFactory().Type().String())
 }
 
 func TestComponentConfigStruct(t *testing.T) {
