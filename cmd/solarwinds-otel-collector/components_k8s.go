@@ -32,6 +32,7 @@ import (
 	"github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexporter"
 	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension"
 	"github.com/solarwinds/solarwinds-otel-collector/k8s/connectioncheck"
+	"github.com/solarwinds/solarwinds-otel-collector/processor/k8seventgenerationprocessor"
 
 	"go.opentelemetry.io/collector/connector"
 	"go.opentelemetry.io/collector/connector/forwardconnector"
@@ -112,6 +113,7 @@ func components() (otelcol.Factories, error) {
 		transformprocessor.NewFactory(),
 		memorylimiterprocessor.NewFactory(),
 		batchprocessor.NewFactory(),
+		k8seventgenerationprocessor.NewFactory(),
 	)
 
 	if err != nil {

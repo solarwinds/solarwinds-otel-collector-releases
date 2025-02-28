@@ -164,10 +164,11 @@ require (
 	github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexporter v0.119.0
 	github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension v0.119.0
 	github.com/solarwinds/solarwinds-otel-collector/pkg/version v0.119.0
+	github.com/solarwinds/solarwinds-otel-collector/processor/k8seventgenerationprocessor v0.119.0
 	github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver v0.119.0
 	github.com/spf13/cobra v1.8.1
 	go.opentelemetry.io/collector/component v0.119.0
-	go.opentelemetry.io/collector/confmap v1.25.0
+	go.opentelemetry.io/collector/confmap v1.26.0
 	go.opentelemetry.io/collector/confmap/provider/envprovider v1.25.0
 	go.opentelemetry.io/collector/confmap/provider/fileprovider v1.25.0
 	go.opentelemetry.io/collector/confmap/provider/httpprovider v1.25.0
@@ -734,3 +735,5 @@ replace github.com/solarwinds/solarwinds-otel-collector/pkg/testutil => ../../pk
 replace github.com/solarwinds/solarwinds-otel-collector/pkg/version => ../../pkg/version
 
 replace github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver => ../../receiver/swohostmetricsreceiver
+
+replace github.com/solarwinds/solarwinds-otel-collector/processor/k8seventgenerationprocessor => ../../processor/k8seventgenerationprocessor
