@@ -20,6 +20,7 @@ body:
         - exporter/solarwindsexporter
         - extension/solarwindsextension
         - receiver/swohostmetricsreceiver
+        - processor/k8seventgenerationprocessor
   - type: textarea
     attributes:
       label: Description

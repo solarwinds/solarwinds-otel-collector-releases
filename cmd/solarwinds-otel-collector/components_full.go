@@ -26,6 +26,7 @@ import (
 
 	"github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexporter"
 	"github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension"
+	"github.com/solarwinds/solarwinds-otel-collector/processor/k8seventgenerationprocessor"
 
 	// extensions
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/ackextension"
@@ -370,6 +371,7 @@ func components() (otelcol.Factories, error) {
 		transformprocessor.NewFactory(),
 		batchprocessor.NewFactory(),
 		memorylimiterprocessor.NewFactory(),
+		k8seventgenerationprocessor.NewFactory(),
 	)
 
 	if err != nil {
