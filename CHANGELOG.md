@@ -3,7 +3,7 @@
 ## vNext
 
 ## v0.119.1
-- Utilize `pdatatest` for specific E2E tests.
+- Utilizes `pdatatest` for specific E2E tests.
 - SolarWinds-specific packages are tagged and can be referenced from other repositories.
 - Adds custom `k8seventgenerationprocessor` to transform K8S entities change events to logs.
 - Removes opentelemetry-collector wrapper used for corruption prevention as newly introduced `fsync@v0.96.0` solves the issue.
