@@ -586,7 +586,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/snowflakedb/gosnowflake v1.12.0 // indirect
 	github.com/soheilhy/cmux v0.1.5 // indirect
-	github.com/solarwinds/solarwinds-otel-collector/pkg/testutil v0.119.0 // indirect
+	github.com/solarwinds/solarwinds-otel-collector/pkg/testutil v0.119.1 // indirect
 	github.com/solarwindscloud/apm-proto v1.0.8 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
@@ -735,3 +735,5 @@ replace github.com/solarwinds/solarwinds-otel-collector/pkg/testutil => ../../pk
 replace github.com/solarwinds/solarwinds-otel-collector/pkg/version => ../../pkg/version
 
 replace github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver => ../../receiver/swohostmetricsreceiver
+
+replace github.com/solarwinds/solarwinds-otel-collector/processor/k8seventgenerationprocessor => ../../processor/k8seventgenerationprocessor
