@@ -77,3 +77,6 @@ require (
 )
 
 replace github.com/solarwinds/solarwinds-otel-collector/pkg/version => ../../pkg/version
+
+// Temporary fix for https://github.com/solarwinds/solarwinds-otel-collector/security/code-scanning/5
+replace golang.org/x/crypto => golang.org/x/crypto v0.35.0

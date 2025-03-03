@@ -697,7 +697,7 @@ require (
 	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/oauth2 v0.26.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
-	golang.org/x/term v0.28.0 // indirect
+	golang.org/x/term v0.29.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/time v0.9.0 // indirect
 	golang.org/x/tools v0.29.0 // indirect
@@ -737,3 +737,6 @@ replace github.com/solarwinds/solarwinds-otel-collector/pkg/version => ../../pkg
 replace github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver => ../../receiver/swohostmetricsreceiver
 
 replace github.com/solarwinds/solarwinds-otel-collector/processor/k8seventgenerationprocessor => ../../processor/k8seventgenerationprocessor
+
+// Temporary fix for https://github.com/solarwinds/solarwinds-otel-collector/security/code-scanning/5
+replace golang.org/x/crypto => golang.org/x/crypto v0.35.0
