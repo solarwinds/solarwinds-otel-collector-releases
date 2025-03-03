@@ -5,7 +5,7 @@ go 1.23.4
 require (
 	github.com/mdelapenya/tlscert v0.1.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest v0.119.0
-	github.com/solarwinds/solarwinds-otel-collector/pkg/version v0.119.1
+	github.com/solarwinds/solarwinds-otel-collector/pkg/version v0.119.2
 	github.com/stretchr/testify v1.10.0
 	github.com/testcontainers/testcontainers-go v0.35.0
 	go.opentelemetry.io/collector/pdata v1.25.0
@@ -77,3 +77,6 @@ require (
 )
 
 replace github.com/solarwinds/solarwinds-otel-collector/pkg/version => ../../pkg/version
+
+// Temporary fix for https://github.com/solarwinds/solarwinds-otel-collector/issues/69
+replace golang.org/x/crypto => golang.org/x/crypto v0.35.0
