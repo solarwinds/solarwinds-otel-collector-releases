@@ -738,8 +738,8 @@ replace github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsr
 
 replace github.com/solarwinds/solarwinds-otel-collector/processor/k8seventgenerationprocessor => ../../processor/k8seventgenerationprocessor
 
-// Temporary fix for https://github.com/solarwinds/solarwinds-otel-collector/security/code-scanning/5
+// Temporary fix for https://github.com/solarwinds/solarwinds-otel-collector/issues/69
 replace golang.org/x/crypto => golang.org/x/crypto v0.35.0
 
-// Temporary fix for https://github.com/solarwinds/solarwinds-otel-collector/security/code-scanning/4
+// Temporary fix for https://github.com/solarwinds/solarwinds-otel-collector/issues/69
 replace golang.org/x/oauth2 => golang.org/x/oauth2 v0.27.0
