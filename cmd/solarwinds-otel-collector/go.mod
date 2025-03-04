@@ -746,3 +746,6 @@ replace github.com/solarwinds/solarwinds-otel-collector/internal/k8sconfig => ..
 
 // Temporary fix for https://github.com/solarwinds/solarwinds-otel-collector/issues/69
 replace golang.org/x/crypto => golang.org/x/crypto v0.35.0
+
+// Temporary fix for https://github.com/solarwinds/solarwinds-otel-collector/issues/69
+replace golang.org/x/oauth2 => golang.org/x/oauth2 v0.27.0
