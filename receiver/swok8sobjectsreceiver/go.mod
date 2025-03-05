@@ -7,7 +7,7 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/pkg/golden v0.119.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest v0.119.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/pkg/xk8stest v0.119.0
-	github.com/solarwinds/solarwinds-otel-collector/internal/k8sconfig v0.119.0
+	github.com/solarwinds/solarwinds-otel-collector/internal/k8sconfig v0.119.2
 	github.com/stretchr/testify v1.10.0
 	go.opentelemetry.io/collector/component v0.119.0
 	go.opentelemetry.io/collector/component/componenttest v0.119.0
