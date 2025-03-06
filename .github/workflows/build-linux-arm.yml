@@ -33,7 +33,7 @@ jobs:
         # If on main
         uses: ./.github/actions/uploadDockerImage
         with:
-          image_tag: ${{ needs.generate_tag.outputs.tag }}
+          image_tag: ${{ needs.generate_tag.outputs.tag }}-arm
 
   build-k8s:
     runs-on: ubuntu-24.04-arm
@@ -45,10 +45,10 @@ jobs:
       - name: Build K8S ARM Image
         run: >
           docker build . --file build/docker/Dockerfile.k8s
-          --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-k8s
+          --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-k8s-arm
 
       - name: Upload K8S ARM Image
         # If on main
         uses: ./.github/actions/uploadDockerImage
         with:
-          image_tag: ${{ needs.generate_tag.outputs.tag }}
+          image_tag: ${{ needs.generate_tag.outputs.tag }}-k8s-arm
