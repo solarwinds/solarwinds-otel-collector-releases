@@ -1,10 +1,11 @@
 name: Build and Test Images
 
 on:
-  pull_request:
-    branches:
-      - main
-      - 'release/**'
+# Ignore for testing purposes
+#  pull_request:
+#    branches:
+#      - main
+#      - 'release/**'
   push:
     branches:
       - main
