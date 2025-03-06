@@ -7,6 +7,9 @@ on:
       - main
       - 'release/**'
 
+env:
+  DOCKERHUB_IMAGE: solarwinds/solarwinds-otel-collector
+
 # Run linux amd, k8s linux amd
 jobs:
   checks:
