@@ -1,6 +1,12 @@
+name: new build windows
+
 on:
   workflow_call:
   workflow_dispatch:
+  pull_request: # Remove later
+    branches:
+      - main
+      - 'release/**'
 
 jobs:
   generate_tag:
@@ -11,7 +17,7 @@ jobs:
     runs-on: windows-2022
     # this job takes a long time to run (20 minutes), so run it on main and release branches to have some continuous check that build on windows
     # still works. Also run it on workflow_dispatch to allow manual runs.
-    if: github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch'
+    # if: github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch'
     needs: generate_tag
     steps:
       - name: Checkout
