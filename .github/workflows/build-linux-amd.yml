@@ -62,7 +62,7 @@ jobs:
 
       - name: Upload image
         # If on main
-        uses: ./.github/actions/uploadDockerFile
+        uses: ./.github/actions/uploadDockerImage
         with:
           image_tag: ${{ needs.generate_tag.outputs.tag }}
 
@@ -91,7 +91,7 @@ jobs:
 
       - name: Upload image
         # If on main
-        uses: ./.github/actions/uploadDockerFile
+        uses: ./.github/actions/uploadDockerImage
         with:
           image_tag: ${{ needs.generate_tag.outputs.tag }}-k8s
 

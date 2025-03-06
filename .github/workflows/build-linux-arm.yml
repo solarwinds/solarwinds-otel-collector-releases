@@ -27,11 +27,11 @@ jobs:
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-arm
 
 #      - name: Docker scout image scan
-#        does it makes sense to compare architectures, or it makes sense do do it once let's say for AMD?
+#        does it make sense to compare architectures, or it makes sense do it once let's say for AMD?
 
       - name: Upload AMR Image
         # If on main
-        uses: ./.github/actions/uploadDockerFile
+        uses: ./.github/actions/uploadDockerImage
         with:
           image_tag: ${{ needs.generate_tag.outputs.tag }}
 
@@ -49,6 +49,6 @@ jobs:
 
       - name: Upload K8S ARM Image
         # If on main
-        uses: ./.github/actions/uploadDockerFile
+        uses: ./.github/actions/uploadDockerImage
         with:
           image_tag: ${{ needs.generate_tag.outputs.tag }}
