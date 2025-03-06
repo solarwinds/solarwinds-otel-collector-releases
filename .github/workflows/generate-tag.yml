@@ -1,5 +1,8 @@
 on:
   workflow_call:
+    outputs:
+      description: Generated tag
+      tag: ${{ jobs.generate_tag.outputs.tag }}
 
 jobs:
   generate_tag:
