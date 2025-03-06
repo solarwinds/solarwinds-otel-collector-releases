@@ -16,5 +16,5 @@ runs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: linux-${{ inputs.image_tag }}
+        name: linux-image-${{ inputs.image_tag }}
         path: ${{ inputs.image_tag }}.tar
