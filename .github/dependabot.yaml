@@ -39,6 +39,23 @@ updates:
       opentelemetry:
         patterns:
           - "*opentelemetry*"
+    commit-message:
+      prefix: "chore: "
+  
+  - package-ecosystem: gomod
+    directories:
+      - "**/*"
+    schedule:
+      interval: daily
+      time: "03:00"
+    allow:
+      - dependency-type: "all"
+    ignore:
+      - dependency-name: "github.com/open-telemetry/opentelemetry-collector-contrib*"
+      - dependency-name: "go.opentelemetry.io/collector*"
+    reviewers:
+      - "solarwinds-cloud/eng-plumbus-team"
+    groups:
       security:
         applies-to: security-updates
         patterns:
