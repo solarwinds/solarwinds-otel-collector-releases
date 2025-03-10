@@ -53,6 +53,8 @@ updates:
     ignore:
       - dependency-name: "github.com/open-telemetry/opentelemetry-collector-contrib*"
       - dependency-name: "go.opentelemetry.io/collector*"
+    # Disable version updates
+    open-pull-requests-limit: 0
     reviewers:
       - "solarwinds-cloud/eng-plumbus-team"
     groups:
