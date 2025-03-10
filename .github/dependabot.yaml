@@ -29,24 +29,15 @@ updates:
 
   - package-ecosystem: gomod
     directories:
-      - "/cmd/solarwinds-otel-collector"
-      - "/extension/solarwindsextension"
-      - "/processor/k8seventgenerationprocessor"
-      - "/receiver/swohostmetricsreceiver"
-      - "/receiver/swok8sobjectsreceiver"
-      - "/internal/tools"
-      - "/internal/k8sconfig"
-      - "/internal/e2e"
-      - "/pkg/version"
-      - "/pkg/testutil"
+      - "**/*"
     schedule:
       interval: weekly
       day: sunday
     allow:
       - dependency-type: "direct"
     groups:
-      go-dependencies:
+      opentelemetry:
         patterns:
-          - "*"
+          - "*opentelemetry*"
     commit-message:
       prefix: "chore: "
