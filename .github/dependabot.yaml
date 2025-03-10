@@ -29,17 +29,43 @@ updates:
 
   - package-ecosystem: gomod
     directories:
-      - "**/*"
+      - "cmd/solarwinds-otel-collector"
     schedule:
       interval: weekly
       day: sunday
     allow:
       - dependency-type: "direct"
     groups:
-      opentelemetry:
+      collector-opentelemetry:
         patterns:
           - "*opentelemetry*"
-      security:
+      collector-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "*opentelemetry*"
+        update-types:
+          - "patch"
+          - "minor"
+
+  - package-ecosystem: gomod
+    directories:
+      - "/extension/*/"
+      - "/processor/*/"
+      - "/receiver/*/"
+      - "/internal/*/"
+      - "/pkg/*/"
+    schedule:
+      interval: weekly
+      day: sunday
+    allow:
+      - dependency-type: "direct"
+    groups:
+      components-opentelemetry:
+        patterns:
+          - "*opentelemetry*"
+      components-security:
         applies-to: security-updates
         patterns:
           - "*"
