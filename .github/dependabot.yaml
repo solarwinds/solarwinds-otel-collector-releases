@@ -28,99 +28,15 @@ updates:
       prefix: "chore: "
 
   - package-ecosystem: gomod
-    directory: "/cmd/solarwinds-otel-collector"
-    schedule:
-      interval: weekly
-      day: sunday
-    allow:
-      - dependency-type: "direct"
-    groups:
-      collector-opentelemetry:
-        patterns:
-        - "*opentelemetry*"
-        - "*solarwinds-otel-collector*"
-      collector-miscellaneous:
-        exclude-patterns:
-          - "*opentelemetry*"
-          - "*solarwinds-otel-collector*"
-    commit-message:
-      prefix: "chore: "
-
-  - package-ecosystem: gomod
-    directory: "/extension/solarwindsextension"
-    schedule:
-      interval: weekly
-      day: sunday
-    allow:
-      - dependency-type: "direct"
-    groups:
-      solarwindsextension:
-        patterns:
-          - "*"
-    commit-message:
-      prefix: "chore: "
-
-  - package-ecosystem: gomod
-    directory: "/processor/k8seventgenerationprocessor"
-    schedule:
-      interval: weekly
-      day: sunday
-    allow:
-      - dependency-type: "direct"
-    groups:
-      k8seventgenerationprocessor:
-        patterns:
-          - "*"
-    commit-message:
-      prefix: "chore: "
-
-  - package-ecosystem: gomod
     directories:
+      - "/cmd/solarwinds-otel-collector"
+      - "/extension/solarwindsextension"
+      - "/processor/k8seventgenerationprocessor"
+      - "/receiver/swohostmetricsreceiver"
+      - "/receiver/swok8sobjectsreceiver"
       - "/internal/tools"
       - "/internal/k8sconfig"
       - "/internal/e2e"
-    schedule:
-      interval: weekly
-      day: sunday
-    allow:
-      - dependency-type: "direct"
-    groups:
-      internal:
-        patterns:
-          - "*"
-    commit-message:
-      prefix: "chore: "
-
-  - package-ecosystem: gomod
-    directory: "/receiver/swohostmetricsreceiver"
-    schedule:
-      interval: weekly
-      day: sunday
-    allow:
-      - dependency-type: "direct"
-    groups:
-      swohostmetricsreceiver:
-        patterns:
-          - "*"
-    commit-message:
-      prefix: "chore: "
-
-  - package-ecosystem: gomod
-    directory: "/receiver/swok8sobjectsreceiver"
-    schedule:
-      interval: weekly
-      day: sunday
-    allow:
-      - dependency-type: "direct"
-    groups:
-      swohostmetricsreceiver:
-        patterns:
-          - "*"
-    commit-message:
-      prefix: "chore: "
-
-  - package-ecosystem: gomod
-    directories:
       - "/pkg/version"
       - "/pkg/testutil"
     schedule:
@@ -129,7 +45,7 @@ updates:
     allow:
       - dependency-type: "direct"
     groups:
-      pkg:
+      go-dependencies:
         patterns:
           - "*"
     commit-message:
