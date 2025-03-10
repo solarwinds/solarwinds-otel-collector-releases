@@ -39,5 +39,12 @@ updates:
       opentelemetry:
         patterns:
           - "*opentelemetry*"
+      security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+          - "minor"
     commit-message:
       prefix: "chore: "
