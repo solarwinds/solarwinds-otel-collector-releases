@@ -37,9 +37,23 @@ updates:
     allow:
       - dependency-type: "direct"
     groups:
+      collector-other:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "*opentelemetry*"
       collector-opentelemetry:
         patterns:
           - "*opentelemetry*"
+      collector-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "*opentelemetry*"
+        update-types:
+          - "patch"
+          - "minor"
     commit-message:
       prefix: "chore: "
 
@@ -57,22 +71,15 @@ updates:
     allow:
       - dependency-type: "direct"
     groups:
+      components-other:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "*opentelemetry*"
       components-opentelemetry:
         patterns:
           - "*opentelemetry*"
-    commit-message:
-      prefix: "chore: "
-
-  - package-ecosystem: gomod
-    directories:
-      - "**/*"
-    schedule:
-      interval: daily
-      time: "03:30"
-    allow:
-      - dependency-type: "direct"
-    groups:
-      security:
+      components-security:
         applies-to: security-updates
         patterns:
           - "*"
@@ -83,4 +90,3 @@ updates:
           - "minor"
     commit-message:
       prefix: "chore: "
-
