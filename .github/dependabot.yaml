@@ -8,7 +8,7 @@ updates:
       - Skip Changelog
     schedule:
       interval: weekly
-      day: sunday
+      day: saturday
     commit-message:
       prefix: "chore: "
 
@@ -19,7 +19,7 @@ updates:
       - docker
     schedule:
       interval: weekly
-      day: sunday
+      day: saturday
     groups:
       docker:
         patterns:
@@ -33,21 +33,15 @@ updates:
     schedule:
       interval: weekly
       day: sunday
+      hour: "03:00"
     allow:
       - dependency-type: "direct"
     groups:
       collector-opentelemetry:
         patterns:
           - "*opentelemetry*"
-      collector-security:
-        applies-to: security-updates
-        patterns:
-          - "*"
-        exclude-patterns:
-          - "*opentelemetry*"
-        update-types:
-          - "patch"
-          - "minor"
+    commit-message:
+      prefix: "chore: "
 
   - package-ecosystem: gomod
     directories:
@@ -59,13 +53,26 @@ updates:
     schedule:
       interval: weekly
       day: sunday
+      hour: "03:30"
     allow:
       - dependency-type: "direct"
     groups:
       components-opentelemetry:
         patterns:
           - "*opentelemetry*"
-      components-security:
+    commit-message:
+      prefix: "chore: "
+
+  - package-ecosystem: gomod
+    directories:
+      - "**/*"
+    schedule:
+      interval: daily
+      hour: "03:30"
+    allow:
+      - dependency-type: "direct"
+    groups:
+      security:
         applies-to: security-updates
         patterns:
           - "*"
