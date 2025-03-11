@@ -33,7 +33,7 @@ updates:
     schedule:
       interval: weekly
       day: sunday
-      hour: "03:00"
+      time: "03:00"
     allow:
       - dependency-type: "direct"
     groups:
@@ -53,7 +53,7 @@ updates:
     schedule:
       interval: weekly
       day: sunday
-      hour: "03:30"
+      time: "03:30"
     allow:
       - dependency-type: "direct"
     groups:
@@ -68,7 +68,7 @@ updates:
       - "**/*"
     schedule:
       interval: daily
-      hour: "03:30"
+      time: "03:30"
     allow:
       - dependency-type: "direct"
     groups:
