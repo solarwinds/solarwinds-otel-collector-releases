@@ -296,6 +296,9 @@ func (kr *k8sobjectsreceiver) watchEventToLogData(ctx context.Context, event *ap
 		return fmt.Errorf("received data that wasnt unstructure, %v", event)
 	}
 
+	// clear out managed fields
+	udata.SetManagedFields(nil)
+
 	key := getKey(udata)
 	hashes, err := getObjectHashes(udata)
 	if err != nil {
@@ -390,7 +393,6 @@ func (kr *k8sobjectsreceiver) loadStorage(ctx context.Context, storage *objectst
 func getObjectHashes(udata *unstructured.Unstructured) (*objecthashes, error) {
 	udataCopy := udata.DeepCopy()
 	udataCopy.SetResourceVersion("") // do not report changes in resource version
-	udataCopy.SetManagedFields(nil)  // do not report changes in managed fields
 
 	metadataHash, err := getHash(udataCopy, "metadata")
 	if err != nil {
