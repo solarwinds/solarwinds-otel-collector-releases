@@ -161,12 +161,12 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/windowsperfcountersreceiver v0.119.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zipkinreceiver v0.119.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zookeeperreceiver v0.119.0
-	github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexporter v0.119.4
-	github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension v0.119.4
-	github.com/solarwinds/solarwinds-otel-collector/pkg/version v0.119.4
-	github.com/solarwinds/solarwinds-otel-collector/processor/k8seventgenerationprocessor v0.119.4
-	github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver v0.119.4
-	github.com/solarwinds/solarwinds-otel-collector/receiver/swok8sobjectsreceiver v0.119.4
+	github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexporter v0.119.5
+	github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension v0.119.5
+	github.com/solarwinds/solarwinds-otel-collector/pkg/version v0.119.5
+	github.com/solarwinds/solarwinds-otel-collector/processor/k8seventgenerationprocessor v0.119.5
+	github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver v0.119.5
+	github.com/solarwinds/solarwinds-otel-collector/receiver/swok8sobjectsreceiver v0.119.5
 	github.com/spf13/cobra v1.8.1
 	go.opentelemetry.io/collector/component v0.119.0
 	go.opentelemetry.io/collector/confmap v1.26.0
@@ -587,8 +587,8 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/snowflakedb/gosnowflake v1.12.0 // indirect
 	github.com/soheilhy/cmux v0.1.5 // indirect
-	github.com/solarwinds/solarwinds-otel-collector/internal/k8sconfig v0.119.4 // indirect
-	github.com/solarwinds/solarwinds-otel-collector/pkg/testutil v0.119.4 // indirect
+	github.com/solarwinds/solarwinds-otel-collector/internal/k8sconfig v0.119.5 // indirect
+	github.com/solarwinds/solarwinds-otel-collector/pkg/testutil v0.119.5 // indirect
 	github.com/solarwindscloud/apm-proto v1.0.8 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
