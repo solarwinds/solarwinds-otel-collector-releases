@@ -1,6 +1,8 @@
 module github.com/solarwinds/solarwinds-otel-collector/internal/k8sconfig
 
-go 1.22.0
+go 1.23.0
+
+toolchain go1.23.2
 
 require (
 	github.com/openshift/client-go v0.0.0-20210521082421-73d9475a9142
@@ -33,11 +35,11 @@ require (
 	github.com/openshift/api v3.9.0+incompatible // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
-	golang.org/x/net v0.33.0 // indirect
+	golang.org/x/net v0.36.0 // indirect
 	golang.org/x/oauth2 v0.21.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/term v0.27.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/term v0.29.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/time v0.4.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
