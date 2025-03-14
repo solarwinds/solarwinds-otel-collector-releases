@@ -154,7 +154,7 @@ jobs:
     runs-on: windows-2022
     # this job takes a long time to run (10 minutes), so run it on main and release branches to have some continuous check that build on windows
     # still works. Also run it on workflow_dispatch to allow manual runs.
-    if: github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    # if: github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     needs: generate_tag
     steps:
       - name: Checkout
@@ -210,7 +210,7 @@ jobs:
 
   write_docker_scout_info_comment:
     runs-on: ubuntu-latest
-    needs: ['build_and_test', 'build_k8s']
+    needs: ['build_and_test', 'build_k8s', 'build_windows_k8s']
     if: |
       !contains(needs.*.result, 'failure') &&
       github.event_name == 'pull_request'
