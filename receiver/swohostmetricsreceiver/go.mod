@@ -1,6 +1,6 @@
 module github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver
 
-go 1.23.4
+go 1.23.6
 
 require (
 	github.com/go-ole/go-ole v1.3.0
