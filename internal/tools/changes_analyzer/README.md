@@ -1,6 +1,7 @@
 # OpenTelemetry Changes Analyzer
 
 This tool analyzes changes in the [OpenTelemetry Collector Contrib](https://github.com/open-telemetry/opentelemetry-collector-contrib) repository between two specified versions. It generates a Markdown summary of breaking changes, deprecations, and enhancements for components used in your project, perfect for GitHub comments or documentation.
+Tool also supports [OpenTelemetry Collector](https://github.com/open-telemetry/opentelemetry-collector) and potentially other OpenTelemetry repositories that use the same release notes formatting.
 
 ## Purpose
 
@@ -11,14 +12,8 @@ This tool analyzes changes in the [OpenTelemetry Collector Contrib](https://gith
 
 ## Running the Tool
 Run the tool with the following command, adjusting paths and versions as needed:
-```
-go run ./main.go 
-  --old v0.119.0 
-  --new v0.121.0 
-  --goModPath ./../../../cmd/solarwinds-otel-collector/go.mod 
-  --dependencyFilter opentelemetry-collector-contrib 
-  --repo opentelemetry-collector-contrib
-```
+
+go run main.go --old v0.119.0 --new v0.121.0 --goModPath /path/to/your/go.mod --dependencyFilter opentelemetry-collector-contrib --encode
 
 --old: Starting version (e.g., v0.119.0).
 --new: Ending version (e.g., v0.121.0).
