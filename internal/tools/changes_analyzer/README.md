@@ -12,8 +12,19 @@ Tool also supports [OpenTelemetry Collector](https://github.com/open-telemetry/o
 
 ## Running the Tool
 Run the tool with the following command, adjusting paths and versions as needed:
+```
+go run main.go 
+  --old v0.119.0 
+  --new v0.121.0 
+  --goModPath /path/to/your/go.mod 
+  --dependencyFilter opentelemetry-collector-contrib 
+  --encode
+```
 
-go run main.go --old v0.119.0 --new v0.121.0 --goModPath /path/to/your/go.mod --dependencyFilter opentelemetry-collector-contrib --encode
+For testing, it is recommended to test with just one component.
+```
+go run ./main.go --old v0.114.0 --new v0.122.0 --components elasticsearchexporter --repo opentelemetry-collector-contrib
+```
 
 --old: Starting version (e.g., v0.119.0).
 --new: Ending version (e.g., v0.121.0).
@@ -21,6 +32,7 @@ go run main.go --old v0.119.0 --new v0.121.0 --goModPath /path/to/your/go.mod --
 --dependencyFilter: Filters components from go.mod (e.g., opentelemetry-collector-contrib).
 --encode: Flag to base64 encode the output.
 --repo: OpenTelemetry repository name, as used in URL.
+--components: Comma separated list of components (e.g. elasticsearchexporter). Wne used, ommit goModPath and dependencyFilter parameters.
 
 # Example Output
 
