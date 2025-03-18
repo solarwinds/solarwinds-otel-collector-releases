@@ -11,8 +11,14 @@ This tool analyzes changes in the [OpenTelemetry Collector Contrib](https://gith
 
 ## Running the Tool
 Run the tool with the following command, adjusting paths and versions as needed:
-
-go run main.go --old v0.119.0 --new v0.121.0 --goModPath /path/to/your/go.mod --dependencyFilter opentelemetry-collector-contrib --encode
+```
+go run ./main.go 
+  --old v0.119.0 
+  --new v0.121.0 
+  --goModPath ./../../../cmd/solarwinds-otel-collector/go.mod 
+  --dependencyFilter opentelemetry-collector-contrib 
+  --repo opentelemetry-collector-contrib
+```
 
 --old: Starting version (e.g., v0.119.0).
 --new: Ending version (e.g., v0.121.0).

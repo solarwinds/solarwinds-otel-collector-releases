@@ -155,7 +155,18 @@ func extractReleaseSections(htmlContent string, sectionPhrases map[string]string
 						for _, line := range lines {
 							trimmed := strings.TrimSpace(line)
 							if trimmed != "" {
-								changes = append(changes, trimmed)
+								if strings.Contains(trimmed, ":") {
+									// Append as new element if line contains ":"
+									// Lines like that most likely contain the component name.
+									changes = append(changes, trimmed)
+								} else if len(changes) > 0 {
+									// Merge with previous element using newline if no ":" and array not empty
+									// There is probably no mention of any component on this line, so append it behind the previous row
+									changes[len(changes)-1] = changes[len(changes)-1] + "\n    " + trimmed
+								} else {
+									// Append as new element if no ":" and array is empty
+									changes = append(changes, trimmed)
+								}
 							}
 						}
 					}
