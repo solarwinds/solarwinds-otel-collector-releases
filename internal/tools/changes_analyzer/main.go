@@ -155,7 +155,14 @@ func extractReleaseSections(htmlContent string, sectionPhrases map[string]string
 
 	sectionMap := make(map[string][]string)
 	doc.Find("h1, h2, h3").Each(func(i int, s *goquery.Selection) {
-		text := s.Text()
+		text := strings.TrimSpace(s.Text())
+
+		// Skip the changelog type headers
+		if strings.Contains(text, "End user changelog") || strings.Contains(text, "API changelog") {
+			return // Continue to next element
+		}
+
+		// Process section headers regardless of which changelog they belong to
 		for phrase, category := range sectionPhrases {
 			if strings.Contains(text, phrase) {
 				var changes []string
@@ -185,7 +192,8 @@ func extractReleaseSections(htmlContent string, sectionPhrases map[string]string
 						}
 					}
 				}
-				sectionMap[category] = changes
+				// Append to existing category slice instead of overwriting
+				sectionMap[category] = append(sectionMap[category], changes...)
 				break // Assume only one category per heading
 			}
 		}
@@ -263,6 +271,14 @@ func getComponentChanges(versionOld, versionNew string, ourComponents []string, 
 			result[component] = categories
 		}
 	}
+
+	// Sort all categories for each component
+	for _, changes := range componentChanges {
+		sort.Strings(changes["breaking_changes"])
+		sort.Strings(changes["deprecations"])
+		sort.Strings(changes["enhancements"])
+	}
+
 	return result, nil
 }
 
