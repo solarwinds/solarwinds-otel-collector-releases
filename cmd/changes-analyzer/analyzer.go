@@ -378,7 +378,7 @@ func getComponentsFromGoMod(goModPath, dependencyFilter string) (string, error) 
 			parts := strings.Fields(line)
 			if len(parts) >= 2 { // Ensure there’s at least a path and version
 				index := 0
-				// this is an edgese for go.mod files, where every import is prefixed with 'require' instead of the imports being grouped
+				// this is an edge case for go.mod files where every import is prefixed with 'require' instead of the imports being grouped
 				if strings.Contains(line, "require") {
 					index = 1
 				}

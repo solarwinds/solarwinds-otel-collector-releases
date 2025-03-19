@@ -13,7 +13,7 @@ Tool also supports [OpenTelemetry Collector](https://github.com/open-telemetry/o
 ## Running the Tool
 Run the tool with the following command, adjusting paths and versions as needed:
 ```
-go run main.go 
+go run .
   --old v0.119.0 
   --new v0.121.0 
   --goModPath /path/to/your/go.mod 
@@ -23,7 +23,7 @@ go run main.go
 
 For testing, it is recommended to test with just one component.
 ```
-go run ./main.go --old v0.114.0 --new v0.122.0 --components elasticsearchexporter --repo opentelemetry-collector-contrib
+go run . --old v0.114.0 --new v0.122.0 --components elasticsearchexporter --repo opentelemetry-collector-contrib
 ```
 
 --old: Starting version (e.g., v0.119.0).
