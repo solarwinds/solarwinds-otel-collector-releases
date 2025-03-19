@@ -106,6 +106,10 @@ func getVersionsBetween(oldVersion, newVersion string, opentelemetryRepo string)
 
 	var filtered []*version.Version
 	for _, tag := range allReleases {
+		// collector has some release versions like, cmd/builder/v0.106.1, we do not care about those.
+		if strings.Contains(tag, "/") {
+			continue
+		}
 		ver, err := version.NewVersion(tag)
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse version %s: %v", tag, err)
