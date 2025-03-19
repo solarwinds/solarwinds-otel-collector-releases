@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // analyzer_test.go
-package main
+package analyzer
 
 import (
 	"fmt"

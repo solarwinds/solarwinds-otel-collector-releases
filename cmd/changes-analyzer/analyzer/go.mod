@@ -1,4 +1,4 @@
-module main
+module changesanalyzer
 
 go 1.23.4
 
