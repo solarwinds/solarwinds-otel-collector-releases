@@ -61,8 +61,7 @@ func parseLinkHeader(header string) map[string]string {
 
 // getVersionsBetween retrieves all released versions between oldVersion and newVersion from GitHub.
 func getVersionsBetween(oldVersion, newVersion string, opentelemetryRepo string) ([]*version.Version, error) {
-	owner := "open-telemetry"
-	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases?per_page=100", owner, opentelemetryRepo)
+	url := fmt.Sprintf("https://api.github.com/repos/open-telemetry/%s/releases?per_page=100", opentelemetryRepo)
 
 	var allReleases []string
 	for url != "" {
