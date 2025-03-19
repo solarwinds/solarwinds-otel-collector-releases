@@ -31,6 +31,12 @@ import (
 	"github.com/hashicorp/go-version"
 )
 
+type categoryToChangesMap = map[string][]string
+
+const breakingChanges = "breaking_changes"
+const deprecations = "deprecations"
+const enhancements = "enhancements"
+
 // parseVersion parses a version string by stripping the 'v' prefix and creating a version object.
 func parseVersion(verStr string) (*version.Version, error) {
 	verStr = strings.TrimPrefix(verStr, "v")
@@ -54,27 +60,23 @@ func parseLinkHeader(header string) map[string]string {
 }
 
 // getVersionsBetween retrieves all released versions between oldVersion and newVersion from GitHub.
-func getVersionsBetween(oldVersion, newVersion string, opentelemetryRepo string) ([]string, error) {
+func getVersionsBetween(oldVersion, newVersion string, opentelemetryRepo string) ([]*version.Version, error) {
 	owner := "open-telemetry"
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases?per_page=100", owner, opentelemetryRepo)
 
 	var allReleases []string
 	for url != "" {
-		resp, err := http.Get(url)
+		response, err := getResponse(url)
 		if err != nil {
-			return nil, fmt.Errorf("failed to fetch releases: %v", err)
+			return nil, fmt.Errorf("get request failed for url %s: %v", url, err)
 		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			return nil, fmt.Errorf("releases API returned status %d", resp.StatusCode)
-		}
+		defer response.Body.Close()
 
 		var releases []struct {
 			TagName    string `json:"tag_name"`
 			Prerelease bool   `json:"prerelease"`
 		}
-		if err := json.NewDecoder(resp.Body).Decode(&releases); err != nil {
+		if err := json.NewDecoder(response.Body).Decode(&releases); err != nil {
 			return nil, fmt.Errorf("failed to decode releases: %v", err)
 		}
 
@@ -84,12 +86,11 @@ func getVersionsBetween(oldVersion, newVersion string, opentelemetryRepo string)
 			}
 		}
 
-		linkHeader := resp.Header.Get("Link")
-		if linkHeader == "" {
-			url = ""
-		} else {
+		linkHeader := response.Header.Get("Link")
+		if linkHeader != "" {
 			links := parseLinkHeader(linkHeader)
 			url = links["next"]
+			break
 		}
 	}
 
@@ -103,50 +104,61 @@ func getVersionsBetween(oldVersion, newVersion string, opentelemetryRepo string)
 		return nil, fmt.Errorf("invalid new version %s: %v", newVersion, err)
 	}
 
-	// Filter versions within the range
-	var filtered []string
+	var filtered []*version.Version
 	for _, tag := range allReleases {
-		ver, err := parseVersion(tag)
-		if err == nil && ver.GreaterThanOrEqual(oldVer) && ver.LessThanOrEqual(newVer) {
-			filtered = append(filtered, tag)
+		ver, err := version.NewVersion(tag)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse version %s: %v", tag, err)
+		}
+		if ver.GreaterThanOrEqual(oldVer) && ver.LessThanOrEqual(newVer) {
+			filtered = append(filtered, ver)
 		}
 	}
 
 	// Sort versions in ascending order
 	sort.Slice(filtered, func(i, j int) bool {
-		vi, _ := parseVersion(filtered[i])
-		vj, _ := parseVersion(filtered[j])
-		return vi.LessThan(vj)
+		return filtered[i].Compare(filtered[j]) < 0
 	})
 
 	return filtered, nil
 }
 
-// fetchReleaseNotes retrieves the HTML content of release notes for a specific version.
-func fetchReleaseNotes(version string, opentelemetryRepo string) (string, error) {
-	url := fmt.Sprintf("https://github.com/open-telemetry/%s/releases/tag/%s", opentelemetryRepo, version)
+// getResponse calls http.Get for given url and returns the response
+func getResponse(url string) (*http.Response, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Printf("failed to fetch release notes for %s: %v", version, err)
-		return "", fmt.Errorf("failed to fetch release notes for %s: %v", version, err)
+		return nil, fmt.Errorf("failed to GET response for url:  %s: %v", url, err)
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("release notes fetch returned status %d for %s", resp.StatusCode, version)
-		return "", fmt.Errorf("release notes fetch returned status %d for %s", resp.StatusCode, version)
+		return nil, fmt.Errorf("GET request status is %d for url %s", resp.StatusCode, url)
 	}
+	return resp, err
+}
 
-	body, err := io.ReadAll(resp.Body)
+// fetchReleaseNotes retrieves the HTML content of release notes for a specific version.
+func fetchReleaseNotes(version string, opentelemetryRepo string) (string, error) {
+	url := fmt.Sprintf("https://github.com/open-telemetry/%s/releases/tag/v%s", opentelemetryRepo, version)
+	response, err := getResponse(url)
 	if err != nil {
-		fmt.Printf("failed to read release notes body: %v", err)
+		return "", err
+	}
+	defer response.Body.Close()
+	bodyBytes, err := io.ReadAll(response.Body)
+	if err != nil {
 		return "", fmt.Errorf("failed to read release notes body: %v", err)
 	}
-	return string(body), nil
+	return string(bodyBytes), nil
 }
 
 // extractReleaseSections extracts specified sections (e.g., Breaking changes, Deprecations, Enhancements) from HTML content.
-func extractReleaseSections(htmlContent string, sectionPhrases map[string]string) (map[string][]string, error) {
+func extractReleaseSections(htmlContent string) (map[string][]string, error) {
+	// Define sections to extract and their corresponding categories
+	sectionPhrases := map[string]string{
+		"Breaking changes": breakingChanges,
+		"Deprecations":     deprecations,
+		"Enhancements":     enhancements,
+	}
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
 	if err != nil {
 		fmt.Printf("failed to parse HTML: %v", err)
@@ -166,35 +178,21 @@ func extractReleaseSections(htmlContent string, sectionPhrases map[string]string
 		for phrase, category := range sectionPhrases {
 			if strings.Contains(text, phrase) {
 				var changes []string
-				for node := s.Next(); node.Length() > 0; node = node.Next() {
-					if node.Is("h1, h2, h3") {
-						break
-					}
-					changeText := strings.TrimSpace(node.Text())
-					if changeText != "" {
-						lines := strings.Split(changeText, "\n")
-						for _, line := range lines {
-							trimmed := strings.TrimSpace(line)
-							if trimmed != "" {
-								if strings.Contains(trimmed, ":") {
-									// Append as new element if line contains ":"
-									// Lines like that most likely contain the component name.
-									changes = append(changes, trimmed)
-								} else if len(changes) > 0 {
-									// Merge with previous element using newline if no ":" and array not empty
-									// There is probably no mention of any component on this line, so append it behind the previous row
-									changes[len(changes)-1] = changes[len(changes)-1] + "\n    " + trimmed
-								} else {
-									// Append as new element if no ":" and array is empty
-									changes = append(changes, trimmed)
-								}
-							}
+				node := s.Next() // Get the next sibling after <h3>
+				if node.Length() > 0 && node.Is("ul") {
+					for child := node.Children().First(); child.Length() > 0; child = child.Next() {
+						if !child.Is("li") {
+							continue
 						}
+						changeText := strings.TrimSpace(child.Text())
+						if changeText == "" {
+							continue
+						}
+						reformated := strings.ReplaceAll(changeText, "\n", "\n             ")
+						changes = append(changes, reformated)
 					}
 				}
-				// Append to existing category slice instead of overwriting
 				sectionMap[category] = append(sectionMap[category], changes...)
-				break // Assume only one category per heading
 			}
 		}
 	})
@@ -202,49 +200,42 @@ func extractReleaseSections(htmlContent string, sectionPhrases map[string]string
 }
 
 // getComponentChanges retrieves breaking changes, deprecations, and enhancements for specified components across versions.
-func getComponentChanges(versionOld, versionNew string, ourComponents []string, opentelemetryRepo string) (map[string]map[string][]string, error) {
+func getComponentChanges(versionOld, versionNew string, componentsOfInterest []string, opentelemetryRepo string) (map[string]categoryToChangesMap, error) {
 	versions, err := getVersionsBetween(versionOld, versionNew, opentelemetryRepo)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get versions: %v", err)
 	}
 
-	// Define sections to extract and their corresponding categories
-	sectionPhrases := map[string]string{
-		"Breaking changes": "breaking_changes",
-		"Deprecations":     "deprecations",
-		"Enhancements":     "enhancements",
-	}
-
 	// Fetch release notes for each version
 	releaseNotes := make(map[string]map[string][]string)
 	for _, ver := range versions {
-		htmlContent, err := fetchReleaseNotes(ver, opentelemetryRepo)
+		htmlContent, err := fetchReleaseNotes(ver.String(), opentelemetryRepo)
 		if err != nil {
 			fmt.Printf("Skipping %s due to fetch error: %v\n", ver, err)
 			continue
 		}
-		sectionChanges, err := extractReleaseSections(htmlContent, sectionPhrases)
+		sectionChanges, err := extractReleaseSections(htmlContent)
 		if err != nil {
 			fmt.Printf("Skipping %s due to parsing error: %v\n", ver, err)
 			continue
 		}
-		releaseNotes[ver] = sectionChanges
+		releaseNotes[ver.String()] = sectionChanges
 	}
 
 	// Initialize the component changes map
-	componentChanges := make(map[string]map[string][]string)
-	for _, component := range ourComponents {
-		componentChanges[component] = map[string][]string{
-			"breaking_changes": {},
-			"deprecations":     {},
-			"enhancements":     {},
+	componentChanges := make(map[string]categoryToChangesMap)
+	for _, component := range componentsOfInterest {
+		componentChanges[component] = categoryToChangesMap{
+			breakingChanges: {},
+			deprecations:    {},
+			enhancements:    {},
 		}
 	}
 	// Now filter only those changes that happened on components we care about
 	for ver, sectionChanges := range releaseNotes {
 		for category, changes := range sectionChanges {
 			for _, change := range changes {
-				for _, component := range ourComponents {
+				for _, component := range componentsOfInterest {
 					// Line has to contain 'component_name:'
 					if strings.Contains(change, fmt.Sprintf("%s:", component)) {
 						componentChanges[component][category] = append(
@@ -256,9 +247,8 @@ func getComponentChanges(versionOld, versionNew string, ourComponents []string, 
 			}
 		}
 	}
-
 	// Filter out components with no changes in any category
-	result := make(map[string]map[string][]string)
+	result := make(map[string]categoryToChangesMap)
 	for component, categories := range componentChanges {
 		hasChanges := false
 		for _, changes := range categories {
@@ -274,9 +264,9 @@ func getComponentChanges(versionOld, versionNew string, ourComponents []string, 
 
 	// Sort all categories for each component
 	for _, changes := range componentChanges {
-		sort.Strings(changes["breaking_changes"])
-		sort.Strings(changes["deprecations"])
-		sort.Strings(changes["enhancements"])
+		sort.Strings(changes[breakingChanges])
+		sort.Strings(changes[deprecations])
+		sort.Strings(changes[enhancements])
 	}
 
 	return result, nil
@@ -293,7 +283,7 @@ func formatDescription(desc string) string {
 }
 
 // formatComponentChanges formats the component changes into a Markdown string suitable for GitHub comments, skipping empty categories.
-func formatComponentChanges(opentelemetryRepo string, componentChanges map[string]map[string][]string) string {
+func formatComponentChanges(opentelemetryRepo string, componentChanges map[string]categoryToChangesMap) string {
 	var blocks []string
 	components := make([]string, 0, len(componentChanges))
 	for component := range componentChanges {
@@ -308,7 +298,7 @@ func formatComponentChanges(opentelemetryRepo string, componentChanges map[strin
 		componentBlock.WriteString(fmt.Sprintf("#### %s\n", component))
 
 		categories := componentChanges[component]
-		for _, category := range []string{"breaking_changes", "deprecations", "enhancements"} {
+		for _, category := range []string{breakingChanges, deprecations, enhancements} {
 			changes := categories[category]
 			if len(changes) > 0 { // Only include categories with changes
 				display := strings.Title(strings.ReplaceAll(category, "_", " "))
@@ -343,13 +333,12 @@ func formatComponentChanges(opentelemetryRepo string, componentChanges map[strin
 
 // getMessage generates a formatted github formated message listing component changes between two versions. Optionally, encodes to base64.
 func getMessage(oldTag, newTag string, componentsOfInterest []string, opentelemetryRepo string, encode bool) (string, error) {
-	compareURL := fmt.Sprintf("https://github.com/open-telemetry/%s/compare/v%s...v%s", opentelemetryRepo, oldTag, newTag)
 	componentChanges, err := getComponentChanges(oldTag, newTag, componentsOfInterest, opentelemetryRepo)
 	if err != nil {
 		fmt.Printf("failed to get component changes: %v", err)
 		return "", fmt.Errorf("failed to get component changes: %v", err)
 	}
-
+	compareURL := fmt.Sprintf("https://github.com/open-telemetry/%s/compare/v%s...v%s", opentelemetryRepo, oldTag, newTag)
 	// Build the Markdown output
 	markdown := strings.ToUpper(fmt.Sprintf("# %s changes\n", opentelemetryRepo))
 	markdown += fmt.Sprintf("**Diff**: [%s to %s](%s)\n\n", oldTag, newTag, compareURL)
