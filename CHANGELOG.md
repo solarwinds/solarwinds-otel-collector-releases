@@ -3,6 +3,12 @@
 ## vNext
 - Ignores any timestamps in all the Kubernetes manifests
 
+## v0.119.9
+- Fix CVE-2025-29786
+
+## v0.119.8
+- Adds ap-01 datacell support
+
 ## v0.119.7
 - Fix CVE-2025-22866
 
