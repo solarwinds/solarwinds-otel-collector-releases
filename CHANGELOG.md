@@ -1,6 +1,8 @@
 # Changelog
 
 ## vNext
+
+## v0.119.10
 - Ignores any timestamps in all the Kubernetes manifests
 
 ## v0.119.9
