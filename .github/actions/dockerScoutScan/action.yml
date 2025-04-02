@@ -42,7 +42,7 @@ runs:
       if: ${{ inputs.compare-to-regex }}
       id: get-latest
       shell: bash
-      run: echo "tag=$(curl -s 'https://registry.hub.docker.com/v2/repositories/solarwinds/solarwinds-otel-collector-releases/tags/' | jq -r '.results[].name' | grep -E '${{ inputs.compare-to-regex }}' | sort -r | head -n 1)" >> $GITHUB_OUTPUT
+      run: echo "tag=$(curl -s 'https://registry.hub.docker.com/v2/repositories/solarwinds/solarwinds-otel-collector/tags/' | jq -r '.results[].name' | grep -E '${{ inputs.compare-to-regex }}' | sort -r | head -n 1)" >> $GITHUB_OUTPUT
 
     - name: Docker scout
       id: docker-scout
