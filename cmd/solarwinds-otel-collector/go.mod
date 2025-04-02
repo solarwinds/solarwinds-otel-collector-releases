@@ -1,6 +1,6 @@
 module github.com/solarwinds/solarwinds-otel-collector
 
-go 1.23.6
+go 1.24.2
 
 require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/confmap/provider/aesprovider v0.119.0
