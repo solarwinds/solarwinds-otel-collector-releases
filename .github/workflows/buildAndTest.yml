@@ -51,7 +51,7 @@ jobs:
 
       - name: Build and Test - Full Image
         run: >
-          docker build . --file build/docker/Dockerfile
+          docker build --progress=plain . --file build/docker/Dockerfile
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}
           --tag solarwinds-otel-collector:latest
 
