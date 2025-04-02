@@ -2,7 +2,7 @@
 Provide description of the changes made.
 
 <!-- Issue number if applicable
-**Tracking Issue:** https://github.com/solarwinds/solarwinds-otel-collector/issues/XXXX
+**Tracking Issue:** https://github.com/solarwinds/solarwinds-otel-collector-releases/issues/XXXX
 -->
 
 #### Testing
