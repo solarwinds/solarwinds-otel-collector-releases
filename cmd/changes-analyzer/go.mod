@@ -1,4 +1,4 @@
-module github.com/solarwinds/solarwinds-otel-collector/changes-analyzer
+module github.com/solarwinds/solarwinds-otel-collector-releases/changes-analyzer
 
 go 1.23.6
 

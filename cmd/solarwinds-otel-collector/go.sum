@@ -2401,6 +2401,7 @@ github.com/snowflakedb/gosnowflake v1.12.0 h1:Saez8egtn5xAoVMBxFaMu9MYfAG9SS9dpA
 github.com/snowflakedb/gosnowflake v1.12.0/go.mod h1:wHfYmZi3zvtWItojesAhWWXBN7+niex2R1h/S7QCZYg=
 github.com/soheilhy/cmux v0.1.5 h1:jjzc5WVemNEDTLwv9tlmemhC73tI08BNOIGwBOo10Js=
 github.com/soheilhy/cmux v0.1.5/go.mod h1:T7TcVDs9LWfQgPlPsdngu6I6QIoyIFZDDC6sNE1GqG0=
+github.com/solarwinds/solarwinds-otel-collector-releases/pkg/testutil v0.119.11/go.mod h1:ZZnUFTajIqCrWt2vbLPAzK3QLdhClQC8hZbPU9i8esw=
 github.com/solarwindscloud/apm-proto v1.0.8 h1:a5A0s+5RmMB6LNBs32qQ+oL26rltw5b2cbUhqhJPne0=
 github.com/solarwindscloud/apm-proto v1.0.8/go.mod h1:PIMzXc8HpB0ryT4Oci4pUz8F0m1X7Q/hVXkQE4jGv6Y=
 github.com/sourcegraph/conc v0.3.0 h1:OQTbbt6P72L20UqAkXXuLOj79LfEanQ+YQFNpLA9ySo=

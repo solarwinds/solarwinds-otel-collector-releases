@@ -32,7 +32,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/solarwinds/solarwinds-otel-collector/pkg/version"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/pkg/version"
 )
 
 func sendTestMessage(logger *zap.Logger, endpoint, apiToken, clusterUid string, insecure bool) {

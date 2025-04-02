@@ -20,7 +20,7 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           if [[ ! ${PR_TITLE} =~ ^(build|ci|chore|docs|feature|fix|perf|refactor|style|test):[[:space:]](#[[:digit:]]+[[:space:]]){0,1}([^ ,#].*)$ ]]; then
-            echo "::error::Invalid Pull Request title. Please update it according to guidelines: https://github.com/solarwinds/solarwinds-otel-collector/blob/main/docs/development-guidelines.md#pull-requests"
+            echo "::error::Invalid Pull Request title. Please update it according to guidelines: https://github.com/solarwinds/solarwinds-otel-collector-releases/blob/main/docs/development-guidelines.md#pull-requests"
             exit 1
           fi
       - name: Require valid Issue number in PR title for some PR types
