@@ -1,10 +1,7 @@
 module github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension
 
 go 1.24.2
-
 require (
-	github.com/solarwinds/solarwinds-otel-collector/pkg/testutil v0.119.11
-	github.com/solarwinds/solarwinds-otel-collector/pkg/version v0.119.11
 	github.com/stretchr/testify v1.10.0
 	go.opentelemetry.io/collector/component v0.119.0
 	go.opentelemetry.io/collector/component/componenttest v0.119.0
@@ -70,7 +67,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.34.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/net v0.36.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250115164207-1a7da9e5054f // indirect
 	google.golang.org/grpc v1.70.0 // indirect
