@@ -1,6 +1,7 @@
 module github.com/solarwinds/solarwinds-otel-collector
 
 go 1.24.2
+
 require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/confmap/provider/aesprovider v0.119.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/confmap/provider/s3provider v0.119.0
@@ -160,6 +161,12 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/windowsperfcountersreceiver v0.119.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zipkinreceiver v0.119.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zookeeperreceiver v0.119.0
+	github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexporter v0.119.11
+	github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension v0.119.11
+	github.com/solarwinds/solarwinds-otel-collector/pkg/version v0.119.11
+	github.com/solarwinds/solarwinds-otel-collector/processor/k8seventgenerationprocessor v0.119.11
+	github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver v0.119.11
+	github.com/solarwinds/solarwinds-otel-collector/receiver/swok8sobjectsreceiver v0.119.11
 	github.com/spf13/cobra v1.9.1
 	go.opentelemetry.io/collector/component v0.119.0
 	go.opentelemetry.io/collector/confmap v1.26.0
@@ -570,13 +577,17 @@ require (
 	github.com/rs/cors v1.11.1 // indirect
 	github.com/scaleway/scaleway-sdk-go v1.0.0-beta.29 // indirect
 	github.com/secure-systems-lab/go-securesystemslib v0.8.0 // indirect
+	github.com/shirou/gopsutil/v3 v3.24.5 // indirect
 	github.com/shirou/gopsutil/v4 v4.25.1 // indirect
+	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/signalfx/com_signalfx_metrics_protobuf v0.0.3 // indirect
 	github.com/signalfx/sapm-proto v0.17.0 // indirect
 	github.com/sijms/go-ora/v2 v2.8.23 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/snowflakedb/gosnowflake v1.12.0 // indirect
 	github.com/soheilhy/cmux v0.1.5 // indirect
+	github.com/solarwinds/solarwinds-otel-collector/internal/k8sconfig v0.119.11 // indirect
+	github.com/solarwinds/solarwinds-otel-collector/pkg/testutil v0.119.11 // indirect
 	github.com/solarwindscloud/apm-proto v1.0.8 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
