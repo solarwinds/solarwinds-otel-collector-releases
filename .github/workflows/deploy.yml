@@ -271,7 +271,6 @@ jobs:
         run: |
           gh release create v${{ needs.release_checks.outputs.image_tag }} \
             --title v${{ needs.release_checks.outputs.image_tag }} \
-            --latest=false \
             --generate-notes \
             --notes-start-tag ${{ env.PREVIOUS_TAG }}
       - name: Tag Go packages on GitHub
