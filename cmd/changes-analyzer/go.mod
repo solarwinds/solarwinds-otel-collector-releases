@@ -1,6 +1,6 @@
 module github.com/solarwinds/solarwinds-otel-collector/changes-analyzer
 
-go 1.23.6
+go 1.24.2
 
 require (
 	github.com/PuerkitoBio/goquery v1.10.2
