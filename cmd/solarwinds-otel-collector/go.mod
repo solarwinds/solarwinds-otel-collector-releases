@@ -1,7 +1,6 @@
 module github.com/solarwinds/solarwinds-otel-collector
 
 go 1.24.2
-
 require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/confmap/provider/aesprovider v0.119.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/confmap/provider/s3provider v0.119.0
@@ -161,13 +160,7 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/windowsperfcountersreceiver v0.119.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zipkinreceiver v0.119.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zookeeperreceiver v0.119.0
-	github.com/solarwinds/solarwinds-otel-collector/exporter/solarwindsexporter v0.119.11
-	github.com/solarwinds/solarwinds-otel-collector/extension/solarwindsextension v0.119.11
-	github.com/solarwinds/solarwinds-otel-collector/pkg/version v0.119.11
-	github.com/solarwinds/solarwinds-otel-collector/processor/k8seventgenerationprocessor v0.119.11
-	github.com/solarwinds/solarwinds-otel-collector/receiver/swohostmetricsreceiver v0.119.11
-	github.com/solarwinds/solarwinds-otel-collector/receiver/swok8sobjectsreceiver v0.119.11
-	github.com/spf13/cobra v1.8.1
+	github.com/spf13/cobra v1.9.1
 	go.opentelemetry.io/collector/component v0.119.0
 	go.opentelemetry.io/collector/confmap v1.26.0
 	go.opentelemetry.io/collector/confmap/provider/envprovider v1.25.0
@@ -197,13 +190,13 @@ require (
 	go.opentelemetry.io/otel/sdk v1.34.0
 	go.opentelemetry.io/otel/sdk/log v0.10.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/sys v0.30.0
-	google.golang.org/grpc v1.70.0
+	golang.org/x/sys v0.31.0
+	google.golang.org/grpc v1.71.1
 )
 
 require (
 	bitbucket.org/atlassian/go-asap/v2 v2.9.0 // indirect
-	cel.dev/expr v0.19.0 // indirect
+	cel.dev/expr v0.19.1 // indirect
 	cloud.google.com/go v0.117.0 // indirect
 	cloud.google.com/go/auth v0.14.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.7 // indirect
@@ -326,7 +319,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cihub/seelog v0.0.0-20170130134532-f561c5e57575 // indirect
 	github.com/cloudfoundry-incubator/uaago v0.0.0-20190307164349-8136b7bbe76e // indirect
-	github.com/cncf/xds/go v0.0.0-20240905190251-b4127c9b8d78 // indirect
+	github.com/cncf/xds/go v0.0.0-20241223141626-cff3c89139a3 // indirect
 	github.com/containerd/cgroups/v3 v3.0.5 // indirect
 	github.com/containerd/containerd/api v1.8.0 // indirect
 	github.com/containerd/errdefs v1.0.0 // indirect
@@ -357,8 +350,8 @@ require (
 	github.com/elastic/go-grok v0.3.1 // indirect
 	github.com/elastic/lunes v0.1.0 // indirect
 	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
-	github.com/envoyproxy/go-control-plane v0.13.1 // indirect
-	github.com/envoyproxy/protoc-gen-validate v1.1.0 // indirect
+	github.com/envoyproxy/go-control-plane/envoy v1.32.4 // indirect
+	github.com/envoyproxy/protoc-gen-validate v1.2.1 // indirect
 	github.com/euank/go-kmsg-parser v2.0.0+incompatible // indirect
 	github.com/expr-lang/expr v1.17.0 // indirect
 	github.com/facebook/time v0.0.0-20240510113249-fa89cc575891 // indirect
@@ -491,7 +484,6 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
 	github.com/nginxinc/nginx-prometheus-exporter v0.11.0 // indirect
-	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/oklog/ulid/v2 v2.1.0 // indirect
 	github.com/open-telemetry/opamp-go v0.18.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/kafkaexporter v0.119.0 // indirect
@@ -578,17 +570,13 @@ require (
 	github.com/rs/cors v1.11.1 // indirect
 	github.com/scaleway/scaleway-sdk-go v1.0.0-beta.29 // indirect
 	github.com/secure-systems-lab/go-securesystemslib v0.8.0 // indirect
-	github.com/shirou/gopsutil/v3 v3.24.5 // indirect
 	github.com/shirou/gopsutil/v4 v4.25.1 // indirect
-	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/signalfx/com_signalfx_metrics_protobuf v0.0.3 // indirect
 	github.com/signalfx/sapm-proto v0.17.0 // indirect
 	github.com/sijms/go-ora/v2 v2.8.23 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/snowflakedb/gosnowflake v1.12.0 // indirect
 	github.com/soheilhy/cmux v0.1.5 // indirect
-	github.com/solarwinds/solarwinds-otel-collector/internal/k8sconfig v0.119.11 // indirect
-	github.com/solarwinds/solarwinds-otel-collector/pkg/testutil v0.119.11 // indirect
 	github.com/solarwindscloud/apm-proto v1.0.8 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
@@ -596,9 +584,6 @@ require (
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/tg123/go-htpasswd v1.2.3 // indirect
-	github.com/tidwall/gjson v1.18.0 // indirect
-	github.com/tidwall/pretty v1.2.1 // indirect
-	github.com/tidwall/tinylru v1.2.1 // indirect
 	github.com/tilinna/clock v1.1.0 // indirect
 	github.com/tinylib/msgp v1.2.5 // indirect
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
@@ -671,7 +656,7 @@ require (
 	go.opentelemetry.io/collector/service v0.119.0 // indirect
 	go.opentelemetry.io/contrib/bridges/otelzap v0.9.0 // indirect
 	go.opentelemetry.io/contrib/config v0.14.0 // indirect
-	go.opentelemetry.io/contrib/detectors/gcp v1.32.0 // indirect
+	go.opentelemetry.io/contrib/detectors/gcp v1.34.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.59.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.59.0 // indirect
 	go.opentelemetry.io/contrib/propagators/b3 v1.34.0 // indirect
