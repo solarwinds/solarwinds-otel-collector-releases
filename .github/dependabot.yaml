@@ -42,6 +42,7 @@ updates:
           - "*"
         exclude-patterns:
           - "*opentelemetry*"
+          - "*solarwinds-otel-collector-releases*"
       collector-opentelemetry:
         patterns:
           - "*opentelemetry*"
@@ -51,6 +52,7 @@ updates:
           - "*"
         exclude-patterns:
           - "*opentelemetry*"
+          - "*solarwinds-otel-collector-releases*"
         update-types:
           - "patch"
           - "minor"
@@ -76,6 +78,7 @@ updates:
           - "*"
         exclude-patterns:
           - "*opentelemetry*"
+          - "*solarwinds-otel-collector-releases*"
       components-opentelemetry:
         patterns:
           - "*opentelemetry*"
@@ -85,6 +88,7 @@ updates:
           - "*"
         exclude-patterns:
           - "*opentelemetry*"
+          - "*solarwinds-otel-collector-releases*"
         update-types:
           - "patch"
           - "minor"
