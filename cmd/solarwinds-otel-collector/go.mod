@@ -693,13 +693,13 @@ require (
 	golang.org/x/mod v0.22.0 // indirect
 	golang.org/x/net v0.36.0 // indirect
 	golang.org/x/oauth2 v0.26.0 // indirect
-	golang.org/x/sync v0.11.0 // indirect
+	golang.org/x/sync v0.12.0 // indirect
 	golang.org/x/term v0.29.0 // indirect
-	golang.org/x/text v0.22.0 // indirect
+	golang.org/x/text v0.23.0 // indirect
 	golang.org/x/time v0.9.0 // indirect
 	golang.org/x/tools v0.29.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
-	gonum.org/v1/gonum v0.15.1 // indirect
+	gonum.org/v1/gonum v0.16.0 // indirect
 	google.golang.org/api v0.219.0 // indirect
 	google.golang.org/genproto v0.0.0-20241118233622-e639e219e697 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250207221924-e9438ea467c6 // indirect
@@ -753,3 +753,9 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 // Dependabot fails on this indirect dependency.
 // https://gonum.org/v1/gonum?go-get=1 returns 404, and dependabot gives up and fails.
 replace gonum.org/v1/gonum => github.com/gonum/gonum v0.15.1
+
+// Also breaks dependabot, dependency of the one github.com/openshift/api. This pseudoversion is latest master at this point.
+replace gonum.org/v1/netlib => github.com/gonum/netlib v0.0.0-20230729102104-8b8060e7531f
+
+// Also breaks dependabot, Using latest version.
+replace gonum.org/v1/plot => github.com/gonum/plot v0.16.0
