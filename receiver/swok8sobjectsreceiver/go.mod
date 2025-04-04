@@ -120,7 +120,7 @@ require (
 	golang.org/x/oauth2 v0.24.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/term v0.29.0 // indirect
-	golang.org/x/text v0.22.0 // indirect
+	golang.org/x/text v0.23.0 // indirect
 	golang.org/x/time v0.7.0 // indirect
 	gonum.org/v1/gonum v0.15.1 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250102185135-69823020774d // indirect
@@ -147,7 +147,7 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // Dependabot fails on this indirect dependency.
 // https://gonum.org/v1/gonum?go-get=1 returns 404, and dependabot gives up and fails.
-replace gonum.org/v1/gonum => github.com/gonum/gonum v0.15.1
+replace gonum.org/v1/gonum => github.com/gonum/gonum v0.16.0
 
 // Also breaks dependabot, dependency of the one github.com/openshift/api. This pseudoversion is latest master at this point.
 replace gonum.org/v1/netlib => github.com/gonum/netlib v0.0.0-20230729102104-8b8060e7531f
