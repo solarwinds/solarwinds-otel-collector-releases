@@ -141,8 +141,13 @@ require (
 
 replace github.com/solarwinds/solarwinds-otel-collector-releases/internal/k8sconfig => ../../internal/k8sconfig
 
+// Dependabot fails on this indirect dependency.
 // openshift removed all tags from their repo, use the pseudoversion from the release-4.4, first with go.mod
 replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api v0.0.0-20200618202633-7192180f496a
+
+// Dependabot fails on this indirect dependency.
+// https://gonum.org/v1/gonum?go-get=1 returns 404, and dependabot gives up and fails.
+replace gonum.org/v1/gonum => github.com/gonum/gonum v0.15.1
 
 retract (
 	v0.76.2
