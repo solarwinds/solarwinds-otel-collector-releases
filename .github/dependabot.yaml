@@ -14,12 +14,12 @@ updates:
 
   - package-ecosystem: docker
     directory: /build/docker
-    labels:
-      - dependencies
-      - docker
     schedule:
       interval: weekly
       day: saturday
+    labels:
+      - dependencies
+      - docker
     groups:
       docker:
         patterns:
