@@ -752,10 +752,13 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // Dependabot fails on this indirect dependency.
 // https://gonum.org/v1/gonum?go-get=1 returns 404, and dependabot gives up and fails.
+// Using the latest version from go.sum when run without this replace.
 replace gonum.org/v1/gonum => github.com/gonum/gonum v0.15.1
 
-// Also breaks dependabot, dependency of the one github.com/openshift/api. This pseudoversion is latest master at this point.
-replace gonum.org/v1/netlib => github.com/gonum/netlib v0.0.0-20230729102104-8b8060e7531f
+// Also breaks dependabot, dependency of the one github.com/openshift/api.
+// Using the latest version from go.sum when run without this replace.
+replace gonum.org/v1/netlib => github.com/gonum/netlib v0.0.0-20190331212654-76723241ea4e
 
-// Also breaks dependabot, Using latest version.
-replace gonum.org/v1/plot => github.com/gonum/plot v0.16.0
+// Also breaks dependabot.
+// Using the latest version from go.sum when run without this replace.
+replace gonum.org/v1/plot => github.com/gonum/plot v0.10.1
