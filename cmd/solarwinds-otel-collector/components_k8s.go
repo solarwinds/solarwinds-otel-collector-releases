@@ -33,7 +33,7 @@ import (
 	"github.com/solarwinds/solarwinds-otel-collector-releases/extension/solarwindsextension"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/processor/k8seventgenerationprocessor"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swok8sobjectsreceiver"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/k8s/connectioncheck"
+	"github.com/solarwinds/solarwinds-otel-collector/k8s/connectioncheck"
 
 	"go.opentelemetry.io/collector/connector"
 	"go.opentelemetry.io/collector/connector/forwardconnector"

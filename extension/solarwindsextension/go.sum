@@ -140,10 +140,6 @@ go.opentelemetry.io/collector/receiver/receivertest v0.123.0 h1:MB2x4v7Pg+npLyIQ
 go.opentelemetry.io/collector/receiver/receivertest v0.123.0/go.mod h1:eDcm8N4yFz//V5dSa6MeEdjuK5Nq1X+j9xP9kPJr8BU=
 go.opentelemetry.io/collector/receiver/xreceiver v0.123.0 h1:oRExkR/d5axuvAUa3lcOf1ea+zL0hK+iGAhewqZz1NU=
 go.opentelemetry.io/collector/receiver/xreceiver v0.123.0/go.mod h1:M3a0ACBOPHag90EV+GbIWKZhJkHXW7Ka2xabBGY25aw=
-go.opentelemetry.io/collector/scraper v0.123.0 h1:gtbmMNo1twt5mlRTfnVKuKosTuTllRJCUzSjmv/vfhM=
-go.opentelemetry.io/collector/scraper v0.123.0/go.mod h1:/7cUmZBibIRmmkbZWx/NPXxYfwmWcfxC5F51e4KP6Oc=
-go.opentelemetry.io/collector/scraper/scrapertest v0.123.0 h1:0mcdSyDh6Q3f6cKuk7gEFfZ5HP4pUpWOiFnBXMvOWpg=
-go.opentelemetry.io/collector/scraper/scrapertest v0.123.0/go.mod h1:NIyPElkqiUjuh4L0INZof6soZSVy/2vj90QiHow+aiQ=
 go.opentelemetry.io/contrib/bridges/otelzap v0.10.0 h1:ojdSRDvjrnm30beHOmwsSvLpoRF40MlwNCA+Oo93kXU=
 go.opentelemetry.io/contrib/bridges/otelzap v0.10.0/go.mod h1:oTTm4g7NEtHSV2i/0FeVdPaPgUIZPfQkFbq0vbzqnv0=
 go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.60.0 h1:x7wzEgXfnzJcHDwStJT+mxOz4etr2EcexjqhBvmoakw=

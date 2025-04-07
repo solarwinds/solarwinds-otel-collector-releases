@@ -17,7 +17,6 @@ require (
 	go.opentelemetry.io/collector/extension v1.29.0
 	go.opentelemetry.io/collector/extension/extensiontest v0.123.0
 	go.opentelemetry.io/collector/pdata v1.29.0
-	go.opentelemetry.io/collector/scraper/scrapertest v0.123.0
 	go.uber.org/goleak v1.3.0
 	go.uber.org/zap v1.27.0
 )
@@ -64,7 +63,6 @@ require (
 	go.opentelemetry.io/collector/pdata/pprofile v0.123.0 // indirect
 	go.opentelemetry.io/collector/pipeline v0.123.0 // indirect
 	go.opentelemetry.io/collector/pipeline/xpipeline v0.123.0 // indirect
-	go.opentelemetry.io/collector/scraper v0.123.0 // indirect
 	go.opentelemetry.io/contrib/bridges/otelzap v0.10.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.60.0 // indirect
 	go.opentelemetry.io/otel v1.35.0 // indirect
