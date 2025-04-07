@@ -39,7 +39,7 @@ func newExporter(ctx context.Context, set extension.Settings, cfg *Config) (*Exp
 	expSet := toExporterSettings(set)
 
 	exp := &Exporter{logger: set.Logger}
-	exp.exporter, err = otlpexporter.NewFactory().CreateMetrics(ctx, expSet, oCfg)
+	exp.exporter, err = otlpexporter.NewFactory().CreateMetrics(ctx, expSet, oCfg) // TODO, we need solarwindsexporter here, but can't due to circular import
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (e *Exporter) shutdown(ctx context.Context) error {
 
 func toExporterSettings(set extension.Settings) exporter.Settings {
 	return exporter.Settings{
-		ID:                component.MustNewID("otlp"),
+		ID:                set.ID,
 		TelemetrySettings: set.TelemetrySettings,
 		BuildInfo:         set.BuildInfo,
 	}
