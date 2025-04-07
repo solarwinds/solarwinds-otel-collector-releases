@@ -58,7 +58,7 @@ func (e *Exporter) shutdown(ctx context.Context) error {
 
 func toExporterSettings(set extension.Settings) exporter.Settings {
 	return exporter.Settings{
-		ID:                set.ID,
+		ID:                component.MustNewID("otlp"),
 		TelemetrySettings: set.TelemetrySettings,
 		BuildInfo:         set.BuildInfo,
 	}
