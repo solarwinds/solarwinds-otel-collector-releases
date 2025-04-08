@@ -42,10 +42,7 @@ runs:
       if: ${{ inputs.compare-to-regex }}
       id: get-latest
       shell: bash
-      run: |
-        version=$(grep -oP '(?<=const Version = ")[^"]+' "./pkg/version/version.go")
-        echo "Version: $version"
-        echo "tag=$version" >> $GITHUB_OUTPUT
+      run: echo "tag=$(grep -oP '(?<=const Version = ")[^"]+' "./pkg/version/version.go")" >> $GITHUB_OUTPUT
 
     - name: Docker scout
       id: docker-scout
