@@ -193,7 +193,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-k8s
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-suffix: '-k8s'
+          compare-to-suffix: '-nanoserver-ltsc2022-k8s'
             
       - name: Save image
         run: |
