@@ -42,7 +42,7 @@ runs:
       if: ${{ inputs.compare-to-suffix }}
       id: get-latest
       shell: bash
-      run: echo "tag=$(grep -oP '(?<=const Version = ")[^"]+' "./pkg/version/version.go")${{ inputs.compare-to-suffix }}" >> $GITHUB_OUTPUT
+      run: echo "tag=$(sed -n 's/.*const Version = \"\([^\"]*\)\".*/\1/p' ./pkg/version/version.go)${{ inputs.compare-to-suffix }}" >> $GITHUB_OUTPUT
 
     - name: Docker scout
       id: docker-scout
