@@ -23,6 +23,7 @@ import (
 
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/exporter"
+	"go.opentelemetry.io/collector/exporter/otlpexporter"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.opentelemetry.io/collector/pdata/ptrace"
@@ -132,7 +133,7 @@ func (swiExporter *solarwindsExporter) initExporterType(
 		return fmt.Errorf("failed to init common config from extension: %w", err)
 	}
 
-	solarwindsExporter := NewFactory()
+	otlpExporter := otlpexporter.NewFactory()
 	otlpCfg, err := swiExporter.config.OTLPConfig()
 	if err != nil {
 		return err
@@ -140,13 +141,13 @@ func (swiExporter *solarwindsExporter) initExporterType(
 
 	switch typ {
 	case metricsExporterType:
-		swiExporter.metrics, err = solarwindsExporter.CreateMetrics(ctx, settings, otlpCfg)
+		swiExporter.metrics, err = otlpExporter.CreateMetrics(ctx, settings, otlpCfg)
 		return err
 	case logsExporterType:
-		swiExporter.logs, err = solarwindsExporter.CreateLogs(ctx, settings, otlpCfg)
+		swiExporter.logs, err = otlpExporter.CreateLogs(ctx, settings, otlpCfg)
 		return err
 	case tracesExporterType:
-		swiExporter.traces, err = solarwindsExporter.CreateTraces(ctx, settings, otlpCfg)
+		swiExporter.traces, err = otlpExporter.CreateTraces(ctx, settings, otlpCfg)
 		return err
 	default:
 		return fmt.Errorf("unknown exporter type: %v", typ)
