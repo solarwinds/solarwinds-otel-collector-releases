@@ -26,8 +26,8 @@ func NewFactory() connector.Factory {
 	return connector.NewFactory(
 		metadata.Type,
 		NewDefaultConfig,
-		connector.WithMetricsToLogs(createMetricsToLogsConnector, metadata.MetricsStability),
-		connector.WithLogsToLogs(createLogsToLogsConnector, metadata.LogsStability),
+		connector.WithMetricsToLogs(createMetricsToLogsConnector, metadata.MetricsToLogsStability),
+		connector.WithLogsToLogs(createLogsToLogsConnector, metadata.LogsToLogsStability),
 	)
 }
 

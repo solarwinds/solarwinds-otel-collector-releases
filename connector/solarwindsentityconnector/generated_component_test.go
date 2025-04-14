@@ -12,9 +12,9 @@ import (
 	"go.opentelemetry.io/collector/confmap/confmaptest"
 	"go.opentelemetry.io/collector/connector"
 	"go.opentelemetry.io/collector/connector/connectortest"
-	_ "go.opentelemetry.io/collector/consumer"
-	_ "go.opentelemetry.io/collector/consumer/consumertest"
-	_ "go.opentelemetry.io/collector/pipeline"
+	"go.opentelemetry.io/collector/consumer"
+	"go.opentelemetry.io/collector/consumer/consumertest"
+	"go.opentelemetry.io/collector/pipeline"
 )
 
 var typ = component.MustNewType("solarwindsentity")
@@ -33,7 +33,24 @@ func TestComponentLifecycle(t *testing.T) {
 	tests := []struct {
 		createFn func(ctx context.Context, set connector.Settings, cfg component.Config) (component.Component, error)
 		name     string
-	}{}
+	}{
+
+		{
+			name: "logs_to_logs",
+			createFn: func(ctx context.Context, set connector.Settings, cfg component.Config) (component.Component, error) {
+				router := connector.NewLogsRouter(map[pipeline.ID]consumer.Logs{pipeline.NewID(pipeline.SignalLogs): consumertest.NewNop()})
+				return factory.CreateLogsToLogs(ctx, set, cfg, router)
+			},
+		},
+
+		{
+			name: "metrics_to_logs",
+			createFn: func(ctx context.Context, set connector.Settings, cfg component.Config) (component.Component, error) {
+				router := connector.NewLogsRouter(map[pipeline.ID]consumer.Logs{pipeline.NewID(pipeline.SignalLogs): consumertest.NewNop()})
+				return factory.CreateMetricsToLogs(ctx, set, cfg, router)
+			},
+		},
+	}
 
 	cm, err := confmaptest.LoadConf("metadata.yaml")
 	require.NoError(t, err)
@@ -44,19 +61,19 @@ func TestComponentLifecycle(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name+"-shutdown", func(t *testing.T) {
-			c, err := tt.createFn(context.Background(), connectortest.NewNopSettings(typ), cfg)
+			c, err := tt.createFn(context.Background(), connectortest.NewNopSettings(), cfg)
 			require.NoError(t, err)
 			err = c.Shutdown(context.Background())
 			require.NoError(t, err)
 		})
 		t.Run(tt.name+"-lifecycle", func(t *testing.T) {
-			firstConnector, err := tt.createFn(context.Background(), connectortest.NewNopSettings(typ), cfg)
+			firstConnector, err := tt.createFn(context.Background(), connectortest.NewNopSettings(), cfg)
 			require.NoError(t, err)
 			host := componenttest.NewNopHost()
 			require.NoError(t, err)
 			require.NoError(t, firstConnector.Start(context.Background(), host))
 			require.NoError(t, firstConnector.Shutdown(context.Background()))
-			secondConnector, err := tt.createFn(context.Background(), connectortest.NewNopSettings(typ), cfg)
+			secondConnector, err := tt.createFn(context.Background(), connectortest.NewNopSettings(), cfg)
 			require.NoError(t, err)
 			require.NoError(t, secondConnector.Start(context.Background(), host))
 			require.NoError(t, secondConnector.Shutdown(context.Background()))

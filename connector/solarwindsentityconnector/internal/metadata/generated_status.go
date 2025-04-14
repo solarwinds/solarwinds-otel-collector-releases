@@ -8,11 +8,10 @@ import (
 
 var (
 	Type      = component.MustNewType("solarwindsentity")
-	ScopeName = "solarwindsentityconnector"
+	ScopeName = "github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector"
 )
 
 const (
-	TracesStability  = component.StabilityLevelDevelopment
-	MetricsStability = component.StabilityLevelDevelopment
-	LogsStability    = component.StabilityLevelDevelopment
+	MetricsToLogsStability = component.StabilityLevelDevelopment
+	LogsToLogsStability    = component.StabilityLevelDevelopment
 )

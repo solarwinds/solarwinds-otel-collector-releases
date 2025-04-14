@@ -4,4 +4,6 @@ github_project: solarwinds/solarwinds-otel-collector-releases
 status:
   class: connector
   stability:
-    development: [traces, metrics, logs]
+    development: [metrics_to_logs, logs_to_logs]
+
+tests:
