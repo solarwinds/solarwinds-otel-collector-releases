@@ -17,6 +17,7 @@ body:
       multiple: true
       options:
         - cmd/solarwinds-otel-collector
+        - connector/solarwindsentity
         - exporter/solarwindsexporter
         - extension/solarwindsextension
         - receiver/swohostmetricsreceiver
@@ -74,14 +75,17 @@ body:
             traces:
               receivers: []
               exporters: []
+              connectors: []
               processors: []
             metrics:
               receivers: []
               exporters: []
+              connectors: []
               processors: []
             logs:
               receivers: []
               exporters: []
+              connectors: []
               processors: []
       render: yaml
   - type: textarea

@@ -161,6 +161,7 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/windowsperfcountersreceiver v0.119.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zipkinreceiver v0.119.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zookeeperreceiver v0.119.0
+	github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector v0.119.12
 	github.com/solarwinds/solarwinds-otel-collector-releases/exporter/solarwindsexporter v0.119.12
 	github.com/solarwinds/solarwinds-otel-collector-releases/extension/solarwindsextension v0.119.12
 	github.com/solarwinds/solarwinds-otel-collector-releases/pkg/version v0.119.12
@@ -727,6 +728,8 @@ require (
 replace github.com/solarwinds/solarwinds-otel-collector-releases/exporter/solarwindsexporter => ../../exporter/solarwindsexporter
 
 replace github.com/solarwinds/solarwinds-otel-collector-releases/extension/solarwindsextension => ../../extension/solarwindsextension
+
+replace github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector => ../../connector/solarwindsentityconnector
 
 replace github.com/solarwinds/solarwinds-otel-collector-releases/pkg/testutil => ../../pkg/testutil
 

@@ -11,6 +11,7 @@ body:
       multiple: true
       options:
         - cmd/solarwinds-otel-collector
+        - connector/solarwindsentity
         - exporter/solarwindsexporter
         - extension/solarwindsextension
         - receiver/swohostmetricsreceiver
