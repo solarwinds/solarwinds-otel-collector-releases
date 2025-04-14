@@ -209,7 +209,6 @@ import (
 func components() (otelcol.Factories, error) {
 	var err error
 	factories := otelcol.Factories{}
-	zap.L().Error("In componentes")
 
 	factories.Extensions, err = extension.MakeFactoryMap(
 		memorylimiterextension.NewFactory(),
