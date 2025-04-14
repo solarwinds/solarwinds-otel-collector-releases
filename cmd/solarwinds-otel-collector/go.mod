@@ -387,8 +387,8 @@ require (
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/gogo/googleapis v1.4.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
-	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
+	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
@@ -765,5 +765,3 @@ replace gonum.org/v1/netlib => github.com/gonum/netlib v0.0.0-20190331212654-767
 // Also breaks dependabot.
 // Using the latest version from go.sum or go.mod when run without this replace.
 replace gonum.org/v1/plot => github.com/gonum/plot v0.10.1
-
-exclude github.com/knadh/koanf v1.5.0
