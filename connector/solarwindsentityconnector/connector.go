@@ -34,13 +34,6 @@ func (s *solarwindsentity) Capabilities() consumer.Capabilities {
 
 func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.Metrics) error {
 	logs := plog.NewLogs()
-	logs.ResourceLogs().AppendEmpty()
-	for i := 0; i < metrics.ResourceMetrics().Len(); i++ {
-		resourceMetric := metrics.ResourceMetrics().At(i)
-		for j := 0; j < resourceMetric.ScopeMetrics().Len(); j++ {
-			logs.ResourceLogs().At(0).ScopeLogs().AppendEmpty().LogRecords().AppendEmpty().Attributes().PutStr("metric_name", resourceMetric.ScopeMetrics().At(j).Metrics().At(0).Name())
-		}
-	}
 	err := s.logsConsumer.ConsumeLogs(ctx, logs)
 	if err != nil {
 		return err
@@ -50,9 +43,6 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 
 func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) error {
 	newLogs := plog.NewLogs()
-	attrs := newLogs.ResourceLogs().AppendEmpty().ScopeLogs().AppendEmpty().LogRecords().AppendEmpty().Attributes()
-	attrs.PutStr("log_name", "janca_test")
-	attrs.PutInt("log_count", int64(logs.LogRecordCount()))
 	err := s.logsConsumer.ConsumeLogs(ctx, newLogs)
 	if err != nil {
 		return err
