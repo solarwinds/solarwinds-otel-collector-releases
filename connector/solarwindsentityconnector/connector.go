@@ -16,6 +16,7 @@ package solarwindsentityconnector
 
 import (
 	"context"
+	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.opentelemetry.io/collector/pdata/pmetric"
@@ -23,6 +24,9 @@ import (
 
 type solarwindsentity struct {
 	logsConsumer consumer.Logs
+
+	component.StartFunc
+	component.ShutdownFunc
 }
 
 func (s *solarwindsentity) Capabilities() consumer.Capabilities {
