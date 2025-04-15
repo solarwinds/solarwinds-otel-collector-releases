@@ -38,6 +38,13 @@ func (s *solarwindsentity) Capabilities() consumer.Capabilities {
 
 func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.Metrics) error {
 	logs := plog.NewLogs()
+	events := internal.BuildEventLog(logs)
+	for i := range metrics.ResourceMetrics().Len() {
+		resourceMetric := metrics.ResourceMetrics().At(i)
+		resourceAttrs := resourceMetric.Resource().Attributes()
+
+		internal.AppendEvent(&events, s.entities.GetEntity("Snowflake"), resourceAttrs)
+	}
 	err := s.logsConsumer.ConsumeLogs(ctx, logs)
 	if err != nil {
 		return err
@@ -47,6 +54,13 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 
 func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) error {
 	newLogs := plog.NewLogs()
+	events := internal.BuildEventLog(newLogs)
+	for i := range logs.ResourceLogs().Len() {
+		resourceLog := logs.ResourceLogs().At(i)
+		resourceAttrs := resourceLog.Resource().Attributes()
+
+		internal.AppendEvent(&events, s.entities.GetEntity("Snowflake"), resourceAttrs)
+	}
 	err := s.logsConsumer.ConsumeLogs(ctx, newLogs)
 	if err != nil {
 		return err
