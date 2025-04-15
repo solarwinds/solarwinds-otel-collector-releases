@@ -15,6 +15,8 @@
 package solarwindsentityconnector
 
 import (
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
+
 	"context"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/consumer"
@@ -24,6 +26,7 @@ import (
 
 type solarwindsentity struct {
 	logsConsumer consumer.Logs
+	entities     *internal.Entities
 
 	component.StartFunc
 	component.ShutdownFunc

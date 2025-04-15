@@ -16,7 +16,9 @@ package solarwindsentityconnector
 
 import "go.opentelemetry.io/collector/component"
 
-type Config struct{}
+type Config struct {
+	Schema Schema `mapstructure:"schema"`
+}
 
 func NewDefaultConfig() component.Config {
 	return &Config{}
