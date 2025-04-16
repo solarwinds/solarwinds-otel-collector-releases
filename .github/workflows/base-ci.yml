@@ -12,6 +12,21 @@ on:
       goarch:
         required: true
         type: string
+  workflow_dispatch:
+    inputs:
+      distribution:
+        description: "distribution"
+        required: true
+        type: string
+      goos:
+        description: "goos"
+        required: true
+        type: string
+      goarch:
+        description: "goarch"
+        required: true
+        type: string
+
 
 env:
   GORELEASER_VERSION: v2.7.0
