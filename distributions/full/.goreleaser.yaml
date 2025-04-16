@@ -14,36 +14,41 @@ builds:
     goarch:
       - amd64
       - arm64
-    dir: _build
-    binary: full
+    dir: ../../cmd/solarwinds-otel-collector
+    binary: solarwinds-otel-collector
     ldflags:
       - '{{ .Env.LD_FLAGS }}'
     flags:
       - '{{ .Env.BUILD_FLAGS }}'
+      - -tags=full
   - id: full-windows
     goos:
       - windows
     goarch:
       - amd64
-    dir: _build
-    binary: full
+    dir: ../../cmd/solarwinds-otel-collector
+    binary: solarwinds-otel-collector
     ldflags:
       - '{{ .Env.LD_FLAGS }}'
     flags:
       - '{{ .Env.BUILD_FLAGS }}'
+      - -tags=full
 archives:
   - id: full
-    # TODO: replacement of builds to ids
     ids:
       - full-linux
       - full-windows
     name_template: '{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}'
+    files:
+      - LICENSE
 checksum:
   name_template: '{{ .ProjectName }}_full_checksums.txt'
 dockers:
   - goos: linux
     goarch: amd64
     dockerfile: Dockerfile
+    extra_files:
+      - LICENSE
     image_templates:
       - solarwinds/solarwinds-otel-collector:{{ .Version }}-amd64
       - solarwinds/solarwinds-otel-collector:latest-amd64
@@ -61,6 +66,8 @@ dockers:
   - goos: linux
     goarch: arm64
     dockerfile: Dockerfile
+    extra_files:
+      - LICENSE
     image_templates:
       - solarwinds/solarwinds-otel-collector:{{ .Version }}-arm64
       - solarwinds/solarwinds-otel-collector:latest-arm64
@@ -77,10 +84,12 @@ dockers:
   - goos: windows
     goarch: amd64
     dockerfile: Windows.dockerfile
+    extra_files:
+      - LICENSE
     image_templates:
       - solarwinds/solarwinds-otel-collector:{{ .Version }}-nanoserver-ltsc2019
       - solarwinds/solarwinds-otel-collector:latest-nanoserver-ltsc2019
-#    skip_build: '{{ not (eq .Runtime.Goos "windows") }}'
+    # skip_build: '{{ not (eq .Runtime.Goos "windows") }}'
     skip_push: '{{ not (eq .Runtime.Goos "windows") }}'
     build_flag_templates:
       - --pull
@@ -96,10 +105,12 @@ dockers:
   - goos: windows
     goarch: amd64
     dockerfile: Windows.dockerfile
+    extra_files:
+      - LICENSE
     image_templates:
       - solarwinds/solarwinds-otel-collector:{{ .Version }}-nanoserver-ltsc2022
       - solarwinds/solarwinds-otel-collector:latest-nanoserver-ltsc2022
-#    skip_build: '{{ not (eq .Runtime.Goos "windows") }}'
+    # skip_build: '{{ not (eq .Runtime.Goos "windows") }}'
     skip_push: '{{ not (eq .Runtime.Goos "windows") }}'
     build_flag_templates:
       - --pull
