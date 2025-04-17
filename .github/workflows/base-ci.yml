@@ -26,7 +26,7 @@ jobs:
       matrix:
         GOOS: ${{ fromJSON( inputs.goos )}}
         GOARCH: ${{ fromJSON( inputs.goarch )}}
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner_os }}
     outputs:
       version: ${{ steps.prep.outputs.version }}
 
