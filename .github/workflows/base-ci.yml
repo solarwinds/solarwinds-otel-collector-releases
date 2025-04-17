@@ -134,6 +134,7 @@ jobs:
   docker-tests:
     needs:
       - check-goreleaser
+    if: ${{ inputs.runner_os == 'ubuntu-24.04'}}
     strategy:
       matrix:
         GOOS: ${{ fromJSON( inputs.goos) }}
