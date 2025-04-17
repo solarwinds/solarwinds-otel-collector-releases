@@ -15,6 +15,7 @@ on:
       config_suffix:
         required: false
         type: string
+        default: '[ "" ]'
       runner_os:
         required: false
         type: string

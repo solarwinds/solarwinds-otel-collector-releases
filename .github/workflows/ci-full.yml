@@ -21,5 +21,6 @@ jobs:
       distribution: full
       goos: '[ "windows" ]'
       goarch: '[ "amd64" ]'
+      config_suffix: '[ "-2019", "-2022" ]'
       runner_os: 'windows-2022'
     secrets: inherit
