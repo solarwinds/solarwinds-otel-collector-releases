@@ -16,6 +16,7 @@ package solarwindsentityconnector
 
 import (
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
+	"go.opentelemetry.io/collector/connector"
 
 	"context"
 	"go.opentelemetry.io/collector/component"
@@ -31,6 +32,9 @@ type solarwindsentity struct {
 	component.StartFunc
 	component.ShutdownFunc
 }
+
+var _ connector.Metrics = (*solarwindsentity)(nil)
+var _ connector.Logs = (*solarwindsentity)(nil)
 
 func (s *solarwindsentity) Capabilities() consumer.Capabilities {
 	return consumer.Capabilities{MutatesData: false}
