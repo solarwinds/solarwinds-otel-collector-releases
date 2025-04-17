@@ -12,6 +12,9 @@ on:
       goarch:
         required: true
         type: string
+      config_suffix:
+        required: false
+        type: string
       runner_os:
         required: false
         type: string
@@ -26,6 +29,7 @@ jobs:
       matrix:
         GOOS: ${{ fromJSON( inputs.goos )}}
         GOARCH: ${{ fromJSON( inputs.goarch )}}
+        SUFFIX: ${{ fromJSON( inputs.config_suffix )}}
     runs-on: ${{ inputs.runner_os }}
     outputs:
       version: ${{ steps.prep.outputs.version }}
@@ -49,30 +53,16 @@ jobs:
           check-latest: true
 
       - name: Run GoReleaser for ${{ inputs.distribution }} (linux)
-        if: matrix.GOOS != 'windows'
         uses: goreleaser/goreleaser-action@9c156ee8a17a598857849441385a2041ef570552 # v6.3.0
         with:
           distribution: goreleaser
           version: ${{ env.GORELEASER_VERSION }}
           workdir: distributions/${{ inputs.distribution }}
-          args: --snapshot --clean --skip=sign,sbom --timeout 2h --config .goreleaser.yaml # --split
+          args: --snapshot --clean --skip=sign,sbom --timeout 2h --config .goreleaser-${{ matrix.GOOS}}-${{matrix.GOARCH}}${{matrix.SUFFIX}}.yaml # --split
         env:
           GOOS: ${{ matrix.GOOS }}
           GOARCH: ${{ matrix.GOARCH }}
           GOARM: "7" # Default is 6
-          GOAMD64: v1 # TODO: required?
-
-      - name: Run GoReleaser for ${{ inputs.distribution }} (windows)
-        if: matrix.GOOS == 'windows'
-        uses: goreleaser/goreleaser-action@9c156ee8a17a598857849441385a2041ef570552 # v6.3.0
-        with:
-          distribution: goreleaser
-          version: ${{ env.GORELEASER_VERSION }}
-          workdir: distributions/${{ inputs.distribution }}
-          args: --snapshot --clean --skip=sign,sbom --timeout 2h --config .goreleaser-windows.yaml # --split
-        env:
-          GOOS: ${{ matrix.GOOS }}
-          GOARCH: ${{ matrix.GOARCH }}
           GOAMD64: v1 # TODO: required?
 
       # TODO: /**/file.json
