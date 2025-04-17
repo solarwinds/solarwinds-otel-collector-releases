@@ -1,0 +1,109 @@
+version: 2
+project_name: solarwinds-otel-collector-releases
+env:
+  - COSIGN_YES=true
+  - LD_FLAGS=-s -w
+  - BUILD_FLAGS=-trimpath
+  - CGO_ENABLED=0
+release:
+  replace_existing_artifacts: true
+builds:
+  - id: full-windows
+    goos:
+      - windows
+    goarch:
+      - amd64
+    dir: ../../cmd/solarwinds-otel-collector
+    binary: solarwinds-otel-collector
+    ldflags:
+      - '{{ .Env.LD_FLAGS }}'
+    flags:
+      - '{{ .Env.BUILD_FLAGS }}'
+      - -tags=full
+archives:
+  - id: full
+    ids:
+      - full-windows
+    name_template: '{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}'
+    files:
+      - LICENSE
+checksum:
+  name_template: '{{ .ProjectName }}_full_checksums.txt'
+dockers:
+  - goos: windows
+    goarch: amd64
+    dockerfile: Windows.dockerfile
+    extra_files:
+      - LICENSE
+    image_templates:
+      - solarwinds/solarwinds-otel-collector:{{ .Version }}-nanoserver-ltsc2019
+      - solarwinds/solarwinds-otel-collector:latest-nanoserver-ltsc2019
+    # skip_build: '{{ not (eq .Runtime.Goos "windows") }}'
+    skip_push: '{{ not (eq .Runtime.Goos "windows") }}'
+    build_flag_templates:
+      - --pull
+      - --build-arg=WIN_VERSION=2019
+      - --platform=windows/amd64
+      - --label=org.opencontainers.image.created={{.Date}}
+      - --label=org.opencontainers.image.name={{.ProjectName}}
+      - --label=org.opencontainers.image.revision={{.FullCommit}}
+      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.source={{.GitURL}}
+      - --label=org.opencontainers.image.licenses=Apache-2.0
+    use: docker
+  - goos: windows
+    goarch: amd64
+    dockerfile: Windows.dockerfile
+    extra_files:
+      - LICENSE
+    image_templates:
+      - solarwinds/solarwinds-otel-collector:{{ .Version }}-nanoserver-ltsc2022
+      - solarwinds/solarwinds-otel-collector:latest-nanoserver-ltsc2022
+    # skip_build: '{{ not (eq .Runtime.Goos "windows") }}'
+    skip_push: '{{ not (eq .Runtime.Goos "windows") }}'
+    build_flag_templates:
+      - --pull
+      - --build-arg=WIN_VERSION=2022
+      - --platform=windows/amd64
+      - --label=org.opencontainers.image.created={{.Date}}
+      - --label=org.opencontainers.image.name={{.ProjectName}}
+      - --label=org.opencontainers.image.revision={{.FullCommit}}
+      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.source={{.GitURL}}
+      - --label=org.opencontainers.image.licenses=Apache-2.0
+    use: docker
+docker_manifests:
+  - name_template: solarwinds/solarwinds-otel-collector:{{ .Version }}
+    image_templates:
+      - solarwinds/solarwinds-otel-collector:{{ .Version }}-nanoserver-ltsc2019
+      - solarwinds/solarwinds-otel-collector:{{ .Version }}-nanoserver-ltsc2022
+  - name_template: solarwinds/solarwinds-otel-collector:latest
+    image_templates:
+      - solarwinds/solarwinds-otel-collector:latest-nanoserver-ltsc2019
+      - solarwinds/solarwinds-otel-collector:latest-nanoserver-ltsc2022
+signs:
+  - cmd: cosign
+    args:
+      - sign-blob
+      - --output-signature
+      - ${artifact}.sig
+      - --output-certificate
+      - ${artifact}.pem
+      - ${artifact}
+    signature: ${artifact}.sig
+    artifacts: all
+    certificate: ${artifact}.pem
+docker_signs:
+  - args:
+      - sign
+      - ${artifact}
+    artifacts: all
+sboms:
+  - id: archive
+    artifacts: archive
+  - id: package
+    artifacts: package
+#monorepo:
+#  tag_prefix: v
+#partial:
+#  by: target
