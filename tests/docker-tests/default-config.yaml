@@ -1,0 +1,11 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+extensions:
+  solarwinds:
+    token: "<no token>"
+
+
+exporters:
