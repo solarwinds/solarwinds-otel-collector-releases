@@ -131,6 +131,46 @@ jobs:
           path: /tmp/${{ inputs.distribution }}.tar
           retention-days: 7
 
+  docker-vulnerability-check:
+    needs:
+      - check-goreleaser
+    if: ${{ inputs.runner_os == 'ubuntu-24.04'}}
+    strategy:
+      matrix:
+        GOOS: ${{ fromJSON( inputs.goos) }}
+        GOARCH: ${{ fromJSON( inputs.goarch) }}
+        exclude:
+          - GOOS: windows
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download container image artifact
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: ${{ inputs.distribution }}-image-${{ needs.check-goreleaser.outputs.version }}-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
+
+      - name: Load image into docker
+        run: |
+          docker image load --input ./${{ inputs.distribution }}.tar
+          docker image ls
+          docker image inspect ${{ inputs.distribution }}:${{ needs.check-goreleaser.outputs.version }}-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
+          # Tag image for display usage
+          docker tag ${{ inputs.distribution }}:${{ needs.check-goreleaser.outputs.version }}-${{ matrix.GOOS }}-${{ matrix.GOARCH }} solarwinds-otel-collector:${{ inputs.distribution }}-${{ needs.check-goreleaser.outputs.version }}-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
+
+      - name: Log into registry with PAT to use SCOUT.
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
+          password: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
+
+      - name: Docker scout
+        id: docker-scout
+        uses: docker/scout-action@v1
+        with:
+          command: compare
+          image: solarwinds-otel-collector:${{ inputs.distribution }}-${{ needs.check-goreleaser.outputs.version }}-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
+          to: solarwinds/solarwinds-otel-collector:latest
+          write-comment: false
+
   docker-tests:
     needs:
       - check-goreleaser
