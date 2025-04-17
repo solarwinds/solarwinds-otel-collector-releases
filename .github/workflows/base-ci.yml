@@ -77,7 +77,7 @@ jobs:
         run: cat ./distributions/${{ inputs.distribution }}/dist/metadata.json
 
       - name: Print dist folder contents
-        if: always() # TODO: WHY?WHY?
+        if: always() && matrix.GOOS == 'linux'
         run: ls -laR ./distributions/${{ inputs.distribution }}/dist
 
       # TODO: /**/file.json
