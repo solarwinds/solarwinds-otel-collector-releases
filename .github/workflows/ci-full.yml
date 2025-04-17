@@ -10,6 +10,6 @@ jobs:
     uses: ./.github/workflows/base-ci.yml
     with:
       distribution: full
-      goos: '[ "linux" ]' # TODO: return windows
+      goos: '[ "linux", "windows" ]'
       goarch: '[ "amd64", "arm64" ]'
     secrets: inherit
