@@ -57,11 +57,12 @@ jobs:
           GOARM: "7" # Default is 6
           GOAMD64: v1 # TODO: required?
 
+      # TODO: /**/file.json
       - name: Print built artifacts
-        run: cat ./distributions/${{ inputs.distribution }}/dist/**/artifacts.json
+        run: cat ./distributions/${{ inputs.distribution }}/dist/artifacts.json
 
       - name: Print metadata
-        run: cat ./distributions/${{ inputs.distribution }}/dist/**/metadata.json
+        run: cat ./distributions/${{ inputs.distribution }}/dist/metadata.json
 
       - name: Print dist folder contents
         if: always() # TODO: WHY?WHY?
