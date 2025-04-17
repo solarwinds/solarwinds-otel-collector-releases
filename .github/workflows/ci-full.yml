@@ -10,6 +10,16 @@ jobs:
     uses: ./.github/workflows/base-ci.yml
     with:
       distribution: full
-      goos: '[ "linux", "windows" ]'
+      goos: '[ "linux" ]'
       goarch: '[ "amd64", "arm64" ]'
+    secrets: inherit
+
+  check-goreleaser-windows:
+    name: CI - Full
+    uses: ./.github/workflows/base-ci.yml
+    with:
+      distribution: full
+      goos: '[ "windows" ]'
+      goarch: '[ "amd64" ]'
+      runner_os: 'windows-2022'
     secrets: inherit
