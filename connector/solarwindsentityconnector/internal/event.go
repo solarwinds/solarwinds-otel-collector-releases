@@ -25,7 +25,7 @@ const (
 )
 
 type eventsHandler interface {
-	AppendUpdateEvent(entity Entity, telemetryAttributes pcommon.Map)
+	AppendEntityUpdateEvent(entity Entity, telemetryAttributes pcommon.Map)
 }
 
 type Events struct {
@@ -38,7 +38,7 @@ func NewEvents(logs plog.Logs) *Events {
 	}
 }
 
-func (e *Events) AppendUpdateEvent(entity Entity, resourceAttrs pcommon.Map) {
+func (e *Events) AppendEntityUpdateEvent(entity Entity, resourceAttrs pcommon.Map) {
 	lr := plog.NewLogRecord()
 
 	if exists := setIdAttributes(&lr, entity.IDs(), resourceAttrs); !exists {

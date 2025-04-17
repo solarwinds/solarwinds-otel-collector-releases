@@ -44,7 +44,7 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 		resourceAttrs := resourceMetric.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		events.AppendUpdateEvent(s.entities.GetEntity("Snowflake"), resourceAttrs)
+		events.AppendEntityUpdateEvent(s.entities.GetEntity("Snowflake"), resourceAttrs)
 	}
 
 	if logs.LogRecordCount() == 0 {
@@ -67,7 +67,7 @@ func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) erro
 		resourceAttrs := resourceLog.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		events.AppendUpdateEvent(s.entities.GetEntity("Snowflake"), resourceAttrs)
+		events.AppendEntityUpdateEvent(s.entities.GetEntity("Snowflake"), resourceAttrs)
 	}
 
 	if newLogs.LogRecordCount() == 0 {
