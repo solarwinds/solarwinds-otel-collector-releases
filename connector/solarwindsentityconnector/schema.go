@@ -7,14 +7,9 @@ type Schema struct {
 }
 
 type Entity struct {
-	Type       string      `mapstructure:"entity"`
-	ID         []Attribute `mapstructure:"id"`
-	Attributes []Attribute `mapstructure:"attributes"`
-}
-
-type Attribute struct {
-	ResourceAttribute string `mapstructure:"resource_attribute"`
-	Property          string `mapstructure:"property"`
+	Type       string   `mapstructure:"entity"`
+	IDs        []string `mapstructure:"id"`
+	Attributes []string `mapstructure:"attributes"`
 }
 
 func (s *Schema) NewEntities() *internal.Entities {
@@ -22,18 +17,9 @@ func (s *Schema) NewEntities() *internal.Entities {
 	for _, entity := range s.Entities {
 		entities[entity.Type] = internal.NewEntity(
 			entity.Type,
-			convert(entity.ID),
-			convert(entity.Attributes))
+			entity.IDs,
+			entity.Attributes)
 	}
 
 	return internal.NewEntities(entities)
-}
-
-func convert(schemaAttributes []Attribute) []internal.Attribute {
-	attrs := make([]internal.Attribute, len(schemaAttributes))
-	for _, attr := range schemaAttributes {
-		attrs = append(attrs, internal.NewAttribute(attr.ResourceAttribute, attr.Property))
-	}
-
-	return attrs
 }

@@ -42,11 +42,16 @@ func (e *Events) AppendUpdateEvent(entity Entity, resourceAttrs pcommon.Map) {
 	lr := plog.NewLogRecord()
 	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
 
+	if exists := setIdAttributes(&lr, entity.IDs(), resourceAttrs); !exists {
+		return
+	}
+
 	setEventType(&lr, entityUpdateEventType)
 	setEntityType(&lr, entity.Type())
-	setIdAttributes(&lr, entity.IDs(), resourceAttrs)
-	setAttributes(&lr, entity.IDs(), resourceAttrs)
+	setAttributes(&lr, entity.Attributes(), resourceAttrs)
 
+	eventLog := e.logRecords.AppendEmpty()
+	lr.CopyTo(eventLog)
 }
 
 var _ eventsHandler = (*Events)(nil)

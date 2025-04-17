@@ -40,24 +40,26 @@ func setEventType(lr *plog.LogRecord, eventType string) {
 
 // setIdAttributes sets the entity id attributes in the log record needed by SWO,
 // which are used to identify or infer the entity in the system.
-func setIdAttributes(lr *plog.LogRecord, entityIds []Attribute, resourceAttrs pcommon.Map) {
+func setIdAttributes(lr *plog.LogRecord, entityIds []string, resourceAttrs pcommon.Map) bool {
 	attrs := lr.Attributes()
 	logIds := attrs.PutEmptyMap(swoEntityIds)
 	for _, id := range entityIds {
 		// If identification attribute is not found, entity will not be inferred
-		if !putAttribute(&logIds, id.ResourceAttribute(), &resourceAttrs) {
-			zap.L().Warn("failed to put entity id", zap.String("key", id.ResourceAttribute()))
-			return
+		if !putAttribute(&logIds, id, &resourceAttrs) {
+			zap.L().Warn("failed to put entity id", zap.String("key", id))
+			return false
 		}
 	}
+
+	return true
 }
 
 // setAttributes sets the entity attributes in the log record used for updating state of a SWO entity.
-func setAttributes(lr *plog.LogRecord, entityAttrs []Attribute, resourceAttrs pcommon.Map) {
+func setAttributes(lr *plog.LogRecord, entityAttrs []string, resourceAttrs pcommon.Map) {
 	attrs := lr.Attributes()
 	logIds := attrs.PutEmptyMap(swoEntityAttributes)
 	for _, id := range entityAttrs {
-		putAttribute(&logIds, id.ResourceAttribute(), &resourceAttrs)
+		putAttribute(&logIds, id, &resourceAttrs)
 	}
 }
 

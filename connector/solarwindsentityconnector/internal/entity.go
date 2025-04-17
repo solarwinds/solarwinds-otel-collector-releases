@@ -6,13 +6,8 @@ type Entities struct {
 
 type Entity struct {
 	entityType string
-	ids        []Attribute
-	attributes []Attribute
-}
-
-type Attribute struct {
-	resourceAttribute string
-	property          string
+	ids        []string
+	attributes []string
 }
 
 func (e *Entities) GetEntity(entityType string) Entity {
@@ -25,7 +20,7 @@ func NewEntities(entities map[string]Entity) *Entities {
 	}
 }
 
-func NewEntity(entityType string, ids []Attribute, attributes []Attribute) Entity {
+func NewEntity(entityType string, ids []string, attributes []string) Entity {
 	return Entity{
 		entityType: entityType,
 		ids:        ids,
@@ -33,29 +28,14 @@ func NewEntity(entityType string, ids []Attribute, attributes []Attribute) Entit
 	}
 }
 
-func NewAttribute(resourceAttribute string, property string) Attribute {
-	return Attribute{
-		resourceAttribute: resourceAttribute,
-		property:          property,
-	}
-}
-
 func (e Entity) Type() string {
 	return e.entityType
 }
 
-func (e Entity) IDs() []Attribute {
+func (e Entity) IDs() []string {
 	return e.ids
 }
 
-func (e Entity) Attributes() []Attribute {
+func (e Entity) Attributes() []string {
 	return e.attributes
-}
-
-func (a Attribute) ResourceAttribute() string {
-	return a.resourceAttribute
-}
-
-func (a Attribute) Property() string {
-	return a.property
 }
