@@ -1,0 +1,15 @@
+name: CI - Full
+
+on:
+  # TODO: push to main, PR to main, consider merge group?
+  push:
+
+jobs:
+  check-goreleaser:
+    name: CI - Full
+    uses: ./.github/workflows/base-ci.yml
+    with:
+      distribution: full
+      goos: '[ "linux", "windows" ]'
+      goarch: '[ "amd64", "arm64" ]'
+    secrets: inherit
