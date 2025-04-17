@@ -50,7 +50,7 @@ jobs:
           distribution: goreleaser
           version: ${{ env.GORELEASER_VERSION }}
           workdir: distributions/${{ inputs.distribution }}
-          args: --snapshot --clean --skip=sign,sbom --timeout 2h --split
+          args: --snapshot --clean --skip=sign,sbom --timeout 2h # --split
         env:
           GOOS: ${{ matrix.GOOS }}
           GOARCH: ${{ matrix.GOARCH }}
