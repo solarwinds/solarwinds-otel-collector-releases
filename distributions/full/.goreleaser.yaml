@@ -160,5 +160,5 @@ sboms:
     artifacts: package
 #monorepo:
 #  tag_prefix: v
-#partial:
-#  by: target
+partial:
+  by: target
