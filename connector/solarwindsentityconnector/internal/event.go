@@ -40,7 +40,6 @@ func NewEvents(logs plog.Logs) *Events {
 
 func (e *Events) AppendUpdateEvent(entity Entity, resourceAttrs pcommon.Map) {
 	lr := plog.NewLogRecord()
-	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
 
 	if exists := setIdAttributes(&lr, entity.IDs(), resourceAttrs); !exists {
 		return
@@ -49,6 +48,7 @@ func (e *Events) AppendUpdateEvent(entity Entity, resourceAttrs pcommon.Map) {
 	setEventType(&lr, entityUpdateEventType)
 	setEntityType(&lr, entity.Type())
 	setAttributes(&lr, entity.Attributes(), resourceAttrs)
+	setTimestamp(&lr, time.Now())
 
 	eventLog := e.logRecords.AppendEmpty()
 	lr.CopyTo(eventLog)

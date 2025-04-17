@@ -4,6 +4,7 @@ import (
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.uber.org/zap"
+	"time"
 )
 
 const (
@@ -40,11 +41,12 @@ func setEventType(lr *plog.LogRecord, eventType string) {
 
 // setIdAttributes sets the entity id attributes in the log record needed by SWO,
 // which are used to identify or infer the entity in the system.
+// setIdAttributes will return false if any of the attributes are missing in the resource attributes.
+// If any ID attribute is missing the entity would not be inferred.
 func setIdAttributes(lr *plog.LogRecord, entityIds []string, resourceAttrs pcommon.Map) bool {
 	attrs := lr.Attributes()
 	logIds := attrs.PutEmptyMap(swoEntityIds)
 	for _, id := range entityIds {
-		// If identification attribute is not found, entity will not be inferred
 		if !putAttribute(&logIds, id, &resourceAttrs) {
 			zap.L().Warn("failed to put entity id", zap.String("key", id))
 			return false
@@ -61,6 +63,10 @@ func setAttributes(lr *plog.LogRecord, entityAttrs []string, resourceAttrs pcomm
 	for _, id := range entityAttrs {
 		putAttribute(&logIds, id, &resourceAttrs)
 	}
+}
+
+func setTimestamp(lr *plog.LogRecord, timestamp time.Time) {
+	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(timestamp))
 }
 
 // putAttribute copies the value of attribute identified as key, from source to dest pcommon.Map.
