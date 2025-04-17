@@ -33,6 +33,7 @@ func NewFactory() connector.Factory {
 
 func createMetricsToLogsConnector(ctx context.Context, settings connector.Settings, config component.Config, logs consumer.Logs) (connector.Metrics, error) {
 	cfg := config.(*Config)
+	// TODO: think of better way to create the struct, when condition handling is introduced
 	return &solarwindsentity{
 		entities:     cfg.Schema.NewEntities(),
 		logsConsumer: logs,
@@ -41,6 +42,7 @@ func createMetricsToLogsConnector(ctx context.Context, settings connector.Settin
 
 func createLogsToLogsConnector(ctx context.Context, settings connector.Settings, config component.Config, logs consumer.Logs) (connector.Logs, error) {
 	cfg := config.(*Config)
+	// TODO: think of better way to create the struct, when condition handling is introduced
 	return &solarwindsentity{
 		entities:     cfg.Schema.NewEntities(),
 		logsConsumer: logs,
