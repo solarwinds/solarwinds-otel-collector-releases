@@ -26,6 +26,7 @@ on:
         description: "goarch"
         required: true
         type: string
+  push:
 
 
 env:
