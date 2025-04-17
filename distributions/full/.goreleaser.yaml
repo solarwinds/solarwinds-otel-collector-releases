@@ -35,7 +35,7 @@ builds:
 #      - -tags=full
 archives:
   - id: full
-    ids:
+    builds:
       - full-linux
 #      - full-windows
     name_template: '{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}'

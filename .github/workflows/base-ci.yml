@@ -14,7 +14,7 @@ on:
         type: string
 
 env:
-  GORELEASER_VERSION: v2.8.2
+  GORELEASER_VERSION: v2.7.0
 
 jobs:
   check-goreleaser:
