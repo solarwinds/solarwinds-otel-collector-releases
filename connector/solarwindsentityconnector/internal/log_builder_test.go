@@ -3,8 +3,65 @@ package internal
 import (
 	"github.com/stretchr/testify/assert"
 	"go.opentelemetry.io/collector/pdata/pcommon"
+	"go.opentelemetry.io/collector/pdata/plog"
 	"testing"
 )
+
+func TestSetIdAttributes(t *testing.T) {
+	resourceAttrs := pcommon.NewMap()
+	resourceAttrs.PutStr("id1", "idvalue1")
+	resourceAttrs.PutStr("id2", "idvalue2")
+
+	destination := plog.NewLogRecord()
+	result := setIdAttributes(&destination, []string{"id1"}, resourceAttrs)
+	assert.True(t, result)
+	ids, exists := destination.Attributes().Get(swoEntityIds)
+	assert.True(t, exists)
+	assert.Equal(t, 1, ids.Map().Len())
+	id, exists := ids.Map().Get("id1")
+	assert.True(t, exists)
+	assert.Equal(t, "idvalue1", id.Str())
+}
+
+func TestSetAttributes(t *testing.T) {
+	resourceAttrs := pcommon.NewMap()
+	resourceAttrs.PutStr("attr1", "attrvalue1")
+	resourceAttrs.PutStr("attr2", "attrvalue2")
+
+	destination := plog.NewLogRecord()
+	setAttributes(&destination, []string{"attr1"}, resourceAttrs)
+
+	attrs, exists := destination.Attributes().Get(swoEntityAttributes)
+	assert.True(t, exists)
+	assert.Equal(t, 1, attrs.Map().Len())
+	attr1, exists := attrs.Map().Get("attr1")
+	assert.True(t, exists)
+	assert.Equal(t, "attrvalue1", attr1.Str())
+}
+
+func TestSetEventType(t *testing.T) {
+	resourceAttrs := pcommon.NewMap()
+	resourceAttrs.PutStr("eventType", "testEvent")
+
+	destination := plog.NewLogRecord()
+	setEventType(&destination, "testEvent")
+
+	attrs, exists := destination.Attributes().Get(swoEntityEventType)
+	assert.True(t, exists)
+	assert.Equal(t, "testEvent", attrs.Str())
+}
+
+func TestSetEntityType(t *testing.T) {
+	resourceAttrs := pcommon.NewMap()
+	resourceAttrs.PutStr("entityType", "testEntity")
+
+	destination := plog.NewLogRecord()
+	setEntityType(&destination, "testEntity")
+
+	attrs, exists := destination.Attributes().Get(swoEntityType)
+	assert.True(t, exists)
+	assert.Equal(t, "testEntity", attrs.Str())
+}
 
 func TestPutStringAttribute(t *testing.T) {
 	resourceAttrs := pcommon.NewMap()
