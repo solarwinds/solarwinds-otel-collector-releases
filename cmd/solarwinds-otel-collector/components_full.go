@@ -24,6 +24,7 @@ import (
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
 	"go.uber.org/zap"
 
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/exporter/solarwindsexporter"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/extension/solarwindsextension"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/processor/k8seventgenerationprocessor"
@@ -404,6 +405,7 @@ func components() (otelcol.Factories, error) {
 		servicegraphconnector.NewFactory(),
 		spanmetricsconnector.NewFactory(),
 		sumconnector.NewFactory(),
+		solarwindsentityconnector.NewFactory(),
 		forwardconnector.NewFactory(),
 	)
 

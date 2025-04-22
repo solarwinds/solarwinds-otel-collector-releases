@@ -761,6 +761,8 @@ replace github.com/solarwinds/solarwinds-otel-collector-releases/exporter/solarw
 
 replace github.com/solarwinds/solarwinds-otel-collector-releases/extension/solarwindsextension => ../../extension/solarwindsextension
 
+replace github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector => ../../connector/solarwindsentityconnector
+
 replace github.com/solarwinds/solarwinds-otel-collector-releases/pkg/testutil => ../../pkg/testutil
 
 replace github.com/solarwinds/solarwinds-otel-collector-releases/pkg/version => ../../pkg/version

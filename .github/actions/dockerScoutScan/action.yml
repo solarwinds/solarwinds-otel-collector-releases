@@ -18,17 +18,17 @@ inputs:
     description: Image name to compare to
     required: true
   compare-to-tag:
-    description: Tag to compare to, required if `compare-to-regex` is not provided, if both provided, this is prioritized
+    description: Tag to compare to, required if `compare-to-suffix` is not provided, if both provided, this is prioritized
     required: false
-  compare-to-regex:
-    description: Regex to find latest image in the registry to compare to, required if `compare-to` is not provided
+  compare-to-suffix:
+    description: Suffix identifying the image in the registry to compare to, required if `compare-to` is not provided
     required: false
 
 runs:
   using: composite
   steps:
-    - name: Ensure `compare-to-tag` or `compare-to-regex` is provided
-      if: ${{ !inputs.compare-to-tag && !inputs.compare-to-regex }}
+    - name: Ensure `compare-to-tag` or `compare-to-suffix` is provided
+      if: ${{ !inputs.compare-to-tag && !inputs.compare-to-suffix }}
       shell: bash
       run: exit 1
 
@@ -39,10 +39,10 @@ runs:
         password: ${{ inputs.token }}
 
     - name: Get latest tag
-      if: ${{ inputs.compare-to-regex }}
+      if: ${{ inputs.compare-to-suffix }}
       id: get-latest
       shell: bash
-      run: echo "tag=$(curl -s 'https://registry.hub.docker.com/v2/repositories/solarwinds/solarwinds-otel-collector/tags/' | jq -r '.results[].name' | grep -E '${{ inputs.compare-to-regex }}' | sort -r | head -n 1)" >> $GITHUB_OUTPUT
+      run: echo "tag=$(sed -n 's/.*const Version = \"\([^\"]*\)\".*/\1/p' ./pkg/version/version.go)${{ inputs.compare-to-suffix }}" >> $GITHUB_OUTPUT
 
     - name: Docker scout
       id: docker-scout
