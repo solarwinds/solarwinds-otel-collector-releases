@@ -148,7 +148,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-k8s
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-regex: '[0-9]+\.[0-9]+\.[0-9]+-k8s$'
+          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-k8s$'
 
   build_windows_k8s:
     runs-on: windows-2022
