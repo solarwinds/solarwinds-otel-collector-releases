@@ -103,7 +103,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-suffix: '-nanoserver-ltsc2019'
+          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2019$'
 
       - name: Docker scout image scan for Windows 2022
         uses: ./.github/actions/dockerScoutScan
@@ -113,7 +113,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-suffix: '-nanoserver-ltsc2022'
+          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2022$'
 
       - name: Save image
         run: |
@@ -148,7 +148,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-k8s
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-suffix: '-k8s'
+          compare-to-regex: '[0-9]+\.[0-9]+\.[0-9]+-k8s$'
 
   build_windows_k8s:
     runs-on: windows-2022
@@ -183,7 +183,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-k8s
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-suffix: '-nanoserver-ltsc2019-k8s'
+          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2019-k8s$'
 
       - name: Docker scout image scan for Windows 2022
         uses: ./.github/actions/dockerScoutScan
@@ -193,7 +193,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-k8s
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-suffix: '-nanoserver-ltsc2022-k8s'
+          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2022-k8s$'
             
       - name: Save image
         run: |
