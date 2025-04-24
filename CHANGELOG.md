@@ -1,6 +1,7 @@
 # Changelog
 
 ## vNext
+- Adds [SolarWinds Kubernetes Workload Type Processor](./processor/swok8sworkloadtypeprocessor/README.md) for annotating metrics with a k8s workload type based on their attributes.
 
 ## v0.123.0
 - Consumes OpenTelemetry Collector dependencies v0.123.0.

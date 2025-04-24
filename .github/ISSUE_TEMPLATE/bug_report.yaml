@@ -22,6 +22,7 @@ body:
         - extension/solarwindsextension
         - receiver/swohostmetricsreceiver
         - processor/k8seventgenerationprocessor
+        - processor/swok8sworkloadtype
   - type: textarea
     attributes:
       label: Description
