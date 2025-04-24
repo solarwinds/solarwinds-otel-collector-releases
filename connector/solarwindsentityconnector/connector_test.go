@@ -16,10 +16,17 @@ package solarwindsentityconnector
 
 import (
 	"context"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/golden"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest/plogtest"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal/metadata"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"go.opentelemetry.io/collector/component/componenttest"
+	"go.opentelemetry.io/collector/connector/connectortest"
 	"go.opentelemetry.io/collector/consumer"
+	"go.opentelemetry.io/collector/consumer/consumertest"
 	"go.opentelemetry.io/collector/pdata/plog"
-	"go.opentelemetry.io/collector/pdata/pmetric"
+	"path/filepath"
 	"testing"
 )
 
@@ -36,32 +43,68 @@ func (t *testLogsConsumer) ConsumeLogs(ctx context.Context, ld plog.Logs) error 
 
 var _ consumer.Logs = (*testLogsConsumer)(nil)
 
-func createTestConnector(t *testing.T) *solarwindsentity {
-	return &solarwindsentity{
-		entities: internal.NewEntities(map[string]internal.Entity{
-			"Snowflake": internal.NewEntity(
-				"Snowflake",
-				[]string{"id1", "id2"},
-				[]string{"attr1", "attr2"}),
-		}),
-		logsConsumer: &testLogsConsumer{},
+var (
+	expectedEntities = []Entity{
+		NewEntity("Snowflake", []string{"id1"}, []string{"attr1"}),
+	}
+)
+
+func NewEntity(entityType string, ids []string, attributes []string) Entity {
+	return Entity{
+		Type:       entityType,
+		IDs:        ids,
+		Attributes: attributes,
 	}
 }
 
-func TestConsumeMetrics(t *testing.T) {
-	connector := createTestConnector(t)
+func TestLogsToLogs(t *testing.T) {
+	factory := NewFactory()
+	sink := &consumertest.LogsSink{}
+	conn, err := factory.CreateLogsToLogs(context.Background(),
+		connectortest.NewNopSettings(metadata.Type), &Config{Schema{Entities: expectedEntities}}, sink)
+	require.NoError(t, err)
+	require.NotNil(t, conn)
 
-	// Create a test metrics object
-	metrics := pmetric.NewMetrics()
-	resourceMetrics := metrics.ResourceMetrics().AppendEmpty()
-	resourceMetrics.Resource().Attributes().PutStr("id1", "value1")
-	resourceMetrics.Resource().Attributes().PutStr("id2", "value2")
+	require.NoError(t, conn.Start(context.Background(), componenttest.NewNopHost()))
+	defer func() {
+		assert.NoError(t, conn.Shutdown(context.Background()))
+	}()
 
-	// TODO: not sure how to do the check
-	err := connector.ConsumeMetrics(context.Background(), metrics)
+	testLogs, err := golden.ReadLogs(filepath.Join("testdata", "logsToLogs", "input-log.yaml"))
+	assert.NoError(t, err)
+	assert.NoError(t, conn.ConsumeLogs(context.Background(), testLogs))
 
-	// Assert that there were no errors
-	if err != nil {
-		t.Errorf("ConsumeMetrics() error = %v", err)
-	}
+	allLogs := sink.AllLogs()
+	assert.Len(t, allLogs, 1)
+
+	expected, err := golden.ReadLogs(filepath.Join("testdata", "logsToLogs", "expected-log.yaml"))
+	assert.NoError(t, err)
+
+	assert.NoError(t, plogtest.CompareLogs(expected, allLogs[0], plogtest.IgnoreObservedTimestamp()))
+}
+
+func TestMetricsToLogs(t *testing.T) {
+	factory := NewFactory()
+	sink := &consumertest.LogsSink{}
+	conn, err := factory.CreateMetricsToLogs(context.Background(),
+		connectortest.NewNopSettings(metadata.Type), &Config{Schema{Entities: expectedEntities}}, sink)
+	require.NoError(t, err)
+	require.NotNil(t, conn)
+
+	require.NoError(t, conn.Start(context.Background(), componenttest.NewNopHost()))
+	defer func() {
+		assert.NoError(t, conn.Shutdown(context.Background()))
+	}()
+
+	testMetrics, err := golden.ReadMetrics(filepath.Join("testdata", "metricsToLogs", "input-metric.yaml"))
+	assert.NoError(t, err)
+	assert.NoError(t, conn.ConsumeMetrics(context.Background(), testMetrics))
+
+	allLogs := sink.AllLogs()
+	assert.Len(t, allLogs, 1)
+
+	expected, err := golden.ReadLogs(filepath.Join("testdata", "metricsToLogs", "expected-log.yaml"))
+	assert.NoError(t, err)
+
+	assert.NoError(t, plogtest.CompareLogs(expected, allLogs[0], plogtest.IgnoreObservedTimestamp()))
 }
