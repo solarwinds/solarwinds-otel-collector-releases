@@ -58,53 +58,101 @@ func NewEntity(entityType string, ids []string, attributes []string) Entity {
 }
 
 func TestLogsToLogs(t *testing.T) {
-	factory := NewFactory()
-	sink := &consumertest.LogsSink{}
-	conn, err := factory.CreateLogsToLogs(context.Background(),
-		connectortest.NewNopSettings(metadata.Type), &Config{Schema{Entities: expectedEntities}}, sink)
-	require.NoError(t, err)
-	require.NotNil(t, conn)
+	testCases := []struct {
+		name         string
+		inputFile    string
+		expectedFile string
+		expectedLogs int
+	}{
+		{
+			name:         "when entity is inferred, log event is sent",
+			inputFile:    "input-log.yaml",
+			expectedFile: "expected-log.yaml",
+			expectedLogs: 1,
+		},
+		{
+			name:         "when entity is not inferred, no log is sent",
+			inputFile:    "input-log-nomatch.yaml",
+			expectedLogs: 0,
+		},
+	}
 
-	require.NoError(t, conn.Start(context.Background(), componenttest.NewNopHost()))
-	defer func() {
-		assert.NoError(t, conn.Shutdown(context.Background()))
-	}()
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			factory := NewFactory()
+			sink := &consumertest.LogsSink{}
+			conn, err := factory.CreateLogsToLogs(context.Background(),
+				connectortest.NewNopSettings(metadata.Type), &Config{Schema{Entities: expectedEntities}}, sink)
+			require.NoError(t, err)
+			require.NotNil(t, conn)
 
-	testLogs, err := golden.ReadLogs(filepath.Join("testdata", "logsToLogs", "input-log.yaml"))
-	assert.NoError(t, err)
-	assert.NoError(t, conn.ConsumeLogs(context.Background(), testLogs))
+			require.NoError(t, conn.Start(context.Background(), componenttest.NewNopHost()))
+			defer func() {
+				assert.NoError(t, conn.Shutdown(context.Background()))
+			}()
 
-	allLogs := sink.AllLogs()
-	assert.Len(t, allLogs, 1)
+			testLogs, err := golden.ReadLogs(filepath.Join("testdata", "logsToLogs", tc.inputFile))
+			assert.NoError(t, err)
+			assert.NoError(t, conn.ConsumeLogs(context.Background(), testLogs))
 
-	expected, err := golden.ReadLogs(filepath.Join("testdata", "logsToLogs", "expected-log.yaml"))
-	assert.NoError(t, err)
+			allLogs := sink.AllLogs()
+			assert.Len(t, allLogs, tc.expectedLogs)
 
-	assert.NoError(t, plogtest.CompareLogs(expected, allLogs[0], plogtest.IgnoreObservedTimestamp()))
+			if tc.expectedLogs > 0 {
+				expected, err := golden.ReadLogs(filepath.Join("testdata", "logsToLogs", tc.expectedFile))
+				assert.NoError(t, err)
+				assert.NoError(t, plogtest.CompareLogs(expected, allLogs[0], plogtest.IgnoreObservedTimestamp()))
+			}
+		})
+	}
 }
 
 func TestMetricsToLogs(t *testing.T) {
-	factory := NewFactory()
-	sink := &consumertest.LogsSink{}
-	conn, err := factory.CreateMetricsToLogs(context.Background(),
-		connectortest.NewNopSettings(metadata.Type), &Config{Schema{Entities: expectedEntities}}, sink)
-	require.NoError(t, err)
-	require.NotNil(t, conn)
+	testCases := []struct {
+		name         string
+		inputFile    string
+		expectedFile string
+		expectedLogs int
+	}{
+		{
+			name:         "when entity is inferred, log event is sent",
+			inputFile:    "input-metric.yaml",
+			expectedFile: "expected-log.yaml",
+			expectedLogs: 1,
+		},
+		{
+			name:         "when entity is not inferred, no log is sent",
+			inputFile:    "input-metric-nomatch.yaml",
+			expectedLogs: 0,
+		},
+	}
 
-	require.NoError(t, conn.Start(context.Background(), componenttest.NewNopHost()))
-	defer func() {
-		assert.NoError(t, conn.Shutdown(context.Background()))
-	}()
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			factory := NewFactory()
+			sink := &consumertest.LogsSink{}
+			conn, err := factory.CreateMetricsToLogs(context.Background(),
+				connectortest.NewNopSettings(metadata.Type), &Config{Schema{Entities: expectedEntities}}, sink)
+			require.NoError(t, err)
+			require.NotNil(t, conn)
 
-	testMetrics, err := golden.ReadMetrics(filepath.Join("testdata", "metricsToLogs", "input-metric.yaml"))
-	assert.NoError(t, err)
-	assert.NoError(t, conn.ConsumeMetrics(context.Background(), testMetrics))
+			require.NoError(t, conn.Start(context.Background(), componenttest.NewNopHost()))
+			defer func() {
+				assert.NoError(t, conn.Shutdown(context.Background()))
+			}()
 
-	allLogs := sink.AllLogs()
-	assert.Len(t, allLogs, 1)
+			testMetrics, err := golden.ReadMetrics(filepath.Join("testdata", "metricsToLogs", tc.inputFile))
+			assert.NoError(t, err)
+			assert.NoError(t, conn.ConsumeMetrics(context.Background(), testMetrics))
 
-	expected, err := golden.ReadLogs(filepath.Join("testdata", "metricsToLogs", "expected-log.yaml"))
-	assert.NoError(t, err)
+			allLogs := sink.AllLogs()
+			assert.Len(t, allLogs, tc.expectedLogs)
 
-	assert.NoError(t, plogtest.CompareLogs(expected, allLogs[0], plogtest.IgnoreObservedTimestamp()))
+			if tc.expectedLogs > 0 {
+				expected, err := golden.ReadLogs(filepath.Join("testdata", "metricsToLogs", tc.expectedFile))
+				assert.NoError(t, err)
+				assert.NoError(t, plogtest.CompareLogs(expected, allLogs[0], plogtest.IgnoreObservedTimestamp()))
+			}
+		})
+	}
 }
