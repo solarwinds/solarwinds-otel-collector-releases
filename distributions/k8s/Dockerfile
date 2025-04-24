@@ -3,7 +3,7 @@
 FROM debian:bookworm AS journal
 RUN apt update
 RUN apt install -y systemd
-COPY /build/docker/copy-journal-binary.sh /script.sh
+COPY /copy-journal-binary.sh /script.sh
 RUN chmod +x /script.sh
 RUN /script.sh
 

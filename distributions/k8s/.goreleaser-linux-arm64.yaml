@@ -35,6 +35,7 @@ dockers:
     dockerfile: Dockerfile
     extra_files:
       - LICENSE
+      - copy-journal-binary.sh
     image_templates:
       - solarwinds/solarwinds-otel-collector:{{ .Version }}-arm64
       - solarwinds/solarwinds-otel-collector:latest-arm64
