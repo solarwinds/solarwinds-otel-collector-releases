@@ -1,0 +1,26 @@
+name: CI - K8s
+
+on:
+  # TODO: push to main, PR to main, consider merge group?
+  push:
+
+jobs:
+  check-goreleaser:
+    name: CI - K8s
+    uses: ./.github/workflows/base-ci.yml
+    with:
+      distribution: k8s
+      goos: '[ "linux" ]'
+      goarch: '[ "amd64", "arm64" ]'
+    secrets: inherit
+
+  check-goreleaser-windows:
+    name: CI - K8s
+    uses: ./.github/workflows/base-ci.yml
+    with:
+      distribution: k8s
+      goos: '[ "windows" ]'
+      goarch: '[ "amd64" ]'
+      config_suffix: '[ "-2019", "-2022" ]'
+      runner_os: 'windows-2022'
+    secrets: inherit
