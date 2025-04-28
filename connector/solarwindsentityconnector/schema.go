@@ -20,7 +20,7 @@ type Schema struct {
 	Entities []internal.Entity `mapstructure:"entities"`
 }
 
-func (s *Schema) NewEntities() map[string]internal.Entity {
+func (s *Schema) NewEntities() *map[string]internal.Entity {
 	entities := make(map[string]internal.Entity)
 	for _, entity := range s.Entities {
 		entities[entity.Type] = internal.Entity{
@@ -29,5 +29,5 @@ func (s *Schema) NewEntities() map[string]internal.Entity {
 			Attributes: entity.Attributes}
 	}
 
-	return entities
+	return &entities
 }
