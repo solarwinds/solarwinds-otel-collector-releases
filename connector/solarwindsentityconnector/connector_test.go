@@ -45,7 +45,7 @@ func (t *testLogsConsumer) ConsumeLogs(ctx context.Context, ld plog.Logs) error 
 var _ consumer.Logs = (*testLogsConsumer)(nil)
 
 var (
-	expectedEntities = []internal.Entity{
+	expectedEntities = []Entity{
 		{Type: "Snowflake", IDs: []string{"id1"}, Attributes: []string{"attr1"}},
 	}
 )
