@@ -3,6 +3,9 @@
 ## vNext
 - Adds [SolarWinds Kubernetes Workload Type Processor](./processor/swok8sworkloadtypeprocessor/README.md) for annotating metrics with a k8s workload type based on their attributes.
 
+## v0.123.1
+- Fix CVE-2025-22872: golang.org/x/net vulnerable to Cross-site Scripting
+
 ## v0.123.0
 - Consumes OpenTelemetry Collector dependencies v0.123.0.
 - SolarWinds exporter is now reported as otlp/solarwinds-<name> in collector's telemetry.
