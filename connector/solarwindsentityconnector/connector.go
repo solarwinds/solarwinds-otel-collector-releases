@@ -53,12 +53,8 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 	if logs.LogRecordCount() == 0 {
 		return nil
 	}
-
-	err := s.logsConsumer.ConsumeLogs(ctx, logs)
-	if err != nil {
-		return err
-	}
-	return nil
+	
+	return s.logsConsumer.ConsumeLogs(ctx, logs)
 }
 
 func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) error {
@@ -76,9 +72,5 @@ func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) erro
 		return nil
 	}
 
-	err := s.logsConsumer.ConsumeLogs(ctx, newLogs)
-	if err != nil {
-		return err
-	}
-	return nil
+	return s.logsConsumer.ConsumeLogs(ctx, newLogs)
 }
