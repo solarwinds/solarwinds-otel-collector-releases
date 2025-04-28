@@ -2,6 +2,9 @@
 
 ## vNext
 
+## v0.123.1
+- Package golang.org/x/net promoted to version v0.38.0.
+
 ## v0.123.0
 - Consumes OpenTelemetry Collector dependencies v0.123.0.
 - SolarWinds exporter is now reported as otlp/solarwinds-<name> in collector's telemetry.
