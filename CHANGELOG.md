@@ -3,7 +3,7 @@
 ## vNext
 
 ## v0.123.1
-- Package golang.org/x/net promoted to version v0.38.0.
+- Fix CVE-2025-22872: golang.org/x/net vulnerable to Cross-site Scripting
 
 ## v0.123.0
 - Consumes OpenTelemetry Collector dependencies v0.123.0.
