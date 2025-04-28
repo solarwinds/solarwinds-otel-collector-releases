@@ -27,7 +27,7 @@ import (
 
 type solarwindsentity struct {
 	logsConsumer consumer.Logs
-	entities     map[string]Entity
+	entities     map[string]internal.Entity
 
 	component.StartFunc
 	component.ShutdownFunc

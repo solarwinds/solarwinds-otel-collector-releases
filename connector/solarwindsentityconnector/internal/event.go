@@ -15,7 +15,6 @@
 package internal
 
 import (
-	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"time"
@@ -25,7 +24,13 @@ const (
 	entityUpdateEventType = "entity_state"
 )
 
-func AppendEntityUpdateEvent(logs plog.Logs, entity solarwindsentityconnector.Entity, resourceAttrs pcommon.Map) {
+type Entity struct {
+	Type       string   `mapstructure:"entity"`
+	IDs        []string `mapstructure:"id"`
+	Attributes []string `mapstructure:"attributes"`
+}
+
+func AppendEntityUpdateEvent(logs plog.Logs, entity Entity, resourceAttrs pcommon.Map) {
 	lr := plog.NewLogRecord()
 
 	if exists := setIdAttributes(&lr, entity.IDs, resourceAttrs); !exists {

@@ -14,20 +14,16 @@
 
 package solarwindsentityconnector
 
-type Entity struct {
-	Type       string   `mapstructure:"entity"`
-	IDs        []string `mapstructure:"id"`
-	Attributes []string `mapstructure:"attributes"`
-}
+import "github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
 
 type Schema struct {
-	Entities []Entity `mapstructure:"entities"`
+	Entities []internal.Entity `mapstructure:"entities"`
 }
 
-func (s *Schema) NewEntities() *map[string]Entity {
-	entities := make(map[string]Entity)
+func (s *Schema) NewEntities() *map[string]internal.Entity {
+	entities := make(map[string]internal.Entity)
 	for _, entity := range s.Entities {
-		entities[entity.Type] = Entity{
+		entities[entity.Type] = internal.Entity{
 			Type:       entity.Type,
 			IDs:        entity.IDs,
 			Attributes: entity.Attributes}
