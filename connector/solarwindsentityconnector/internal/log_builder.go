@@ -18,7 +18,6 @@ import (
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.uber.org/zap"
-	"time"
 )
 
 const (
@@ -40,52 +39,27 @@ func buildEventLog(logs *plog.Logs) *plog.LogRecordSlice {
 	return &lrs
 }
 
-// setEntityType sets the entity type attribute in the log record needed by SWO ingestion.
-func setEntityType(lr *plog.LogRecord, entityType string) {
-	attrs := lr.Attributes()
-	attrs.PutStr(swoEntityType, entityType)
-}
-
-// setEventType sets the event type attribute in the log record for SWO to recognized
-// what kind of event it is.
-func setEventType(lr *plog.LogRecord, eventType string) {
-	attrs := lr.Attributes()
-	attrs.PutStr(swoEntityEventType, eventType)
-}
-
-// setIdAttributes sets the entity id attributes in the log record needed by SWO,
-// which are used to identify or infer the entity in the system.
-// setIdAttributes will return false if any of the attributes are missing in the resource attributes.
+// setIdAttributes sets the entity id attributes in the log record as needed by SWO.
+// Attributes are used to infer the entity in the system.
+//
+// Returns false if any of the attributes are missing in the resourceAttrs.
 // If any ID attribute is missing the entity would not be inferred.
+// Returns true if all attributes were set.
 func setIdAttributes(lr *plog.LogRecord, entityIds []string, resourceAttrs pcommon.Map) bool {
 	attrs := lr.Attributes()
 	logIds := attrs.PutEmptyMap(swoEntityIds)
 	for _, id := range entityIds {
-		if !putAttribute(&logIds, id, &resourceAttrs) {
+		if !copyAttribute(&logIds, id, &resourceAttrs) {
 			zap.L().Warn("failed to put entity id", zap.String("key", id))
 			return false
 		}
 	}
-
 	return true
 }
 
-// setAttributes sets the entity attributes in the log record used for updating state of a SWO entity.
-func setAttributes(lr *plog.LogRecord, entityAttrs []string, resourceAttrs pcommon.Map) {
-	attrs := lr.Attributes()
-	logIds := attrs.PutEmptyMap(swoEntityAttributes)
-	for _, id := range entityAttrs {
-		putAttribute(&logIds, id, &resourceAttrs)
-	}
-}
-
-func setTimestamp(lr *plog.LogRecord, timestamp time.Time) {
-	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(timestamp))
-}
-
-// putAttribute copies the value of attribute identified as key, from source to dest pcommon.Map.
+// copyAttribute copies the value of attribute identified as key, from source to dest pcommon.Map.
 // It returns true if the attribute was found and copied, false otherwise.
-func putAttribute(dest *pcommon.Map, key string, src *pcommon.Map) bool {
+func copyAttribute(dest *pcommon.Map, key string, src *pcommon.Map) bool {
 	attrVal, ok := src.Get(key)
 
 	if !ok {

@@ -36,11 +36,18 @@ func AppendEntityUpdateEvent(logs plog.Logs, entity Entity, resourceAttrs pcommo
 	if exists := setIdAttributes(&lr, entity.IDs, resourceAttrs); !exists {
 		return
 	}
-
-	setEventType(&lr, entityUpdateEventType)
-	setEntityType(&lr, entity.Type)
-	setAttributes(&lr, entity.Attributes, resourceAttrs)
-	setTimestamp(&lr, time.Now())
+	attributes := lr.Attributes()
+	// event type
+	attributes.PutStr(swoEntityEventType, entityUpdateEventType)
+	// entity type
+	attributes.PutStr(swoEntityType, entity.Type)
+	// entity attributes
+	logIds := attributes.PutEmptyMap(swoEntityAttributes)
+	for _, id := range entity.Attributes {
+		copyAttribute(&logIds, id, &resourceAttrs)
+	}
+	// timestamp
+	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
 
 	eventLog := buildEventLog(&logs).AppendEmpty()
 	lr.CopyTo(eventLog)
