@@ -18,6 +18,7 @@ import (
 	"context"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/golden"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest/plogtest"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal/metadata"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -44,18 +45,10 @@ func (t *testLogsConsumer) ConsumeLogs(ctx context.Context, ld plog.Logs) error 
 var _ consumer.Logs = (*testLogsConsumer)(nil)
 
 var (
-	expectedEntities = []Entity{
-		NewEntity("Snowflake", []string{"id1"}, []string{"attr1"}),
+	expectedEntities = []internal.Entity{
+		{Type: "Snowflake", IDs: []string{"id1"}, Attributes: []string{"attr1"}},
 	}
 )
-
-func NewEntity(entityType string, ids []string, attributes []string) Entity {
-	return Entity{
-		Type:       entityType,
-		IDs:        ids,
-		Attributes: attributes,
-	}
-}
 
 func TestLogsToLogs(t *testing.T) {
 	testCases := []struct {
@@ -65,13 +58,13 @@ func TestLogsToLogs(t *testing.T) {
 		expectedLogs int
 	}{
 		{
-			name:         "when entity is inferred, log event is sent",
+			name:         "when entity is inferred log event is sent",
 			inputFile:    "input-log.yaml",
 			expectedFile: "expected-log.yaml",
 			expectedLogs: 1,
 		},
 		{
-			name:         "when entity is not inferred, no log is sent",
+			name:         "when entity is not inferred no log is sent",
 			inputFile:    "input-log-nomatch.yaml",
 			expectedLogs: 0,
 		},

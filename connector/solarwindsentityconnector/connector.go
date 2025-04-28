@@ -27,7 +27,7 @@ import (
 
 type solarwindsentity struct {
 	logsConsumer consumer.Logs
-	entities     *internal.Entities
+	entities     map[string]internal.Entity
 
 	component.StartFunc
 	component.ShutdownFunc
@@ -42,13 +42,12 @@ func (s *solarwindsentity) Capabilities() consumer.Capabilities {
 
 func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.Metrics) error {
 	logs := plog.NewLogs()
-	events := internal.NewEvents(logs)
 	for i := range metrics.ResourceMetrics().Len() {
 		resourceMetric := metrics.ResourceMetrics().At(i)
 		resourceAttrs := resourceMetric.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		events.AppendEntityUpdateEvent(s.entities.GetEntity("Snowflake"), resourceAttrs)
+		internal.AppendEntityUpdateEvent(logs, s.entities["Snowflake"], resourceAttrs)
 	}
 
 	if logs.LogRecordCount() == 0 {
@@ -64,14 +63,13 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 
 func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) error {
 	newLogs := plog.NewLogs()
-	events := internal.NewEvents(newLogs)
 
 	for i := range logs.ResourceLogs().Len() {
 		resourceLog := logs.ResourceLogs().At(i)
 		resourceAttrs := resourceLog.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		events.AppendEntityUpdateEvent(s.entities.GetEntity("Snowflake"), resourceAttrs)
+		internal.AppendEntityUpdateEvent(newLogs, s.entities["Snowflake"], resourceAttrs)
 	}
 
 	if newLogs.LogRecordCount() == 0 {

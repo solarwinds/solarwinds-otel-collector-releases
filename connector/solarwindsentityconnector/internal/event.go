@@ -24,34 +24,24 @@ const (
 	entityUpdateEventType = "entity_state"
 )
 
-type eventsHandler interface {
-	AppendEntityUpdateEvent(entity Entity, telemetryAttributes pcommon.Map)
+type Entity struct {
+	Type       string   `mapstructure:"entity"`
+	IDs        []string `mapstructure:"id"`
+	Attributes []string `mapstructure:"attributes"`
 }
 
-type Events struct {
-	logRecords *plog.LogRecordSlice
-}
-
-func NewEvents(logs plog.Logs) *Events {
-	return &Events{
-		logRecords: buildEventLog(&logs),
-	}
-}
-
-func (e *Events) AppendEntityUpdateEvent(entity Entity, resourceAttrs pcommon.Map) {
+func AppendEntityUpdateEvent(logs plog.Logs, entity Entity, resourceAttrs pcommon.Map) {
 	lr := plog.NewLogRecord()
 
-	if exists := setIdAttributes(&lr, entity.IDs(), resourceAttrs); !exists {
+	if exists := setIdAttributes(&lr, entity.IDs, resourceAttrs); !exists {
 		return
 	}
 
 	setEventType(&lr, entityUpdateEventType)
-	setEntityType(&lr, entity.Type())
-	setAttributes(&lr, entity.Attributes(), resourceAttrs)
+	setEntityType(&lr, entity.Type)
+	setAttributes(&lr, entity.Attributes, resourceAttrs)
 	setTimestamp(&lr, time.Now())
 
-	eventLog := e.logRecords.AppendEmpty()
+	eventLog := buildEventLog(&logs).AppendEmpty()
 	lr.CopyTo(eventLog)
 }
-
-var _ eventsHandler = (*Events)(nil)
