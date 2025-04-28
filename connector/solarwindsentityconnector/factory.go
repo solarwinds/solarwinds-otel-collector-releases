@@ -35,7 +35,7 @@ func createMetricsToLogsConnector(ctx context.Context, settings connector.Settin
 	cfg := config.(*Config)
 	// TODO: think of better way to create the struct, when condition handling is introduced
 	return &solarwindsentity{
-		entities:     *cfg.Schema.NewEntities(),
+		entities:     cfg.Schema.NewEntities(),
 		logsConsumer: logs,
 	}, nil
 }
@@ -44,7 +44,7 @@ func createLogsToLogsConnector(ctx context.Context, settings connector.Settings,
 	cfg := config.(*Config)
 	// TODO: think of better way to create the struct, when condition handling is introduced
 	return &solarwindsentity{
-		entities:     *cfg.Schema.NewEntities(),
+		entities:     cfg.Schema.NewEntities(),
 		logsConsumer: logs,
 	}, nil
 }
