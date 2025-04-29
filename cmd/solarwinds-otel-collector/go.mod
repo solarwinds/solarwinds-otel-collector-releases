@@ -166,6 +166,7 @@ require (
 	github.com/solarwinds/solarwinds-otel-collector-releases/extension/solarwindsextension v0.123.1
 	github.com/solarwinds/solarwinds-otel-collector-releases/pkg/version v0.123.1
 	github.com/solarwinds/solarwinds-otel-collector-releases/processor/k8seventgenerationprocessor v0.123.1
+	github.com/solarwinds/solarwinds-otel-collector-releases/processor/swok8sworkloadtypeprocessor v0.123.1
 	github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swohostmetricsreceiver v0.123.1
 	github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swok8sobjectsreceiver v0.123.1
 	github.com/spf13/cobra v1.9.1
@@ -771,6 +772,8 @@ replace github.com/solarwinds/solarwinds-otel-collector-releases/pkg/version => 
 replace github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swohostmetricsreceiver => ../../receiver/swohostmetricsreceiver
 
 replace github.com/solarwinds/solarwinds-otel-collector-releases/processor/k8seventgenerationprocessor => ../../processor/k8seventgenerationprocessor
+
+replace github.com/solarwinds/solarwinds-otel-collector-releases/processor/swok8sworkloadtypeprocessor => ../../processor/swok8sworkloadtypeprocessor
 
 replace github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swok8sobjectsreceiver => ../../receiver/swok8sobjectsreceiver
 

@@ -16,6 +16,7 @@ body:
         - extension/solarwindsextension
         - receiver/swohostmetricsreceiver
         - processor/k8seventgenerationprocessor
+        - processor/swok8sworkloadtype
   - type: textarea
     attributes:
       label: Is your feature request related to a problem? Please describe.
