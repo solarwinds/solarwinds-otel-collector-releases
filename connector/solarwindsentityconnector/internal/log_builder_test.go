@@ -38,70 +38,51 @@ func TestSetIdAttributes(t *testing.T) {
 }
 
 func TestPutStringAttribute(t *testing.T) {
-	resourceAttrs := pcommon.NewMap()
-	resourceAttrs.PutStr("string", "stringValue")
+	value := pcommon.NewValueStr("stringValue")
 
 	destination := pcommon.NewMap()
-	result := copyAttribute(&destination, "string", &resourceAttrs)
-	assert.True(t, result, "Attribute should be set successfully")
+	putAttribute(&destination, "string", value)
 	inDest, exists := destination.Get("string")
 	assert.True(t, exists, "Attribute should exist in destination")
 	assert.Equal(t, "stringValue", inDest.Str(), "Attribute value should match")
 }
 
 func TestPutBoolAttribute(t *testing.T) {
-	resourceAttrs := pcommon.NewMap()
-	resourceAttrs.PutBool("bool", true)
+	value := pcommon.NewValueBool(true)
 
 	destination := pcommon.NewMap()
-	result := copyAttribute(&destination, "bool", &resourceAttrs)
-	assert.True(t, result, "Attribute should be set successfully")
+	putAttribute(&destination, "bool", value)
 	inDest, exists := destination.Get("bool")
 	assert.True(t, exists, "Attribute should exist in destination")
 	assert.Equal(t, true, inDest.Bool(), "Attribute value should match")
 }
 
 func TestPutIntAttribute(t *testing.T) {
-	resourceAttrs := pcommon.NewMap()
-	resourceAttrs.PutInt("int", 123)
-
+	value := pcommon.NewValueInt(123)
 	destination := pcommon.NewMap()
-	result := copyAttribute(&destination, "int", &resourceAttrs)
-	assert.True(t, result, "Attribute should be set successfully")
+	putAttribute(&destination, "int", value)
 	inDest, exists := destination.Get("int")
 	assert.True(t, exists, "Attribute should exist in destination")
 	assert.Equal(t, int64(123), inDest.Int(), "Attribute value should match")
 }
 
 func TestPutDoubleAttribute(t *testing.T) {
-	resourceAttrs := pcommon.NewMap()
-	resourceAttrs.PutDouble("double", 123.456)
+	value := pcommon.NewValueDouble(123.456)
 
 	destination := pcommon.NewMap()
-	result := copyAttribute(&destination, "double", &resourceAttrs)
-	assert.True(t, result, "Attribute should be set successfully")
+	putAttribute(&destination, "double", value)
 	inDest, exists := destination.Get("double")
 	assert.True(t, exists, "Attribute should exist in destination")
 	assert.Equal(t, 123.456, inDest.Double(), "Attribute value should match")
 }
 
 func TestPutBytesAttribute(t *testing.T) {
-	resourceAttrs := pcommon.NewMap()
-	resourceAttrs.PutStr("bytes", "byteValue")
+	value := pcommon.NewValueBytes()
+	value.SetEmptyBytes().Append('1', '2')
 
 	destination := pcommon.NewMap()
-	result := copyAttribute(&destination, "bytes", &resourceAttrs)
-	assert.True(t, result, "Attribute should be set successfully")
+	putAttribute(&destination, "bytes", value)
 	inDest, exists := destination.Get("bytes")
 	assert.True(t, exists, "Attribute should exist in destination")
-	assert.Equal(t, "byteValue", inDest.Str(), "Attribute value should match")
-}
-
-func TestPutNotExistingAttribute(t *testing.T) {
-	resourceAttrs := pcommon.NewMap()
-
-	destination := pcommon.NewMap()
-	result := copyAttribute(&destination, "notExisting", &resourceAttrs)
-	assert.False(t, result, "Attribute should not be set successfully")
-	assert.Equal(t, 0, destination.Len(), "Attribute should not exist in destination")
+	assert.Equal(t, "12", string(inDest.Bytes().AsRaw()), "Attribute value should match")
 }

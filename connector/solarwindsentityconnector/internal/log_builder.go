@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
-	"go.uber.org/zap"
 )
 
 const (
@@ -43,15 +42,16 @@ func BuildEventLog(logs *plog.Logs) *plog.LogRecordSlice {
 // setIdAttributes sets the entity id attributes in the log record as needed by SWO.
 // Attributes are used to infer the entity in the system.
 //
-// Returns false if any of the attributes are missing in the resourceAttrs.
-// If any ID attribute is missing the entity would not be inferred.
-// Returns true if all attributes were set.
+// Returns error if any of the attributes are missing in the resourceAttrs.
+// If any ID attribute is missing, the entity would not be inferred.
 func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map) error {
 	logIds := attrs.PutEmptyMap(swoEntityIds)
 	for _, id := range entityIds {
-		if !copyAttribute(&logIds, id, &resourceAttrs) {
-			return fmt.Errorf("failed to set entity id attribute %s", id)
+		value, exists := findAttribute(id, resourceAttrs)
+		if !exists {
+			return fmt.Errorf("failed to find entity id attribute %s", id)
 		}
+		putAttribute(&logIds, id, value)
 	}
 	return nil
 }
@@ -60,8 +60,12 @@ func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommo
 // Attributes are used to update the entity.
 func setEntityAttributes(attrs pcommon.Map, entityAttrs []string, resourceAttrs pcommon.Map) {
 	logIds := attrs.PutEmptyMap(swoEntityAttributes)
-	for _, id := range entityAttrs {
-		copyAttribute(&logIds, id, &resourceAttrs)
+	for _, attr := range entityAttrs {
+		value, exists := findAttribute(attr, resourceAttrs)
+		if !exists {
+			continue
+		}
+		putAttribute(&logIds, attr, value)
 	}
 }
 
@@ -75,28 +79,25 @@ func setEntityType(attributes pcommon.Map, entityType string) {
 	attributes.PutStr(swoEntityType, entityType)
 }
 
-// copyAttribute copies the value of attribute identified as key, from source to dest pcommon.Map.
-// It returns true if the attribute was found and copied, false otherwise.
-func copyAttribute(dest *pcommon.Map, key string, src *pcommon.Map) bool {
+// findAttribute checks if the attribute identified as key exists in the source pcommon.Map.
+func findAttribute(key string, src pcommon.Map) (pcommon.Value, bool) {
 	attrVal, ok := src.Get(key)
+	return attrVal, ok
+}
 
-	if !ok {
-		zap.L().Warn("attribute not found", zap.String("key", key))
-		return false
-	}
-
-	switch typeAttr := attrVal.Type(); typeAttr {
+// putAttribute copies the value of attribute identified as key, to destination pcommon.Map.
+func putAttribute(dest *pcommon.Map, key string, attrValue pcommon.Value) {
+	switch typeAttr := attrValue.Type(); typeAttr {
 	case pcommon.ValueTypeInt:
-		dest.PutInt(key, attrVal.Int())
+		dest.PutInt(key, attrValue.Int())
 	case pcommon.ValueTypeDouble:
-		dest.PutDouble(key, attrVal.Double())
+		dest.PutDouble(key, attrValue.Double())
 	case pcommon.ValueTypeBool:
-		dest.PutBool(key, attrVal.Bool())
+		dest.PutBool(key, attrValue.Bool())
 	case pcommon.ValueTypeBytes:
-		dest.PutEmptyBytes(attrVal.Str())
+		value := attrValue.Bytes().AsRaw()
+		dest.PutEmptyBytes(key).FromRaw(value)
 	default:
-		dest.PutStr(key, attrVal.Str())
+		dest.PutStr(key, attrValue.Str())
 	}
-
-	return true
 }
