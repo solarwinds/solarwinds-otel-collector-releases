@@ -15,6 +15,7 @@
 package internal
 
 import (
+	"fmt"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.uber.org/zap"
@@ -45,16 +46,15 @@ func BuildEventLog(logs *plog.Logs) *plog.LogRecordSlice {
 // Returns false if any of the attributes are missing in the resourceAttrs.
 // If any ID attribute is missing the entity would not be inferred.
 // Returns true if all attributes were set.
-func setIdAttributes(lr *plog.LogRecord, entityIds []string, resourceAttrs pcommon.Map) bool {
+func setIdAttributes(lr *plog.LogRecord, entityIds []string, resourceAttrs pcommon.Map) error {
 	attrs := lr.Attributes()
 	logIds := attrs.PutEmptyMap(swoEntityIds)
 	for _, id := range entityIds {
 		if !copyAttribute(&logIds, id, &resourceAttrs) {
-			zap.L().Warn("failed to put entity id", zap.String("key", id))
-			return false
+			return fmt.Errorf("failed to set entity id attribute %s", id)
 		}
 	}
-	return true
+	return nil
 }
 
 // copyAttribute copies the value of attribute identified as key, from source to dest pcommon.Map.

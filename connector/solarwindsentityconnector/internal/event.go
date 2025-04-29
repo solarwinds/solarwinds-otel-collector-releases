@@ -17,6 +17,7 @@ package internal
 import (
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -33,9 +34,12 @@ type Entity struct {
 func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity Entity, resourceAttrs pcommon.Map) {
 	lr := plog.NewLogRecord()
 
-	if exists := setIdAttributes(&lr, entity.IDs, resourceAttrs); !exists {
+	err := setIdAttributes(&lr, entity.IDs, resourceAttrs)
+	if err != nil {
+		zap.L().Debug("failed to create update event", zap.Error(err))
 		return
 	}
+
 	attributes := lr.Attributes()
 	// event type
 	attributes.PutStr(swoEntityEventType, entityUpdateEventType)
