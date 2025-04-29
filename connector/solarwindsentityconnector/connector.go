@@ -42,30 +42,33 @@ func (s *solarwindsentity) Capabilities() consumer.Capabilities {
 
 func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.Metrics) error {
 	logs := plog.NewLogs()
+	events := internal.BuildEventLog(&logs)
+
 	for i := range metrics.ResourceMetrics().Len() {
 		resourceMetric := metrics.ResourceMetrics().At(i)
 		resourceAttrs := resourceMetric.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		internal.AppendEntityUpdateEvent(logs, s.entities["Snowflake"], resourceAttrs)
+		internal.AppendEntityUpdateEvent(events, s.entities["Snowflake"], resourceAttrs)
 	}
 
 	if logs.LogRecordCount() == 0 {
 		return nil
 	}
-	
+
 	return s.logsConsumer.ConsumeLogs(ctx, logs)
 }
 
 func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) error {
 	newLogs := plog.NewLogs()
+	events := internal.BuildEventLog(&newLogs)
 
 	for i := range logs.ResourceLogs().Len() {
 		resourceLog := logs.ResourceLogs().At(i)
 		resourceAttrs := resourceLog.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		internal.AppendEntityUpdateEvent(newLogs, s.entities["Snowflake"], resourceAttrs)
+		internal.AppendEntityUpdateEvent(events, s.entities["Snowflake"], resourceAttrs)
 	}
 
 	if newLogs.LogRecordCount() == 0 {

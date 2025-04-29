@@ -30,7 +30,7 @@ type Entity struct {
 	Attributes []string `mapstructure:"attributes"`
 }
 
-func AppendEntityUpdateEvent(logs plog.Logs, entity Entity, resourceAttrs pcommon.Map) {
+func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity Entity, resourceAttrs pcommon.Map) {
 	lr := plog.NewLogRecord()
 
 	if exists := setIdAttributes(&lr, entity.IDs, resourceAttrs); !exists {
@@ -49,6 +49,6 @@ func AppendEntityUpdateEvent(logs plog.Logs, entity Entity, resourceAttrs pcommo
 	// timestamp
 	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
 
-	eventLog := buildEventLog(&logs).AppendEmpty()
+	eventLog := lrs.AppendEmpty()
 	lr.CopyTo(eventLog)
 }

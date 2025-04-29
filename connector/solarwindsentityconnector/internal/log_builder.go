@@ -28,9 +28,9 @@ const (
 	swoEntityAttributes = "otel.entity.attributes"
 )
 
-// buildEventLog prepares a clean LogRecordSlice, where log records representing events should be appended.
+// BuildEventLog prepares a clean LogRecordSlice, where log records representing events should be appended.
 // In given plog.Logs creates a resource log with one scope log and set attributes needed by SWO ingestion.
-func buildEventLog(logs *plog.Logs) *plog.LogRecordSlice {
+func BuildEventLog(logs *plog.Logs) *plog.LogRecordSlice {
 	resourceLog := logs.ResourceLogs().AppendEmpty()
 	scopeLog := resourceLog.ScopeLogs().AppendEmpty()
 	scopeLog.Scope().Attributes().PutBool(swoEntityEventAsLog, true)
