@@ -46,8 +46,7 @@ func BuildEventLog(logs *plog.Logs) *plog.LogRecordSlice {
 // Returns false if any of the attributes are missing in the resourceAttrs.
 // If any ID attribute is missing the entity would not be inferred.
 // Returns true if all attributes were set.
-func setIdAttributes(lr *plog.LogRecord, entityIds []string, resourceAttrs pcommon.Map) error {
-	attrs := lr.Attributes()
+func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map) error {
 	logIds := attrs.PutEmptyMap(swoEntityIds)
 	for _, id := range entityIds {
 		if !copyAttribute(&logIds, id, &resourceAttrs) {
@@ -55,6 +54,25 @@ func setIdAttributes(lr *plog.LogRecord, entityIds []string, resourceAttrs pcomm
 		}
 	}
 	return nil
+}
+
+// setEntityAttributes sets the entity attributes in the log record as needed by SWO.
+// Attributes are used to update the entity.
+func setEntityAttributes(attrs pcommon.Map, entityAttrs []string, resourceAttrs pcommon.Map) {
+	logIds := attrs.PutEmptyMap(swoEntityAttributes)
+	for _, id := range entityAttrs {
+		copyAttribute(&logIds, id, &resourceAttrs)
+	}
+}
+
+// setEventType sets the event type in the log record as needed by SWO.
+func setEventType(attributes pcommon.Map, eventType string) {
+	attributes.PutStr(swoEntityEventType, eventType)
+}
+
+// setEntityType sets the entity type in the log record as needed by SWO.
+func setEntityType(attributes pcommon.Map, entityType string) {
+	attributes.PutStr(swoEntityType, entityType)
 }
 
 // copyAttribute copies the value of attribute identified as key, from source to dest pcommon.Map.

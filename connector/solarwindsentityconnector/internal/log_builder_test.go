@@ -27,8 +27,8 @@ func TestSetIdAttributes(t *testing.T) {
 	resourceAttrs.PutStr("id2", "idvalue2")
 
 	destination := plog.NewLogRecord()
-	result := setIdAttributes(&destination, []string{"id1"}, resourceAttrs)
-	assert.True(t, result)
+	err := setIdAttributes(destination.Attributes(), []string{"id1"}, resourceAttrs)
+	assert.Nil(t, err)
 	ids, exists := destination.Attributes().Get(swoEntityIds)
 	assert.True(t, exists)
 	assert.Equal(t, 1, ids.Map().Len())

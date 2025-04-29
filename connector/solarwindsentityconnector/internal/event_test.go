@@ -24,6 +24,7 @@ import (
 func TestAppendEntityUpdateEventWhenAttributesArePresent(t *testing.T) {
 	// arrange
 	logs := plog.NewLogs()
+	lrs := BuildEventLog(&logs)
 	testEntity := Entity{"testEntityType", []string{"id1", "id2"}, []string{"attr1", "attr2"}}
 	resourceAttrs := pcommon.NewMap()
 	resourceAttrs.PutStr("id1", "idvalue1")
@@ -32,7 +33,7 @@ func TestAppendEntityUpdateEventWhenAttributesArePresent(t *testing.T) {
 	resourceAttrs.PutStr("attr2", "attrvalue2")
 
 	// act
-	AppendEntityUpdateEvent(logs, testEntity, resourceAttrs)
+	AppendEntityUpdateEvent(lrs, testEntity, resourceAttrs)
 
 	// assert
 	assert.Equal(t, 1, logs.LogRecordCount())
@@ -55,27 +56,29 @@ func TestAppendEntityUpdateEventWhenAttributesArePresent(t *testing.T) {
 func TestDoesNotAppendEntityUpdateEventWhenIDAttributeIsMissing(t *testing.T) {
 	// arrange
 	logs := plog.NewLogs()
+	lrs := BuildEventLog(&logs)
 	testEntity := Entity{"testEntityType", []string{"id1", "id2"}, []string{}}
 	resourceAttrs := pcommon.NewMap()
 	resourceAttrs.PutStr("id1", "idvalue1")
 
 	// act
-	AppendEntityUpdateEvent(logs, testEntity, resourceAttrs)
+	AppendEntityUpdateEvent(lrs, testEntity, resourceAttrs)
 
 	// assert
-	assert.Equal(t, 0, logs.ResourceLogs().Len())
+	assert.Equal(t, 0, logs.LogRecordCount())
 }
 
 func TestAppendEntityUpdateEventWhenAttributeIsMissing(t *testing.T) {
 	// arrange
 	logs := plog.NewLogs()
+	lrs := BuildEventLog(&logs)
 	testEntity := Entity{"testEntityType", []string{"id1"}, []string{"attr1", "attr2"}}
 	resourceAttrs := pcommon.NewMap()
 	resourceAttrs.PutStr("id1", "idvalue1")
 	resourceAttrs.PutStr("attr1", "attrvalue1")
 
 	// act
-	AppendEntityUpdateEvent(logs, testEntity, resourceAttrs)
+	AppendEntityUpdateEvent(lrs, testEntity, resourceAttrs)
 
 	// assert
 	assert.Equal(t, 1, logs.LogRecordCount())

@@ -33,24 +33,17 @@ type Entity struct {
 
 func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity Entity, resourceAttrs pcommon.Map) {
 	lr := plog.NewLogRecord()
+	attrs := lr.Attributes()
 
-	err := setIdAttributes(&lr, entity.IDs, resourceAttrs)
+	err := setIdAttributes(attrs, entity.IDs, resourceAttrs)
 	if err != nil {
 		zap.L().Debug("failed to create update event", zap.Error(err))
 		return
 	}
 
-	attributes := lr.Attributes()
-	// event type
-	attributes.PutStr(swoEntityEventType, entityUpdateEventType)
-	// entity type
-	attributes.PutStr(swoEntityType, entity.Type)
-	// entity attributes
-	logIds := attributes.PutEmptyMap(swoEntityAttributes)
-	for _, id := range entity.Attributes {
-		copyAttribute(&logIds, id, &resourceAttrs)
-	}
-	// timestamp
+	setEventType(attrs, entityUpdateEventType)
+	setEntityType(attrs, entity.Type)
+	setEntityAttributes(attrs, entity.Attributes, resourceAttrs)
 	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
 
 	eventLog := lrs.AppendEmpty()
