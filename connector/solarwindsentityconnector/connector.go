@@ -44,7 +44,7 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 	logs := plog.NewLogs()
 	events := internal.BuildEventLog(&logs)
 
-	for i := range metrics.ResourceMetrics().Len() {
+	for i := 0; i < logs.ResourceLogs().Len(); i++ {
 		resourceMetric := metrics.ResourceMetrics().At(i)
 		resourceAttrs := resourceMetric.Resource().Attributes()
 
@@ -63,7 +63,7 @@ func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) erro
 	newLogs := plog.NewLogs()
 	events := internal.BuildEventLog(&newLogs)
 
-	for i := range logs.ResourceLogs().Len() {
+	for i := 0; i < logs.ResourceLogs().Len(); i++ {
 		resourceLog := logs.ResourceLogs().At(i)
 		resourceAttrs := resourceLog.Resource().Attributes()
 
