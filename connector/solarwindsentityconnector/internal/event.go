@@ -31,12 +31,20 @@ const (
 	swoRelationshipType         = "otel.entity_relationship.type"
 	swoSourceEntityType         = "otel.entity_relationship.source_entity.type"
 	swoDestinationEntityType    = "otel.entity_relationship.destination_entity.type"
+	swoRelationshipAttributes   = "otel.entity_relationship.attributes"
 )
 
 type Entity struct {
 	Type       string   `mapstructure:"entity"`
 	IDs        []string `mapstructure:"id"`
 	Attributes []string `mapstructure:"attributes"`
+}
+
+type Relationship struct {
+	Type        string   `mapstructure:"type"`
+	Source      string   `mapstructure:"source_entity"`
+	Destination string   `mapstructure:"destination_entity"`
+	Attributes  []string `mapstructure:"attributes"`
 }
 
 func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity Entity, resourceAttrs pcommon.Map) {
@@ -51,34 +59,32 @@ func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity Entity, resourceAt
 
 	setEventType(attrs, entityUpdateEventType)
 	setEntityType(attrs, entity.Type, swoEntityType)
-	setEntityAttributes(attrs, entity.Attributes, resourceAttrs)
+	setAttributes(attrs, entity.Attributes, resourceAttrs, swoEntityIds)
 	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
 
 	eventLog := lrs.AppendEmpty()
 	lr.CopyTo(eventLog)
 }
 
-func AppendRelationshipUpdateEvent(lrs *plog.LogRecordSlice, src Entity, dest Entity, resourceAttrs pcommon.Map) {
+func AppendRelationshipUpdateEvent(lrs *plog.LogRecordSlice, relationship Relationship, resourceAttrs pcommon.Map, entities map[string]Entity) {
 	lr := plog.NewLogRecord()
 	attrs := lr.Attributes()
 
-	// set id attributes of both source and destination entities
-	err := setIdAttributes(attrs, src.IDs, resourceAttrs, swoSourceEntityIds)
+	src := entities[relationship.Source]
+	dest := entities[relationship.Destination]
+	err := setSourceEntityProperties(attrs, src, resourceAttrs)
 	if err != nil {
-		zap.L().Debug("failed to create update event", zap.Error(err))
 		return
 	}
-
-	err = setIdAttributes(attrs, dest.IDs, resourceAttrs, swoDestinationEntityIds)
+	err = setDestinationEntityProperties(attrs, dest, resourceAttrs)
 	if err != nil {
-		zap.L().Debug("failed to create update event", zap.Error(err))
 		return
 	}
 
 	// set destination attributes
 	setEventType(attrs, relationshipUpdateEventType)
-	setEntityType(attrs, src.Type, swoSourceEntityType)
-	setEntityType(attrs, dest.Type, swoDestinationEntityType)
+	setAttributes(attrs, []string{"placeholderAttr1"}, resourceAttrs, swoRelationshipAttributes)
+	attrs.PutStr(swoRelationshipType, "placeholder")
 	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
 
 	eventLog := lrs.AppendEmpty()

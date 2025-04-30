@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
+	"go.uber.org/zap"
 )
 
 const (
@@ -56,8 +57,8 @@ func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommo
 
 // setEntityAttributes sets the entity attributes in the log record as needed by SWO.
 // Attributes are used to update the entity.
-func setEntityAttributes(attrs pcommon.Map, entityAttrs []string, resourceAttrs pcommon.Map) {
-	logIds := attrs.PutEmptyMap(swoEntityAttributes)
+func setAttributes(attrs pcommon.Map, entityAttrs []string, resourceAttrs pcommon.Map, name string) {
+	logIds := attrs.PutEmptyMap(name)
 	for _, attr := range entityAttrs {
 		value, exists := findAttribute(attr, resourceAttrs)
 		if !exists {
@@ -65,6 +66,26 @@ func setEntityAttributes(attrs pcommon.Map, entityAttrs []string, resourceAttrs 
 		}
 		putAttribute(&logIds, attr, value)
 	}
+}
+
+func setDestinationEntityProperties(attrs pcommon.Map, entity Entity, resourceAttrs pcommon.Map) error {
+	attrs.PutStr(swoDestinationEntityType, entity.Type)
+	err := setIdAttributes(attrs, entity.IDs, resourceAttrs, swoDestinationEntityIds)
+	if err != nil {
+		zap.L().Debug("failed to set attributes for destination entity", zap.Error(err))
+		return nil
+	}
+	return nil
+}
+
+func setSourceEntityProperties(attrs pcommon.Map, entity Entity, resourceAttrs pcommon.Map) error {
+	attrs.PutStr(swoSourceEntityType, entity.Type)
+	err := setIdAttributes(attrs, entity.IDs, resourceAttrs, swoSourceEntityIds)
+	if err != nil {
+		zap.L().Debug("failed to set attributes for source entity", zap.Error(err))
+		return nil
+	}
+	return nil
 }
 
 // setEventType sets the event type in the log record as needed by SWO.
