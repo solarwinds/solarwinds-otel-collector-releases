@@ -22,7 +22,15 @@ import (
 )
 
 const (
-	entityUpdateEventType = "entity_state"
+	entityUpdateEventType       = "entity_state"
+	relationshipUpdateEventType = "entity_relationship_state"
+	swoEntityType               = "otel.entity.type"
+	swoEntityIds                = "otel.entity.id"
+	swoSourceEntityIds          = "otel.entity_relationship.source_entity.id"
+	swoDestinationEntityIds     = "otel.entity_relationship.destination_entity.id"
+	swoRelationshipType         = "otel.entity_relationship.type"
+	swoSourceEntityType         = "otel.entity_relationship.source_entity.type"
+	swoDestinationEntityType    = "otel.entity_relationship.destination_entity.type"
 )
 
 type Entity struct {
@@ -35,15 +43,42 @@ func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity Entity, resourceAt
 	lr := plog.NewLogRecord()
 	attrs := lr.Attributes()
 
-	err := setIdAttributes(attrs, entity.IDs, resourceAttrs)
+	err := setIdAttributes(attrs, entity.IDs, resourceAttrs, swoEntityIds)
 	if err != nil {
 		zap.L().Debug("failed to create update event", zap.Error(err))
 		return
 	}
 
 	setEventType(attrs, entityUpdateEventType)
-	setEntityType(attrs, entity.Type)
+	setEntityType(attrs, entity.Type, swoEntityType)
 	setEntityAttributes(attrs, entity.Attributes, resourceAttrs)
+	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
+
+	eventLog := lrs.AppendEmpty()
+	lr.CopyTo(eventLog)
+}
+
+func AppendRelationshipUpdateEvent(lrs *plog.LogRecordSlice, src Entity, dest Entity, resourceAttrs pcommon.Map) {
+	lr := plog.NewLogRecord()
+	attrs := lr.Attributes()
+
+	// set id attributes of both source and destination entities
+	err := setIdAttributes(attrs, src.IDs, resourceAttrs, swoSourceEntityIds)
+	if err != nil {
+		zap.L().Debug("failed to create update event", zap.Error(err))
+		return
+	}
+
+	err = setIdAttributes(attrs, dest.IDs, resourceAttrs, swoDestinationEntityIds)
+	if err != nil {
+		zap.L().Debug("failed to create update event", zap.Error(err))
+		return
+	}
+
+	// set destination attributes
+	setEventType(attrs, relationshipUpdateEventType)
+	setEntityType(attrs, src.Type, swoSourceEntityType)
+	setEntityType(attrs, dest.Type, swoDestinationEntityType)
 	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
 
 	eventLog := lrs.AppendEmpty()

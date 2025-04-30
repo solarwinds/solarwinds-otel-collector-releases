@@ -23,8 +23,6 @@ import (
 const (
 	swoEntityEventAsLog = "otel.entity.event_as_log"
 	swoEntityEventType  = "otel.entity.event.type"
-	swoEntityType       = "otel.entity.type"
-	swoEntityIds        = "otel.entity.id"
 	swoEntityAttributes = "otel.entity.attributes"
 )
 
@@ -44,8 +42,8 @@ func BuildEventLog(logs *plog.Logs) *plog.LogRecordSlice {
 //
 // Returns error if any of the attributes are missing in the resourceAttrs.
 // If any ID attribute is missing, the entity would not be inferred.
-func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map) error {
-	logIds := attrs.PutEmptyMap(swoEntityIds)
+func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map, name string) error {
+	logIds := attrs.PutEmptyMap(name)
 	for _, id := range entityIds {
 		value, exists := findAttribute(id, resourceAttrs)
 		if !exists {
@@ -75,8 +73,8 @@ func setEventType(attributes pcommon.Map, eventType string) {
 }
 
 // setEntityType sets the entity type in the log record as needed by SWO.
-func setEntityType(attributes pcommon.Map, entityType string) {
-	attributes.PutStr(swoEntityType, entityType)
+func setEntityType(attributes pcommon.Map, entityType string, name string) {
+	attributes.PutStr(name, entityType)
 }
 
 // findAttribute checks if the attribute identified as key exists in the source pcommon.Map.
