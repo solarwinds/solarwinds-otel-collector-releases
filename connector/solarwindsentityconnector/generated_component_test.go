@@ -4,6 +4,7 @@ package solarwindsentityconnector
 
 import (
 	"context"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal/metadata"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -61,19 +62,19 @@ func TestComponentLifecycle(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name+"-shutdown", func(t *testing.T) {
-			c, err := tt.createFn(context.Background(), connectortest.NewNopSettings(), cfg)
+			c, err := tt.createFn(context.Background(), connectortest.NewNopSettings(metadata.Type), cfg)
 			require.NoError(t, err)
 			err = c.Shutdown(context.Background())
 			require.NoError(t, err)
 		})
 		t.Run(tt.name+"-lifecycle", func(t *testing.T) {
-			firstConnector, err := tt.createFn(context.Background(), connectortest.NewNopSettings(), cfg)
+			firstConnector, err := tt.createFn(context.Background(), connectortest.NewNopSettings(metadata.Type), cfg)
 			require.NoError(t, err)
 			host := componenttest.NewNopHost()
 			require.NoError(t, err)
 			require.NoError(t, firstConnector.Start(context.Background(), host))
 			require.NoError(t, firstConnector.Shutdown(context.Background()))
-			secondConnector, err := tt.createFn(context.Background(), connectortest.NewNopSettings(), cfg)
+			secondConnector, err := tt.createFn(context.Background(), connectortest.NewNopSettings(metadata.Type), cfg)
 			require.NoError(t, err)
 			require.NoError(t, secondConnector.Start(context.Background(), host))
 			require.NoError(t, secondConnector.Shutdown(context.Background()))

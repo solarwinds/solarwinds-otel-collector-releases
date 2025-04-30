@@ -14,12 +14,20 @@
 
 package solarwindsentityconnector
 
-import "go.opentelemetry.io/collector/component"
+import "github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
 
-type Config struct {
-	Schema Schema `mapstructure:"schema"`
+type Schema struct {
+	Entities []internal.Entity `mapstructure:"entities"`
 }
 
-func NewDefaultConfig() component.Config {
-	return &Config{}
+func (s *Schema) NewEntities() map[string]internal.Entity {
+	entities := make(map[string]internal.Entity, len(s.Entities))
+	for _, entity := range s.Entities {
+		entities[entity.Type] = internal.Entity{
+			Type:       entity.Type,
+			IDs:        entity.IDs,
+			Attributes: entity.Attributes}
+	}
+
+	return entities
 }

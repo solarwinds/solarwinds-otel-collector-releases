@@ -15,6 +15,9 @@
 package solarwindsentityconnector
 
 import (
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
+	"go.opentelemetry.io/collector/connector"
+
 	"context"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/consumer"
@@ -24,10 +27,14 @@ import (
 
 type solarwindsentity struct {
 	logsConsumer consumer.Logs
+	entities     map[string]internal.Entity
 
 	component.StartFunc
 	component.ShutdownFunc
 }
+
+var _ connector.Metrics = (*solarwindsentity)(nil)
+var _ connector.Logs = (*solarwindsentity)(nil)
 
 func (s *solarwindsentity) Capabilities() consumer.Capabilities {
 	return consumer.Capabilities{MutatesData: false}
@@ -35,18 +42,38 @@ func (s *solarwindsentity) Capabilities() consumer.Capabilities {
 
 func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.Metrics) error {
 	logs := plog.NewLogs()
-	err := s.logsConsumer.ConsumeLogs(ctx, logs)
-	if err != nil {
-		return err
+	events := internal.BuildEventLog(&logs)
+
+	for i := 0; i < logs.ResourceLogs().Len(); i++ {
+		resourceMetric := metrics.ResourceMetrics().At(i)
+		resourceAttrs := resourceMetric.Resource().Attributes()
+
+		// This will be replaced with actual logic when conditions are introduced
+		internal.AppendEntityUpdateEvent(events, s.entities["Snowflake"], resourceAttrs)
 	}
-	return nil
+
+	if logs.LogRecordCount() == 0 {
+		return nil
+	}
+
+	return s.logsConsumer.ConsumeLogs(ctx, logs)
 }
 
 func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) error {
 	newLogs := plog.NewLogs()
-	err := s.logsConsumer.ConsumeLogs(ctx, newLogs)
-	if err != nil {
-		return err
+	events := internal.BuildEventLog(&newLogs)
+
+	for i := 0; i < logs.ResourceLogs().Len(); i++ {
+		resourceLog := logs.ResourceLogs().At(i)
+		resourceAttrs := resourceLog.Resource().Attributes()
+
+		// This will be replaced with actual logic when conditions are introduced
+		internal.AppendEntityUpdateEvent(events, s.entities["Snowflake"], resourceAttrs)
 	}
-	return nil
+
+	if newLogs.LogRecordCount() == 0 {
+		return nil
+	}
+
+	return s.logsConsumer.ConsumeLogs(ctx, newLogs)
 }
