@@ -200,12 +200,12 @@ require (
 	go.opentelemetry.io/otel/sdk/log v0.11.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/sys v0.32.0
-	google.golang.org/grpc v1.71.1
+	google.golang.org/grpc v1.72.0
 )
 
 require (
 	bitbucket.org/atlassian/go-asap/v2 v2.9.0 // indirect
-	cel.dev/expr v0.19.2 // indirect
+	cel.dev/expr v0.20.0 // indirect
 	cloud.google.com/go v0.120.0 // indirect
 	cloud.google.com/go/auth v0.15.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
@@ -616,6 +616,7 @@ require (
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
+	github.com/spiffe/go-spiffe/v2 v2.5.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/tg123/go-htpasswd v1.2.3 // indirect
@@ -639,6 +640,7 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	github.com/yuin/gopher-lua v1.1.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
+	github.com/zeebo/errs v1.4.0 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
 	go.etcd.io/bbolt v1.4.0 // indirect
 	go.mongodb.org/atlas v0.37.0 // indirect
