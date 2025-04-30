@@ -26,8 +26,9 @@ import (
 )
 
 type solarwindsentity struct {
-	logsConsumer consumer.Logs
-	entities     map[string]internal.Entity
+	logsConsumer  consumer.Logs
+	entities      map[string]internal.Entity
+	relationships []internal.Relationship
 
 	component.StartFunc
 	component.ShutdownFunc
@@ -50,6 +51,9 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 
 		// This will be replaced with actual logic when conditions are introduced
 		internal.AppendEntityUpdateEvent(events, s.entities["Snowflake"], resourceAttrs)
+		for r := 0; r < len(s.relationships); i++ {
+			internal.AppendRelationshipUpdateEvent(events, s.relationships[r], resourceAttrs, s.entities)
+		}
 	}
 
 	if logs.LogRecordCount() == 0 {

@@ -17,7 +17,8 @@ package solarwindsentityconnector
 import "github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
 
 type Schema struct {
-	Entities []internal.Entity `mapstructure:"entities"`
+	Entities      []internal.Entity       `mapstructure:"entities"`
+	Relationships []internal.Relationship `mapstructure:"relationships"`
 }
 
 func (s *Schema) NewEntities() map[string]internal.Entity {
@@ -26,8 +27,13 @@ func (s *Schema) NewEntities() map[string]internal.Entity {
 		entities[entity.Type] = internal.Entity{
 			Type:       entity.Type,
 			IDs:        entity.IDs,
-			Attributes: entity.Attributes}
+			Attributes: entity.Attributes,
+		}
 	}
 
 	return entities
+}
+
+func (s *Schema) NewRelationships() map[string]internal.Relationship {
+	relaationships := make()
 }
