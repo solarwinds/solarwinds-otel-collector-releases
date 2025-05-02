@@ -81,10 +81,9 @@ func AppendRelationshipUpdateEvent(lrs *plog.LogRecordSlice, relationship Relati
 		return
 	}
 
-	// set destination attributes
 	setEventType(attrs, relationshipUpdateEventType)
-	setAttributes(attrs, []string{"placeholderAttr1"}, resourceAttrs, swoRelationshipAttributes)
-	attrs.PutStr(swoRelationshipType, "placeholder")
+	setAttributes(attrs, relationship.Attributes, resourceAttrs, swoRelationshipAttributes)
+	attrs.PutStr(swoRelationshipType, relationship.Type)
 	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
 
 	eventLog := lrs.AppendEmpty()

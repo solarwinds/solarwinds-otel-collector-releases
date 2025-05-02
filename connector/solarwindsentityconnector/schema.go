@@ -34,6 +34,6 @@ func (s *Schema) NewEntities() map[string]internal.Entity {
 	return entities
 }
 
-func (s *Schema) NewRelationships() map[string]internal.Relationship {
-	relaationships := make()
+func (s *Schema) NewRelationships() []internal.Relationship {
+	return s.Relationships
 }

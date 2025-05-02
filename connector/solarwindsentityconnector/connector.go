@@ -70,9 +70,12 @@ func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) erro
 	for i := 0; i < logs.ResourceLogs().Len(); i++ {
 		resourceLog := logs.ResourceLogs().At(i)
 		resourceAttrs := resourceLog.Resource().Attributes()
+		internal.AppendEntityUpdateEvent(events, s.entities["Snowflake"], resourceAttrs)
 
 		// This will be replaced with actual logic when conditions are introduced
-		internal.AppendEntityUpdateEvent(events, s.entities["Snowflake"], resourceAttrs)
+		for r := 0; r < len(s.relationships); r++ {
+			internal.AppendRelationshipUpdateEvent(events, s.relationships[r], resourceAttrs, s.entities)
+		}
 	}
 
 	if newLogs.LogRecordCount() == 0 {
