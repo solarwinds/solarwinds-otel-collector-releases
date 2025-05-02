@@ -18,13 +18,7 @@ import (
 	"fmt"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
-	"go.uber.org/zap"
-)
-
-const (
-	swoEntityEventAsLog = "otel.entity.event_as_log"
-	swoEntityEventType  = "otel.entity.event.type"
-	swoEntityAttributes = "otel.entity.attributes"
+	"time"
 )
 
 // BuildEventLog prepares a clean LogRecordSlice, where log records representing events should be appended.
@@ -68,36 +62,6 @@ func setAttributes(attrs pcommon.Map, entityAttrs []string, resourceAttrs pcommo
 	}
 }
 
-func setDestinationEntityProperties(attrs pcommon.Map, entity Entity, resourceAttrs pcommon.Map) error {
-	attrs.PutStr(swoDestinationEntityType, entity.Type)
-	err := setIdAttributes(attrs, entity.IDs, resourceAttrs, swoDestinationEntityIds)
-	if err != nil {
-		zap.L().Debug("failed to set attributes for destination entity", zap.Error(err))
-		return nil
-	}
-	return nil
-}
-
-func setSourceEntityProperties(attrs pcommon.Map, entity Entity, resourceAttrs pcommon.Map) error {
-	attrs.PutStr(swoSourceEntityType, entity.Type)
-	err := setIdAttributes(attrs, entity.IDs, resourceAttrs, swoSourceEntityIds)
-	if err != nil {
-		zap.L().Debug("failed to set attributes for source entity", zap.Error(err))
-		return nil
-	}
-	return nil
-}
-
-// setEventType sets the event type in the log record as needed by SWO.
-func setEventType(attributes pcommon.Map, eventType string) {
-	attributes.PutStr(swoEntityEventType, eventType)
-}
-
-// setEntityType sets the entity type in the log record as needed by SWO.
-func setEntityType(attributes pcommon.Map, entityType string, name string) {
-	attributes.PutStr(name, entityType)
-}
-
 // findAttribute checks if the attribute identified as key exists in the source pcommon.Map.
 func findAttribute(key string, src pcommon.Map) (pcommon.Value, bool) {
 	attrVal, ok := src.Get(key)
@@ -119,4 +83,42 @@ func putAttribute(dest *pcommon.Map, key string, attrValue pcommon.Value) {
 	default:
 		dest.PutStr(key, attrValue.Str())
 	}
+}
+
+func CreateEntityEvent(resourceAttrs pcommon.Map, entity Entity) (plog.LogRecord, error) {
+	lr := plog.NewLogRecord()
+	attrs := lr.Attributes()
+	attrs.PutStr(swoEntityType, entity.Type)
+
+	if err := setIdAttributes(attrs, entity.IDs, resourceAttrs, swoEntityIds); err != nil {
+		return plog.LogRecord{}, err
+	}
+
+	setAttributes(attrs, entity.Attributes, resourceAttrs, swoEntityAttributes)
+
+	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
+
+	return lr, nil
+}
+
+func CreateRelationshipEvent(resourceAttrs pcommon.Map, relationship Relationship, source, dest Entity) (plog.LogRecord, error) {
+	lr := plog.NewLogRecord()
+	attrs := lr.Attributes()
+
+	attrs.PutStr(swoRelationshipType, relationship.Type)
+	attrs.PutStr(swoSourceEntityType, source.Type)
+	attrs.PutStr(swoDestinationEntityType, dest.Type)
+
+	if err := setIdAttributes(attrs, source.IDs, resourceAttrs, swoSourceEntityIds); err != nil {
+		return plog.LogRecord{}, fmt.Errorf("source entity: %w", err)
+	}
+
+	if err := setIdAttributes(attrs, dest.IDs, resourceAttrs, swoDestinationEntityIds); err != nil {
+		return plog.LogRecord{}, fmt.Errorf("destination entity: %w", err)
+	}
+
+	setAttributes(attrs, relationship.Attributes, resourceAttrs, swoRelationshipAttributes)
+
+	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
+	return lr, nil
 }

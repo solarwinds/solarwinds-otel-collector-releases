@@ -21,71 +21,40 @@ import (
 	"time"
 )
 
-const (
-	entityUpdateEventType       = "entity_state"
-	relationshipUpdateEventType = "entity_relationship_state"
-	swoEntityType               = "otel.entity.type"
-	swoEntityIds                = "otel.entity.id"
-	swoSourceEntityIds          = "otel.entity_relationship.source_entity.id"
-	swoDestinationEntityIds     = "otel.entity_relationship.destination_entity.id"
-	swoRelationshipType         = "otel.entity_relationship.type"
-	swoSourceEntityType         = "otel.entity_relationship.source_entity.type"
-	swoDestinationEntityType    = "otel.entity_relationship.destination_entity.type"
-	swoRelationshipAttributes   = "otel.entity_relationship.attributes"
-)
-
-type Entity struct {
-	Type       string   `mapstructure:"entity"`
-	IDs        []string `mapstructure:"id"`
-	Attributes []string `mapstructure:"attributes"`
-}
-
-type Relationship struct {
-	Type        string   `mapstructure:"type"`
-	Source      string   `mapstructure:"source_entity"`
-	Destination string   `mapstructure:"destination_entity"`
-	Attributes  []string `mapstructure:"attributes"`
-}
-
 func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity Entity, resourceAttrs pcommon.Map) {
-	lr := plog.NewLogRecord()
-	attrs := lr.Attributes()
-
-	err := setIdAttributes(attrs, entity.IDs, resourceAttrs, swoEntityIds)
+	event, err := CreateEntityEvent(resourceAttrs, entity)
 	if err != nil {
 		zap.L().Debug("failed to create update event", zap.Error(err))
 		return
 	}
-
-	setEventType(attrs, entityUpdateEventType)
-	setEntityType(attrs, entity.Type, swoEntityType)
-	setAttributes(attrs, entity.Attributes, resourceAttrs, swoEntityIds)
-	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
-
+	event.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
+	event.Attributes().PutStr(swoEntityEventType, entityUpdateEventType)
 	eventLog := lrs.AppendEmpty()
-	lr.CopyTo(eventLog)
+	event.CopyTo(eventLog)
 }
 
 func AppendRelationshipUpdateEvent(lrs *plog.LogRecordSlice, relationship Relationship, resourceAttrs pcommon.Map, entities map[string]Entity) {
-	lr := plog.NewLogRecord()
-	attrs := lr.Attributes()
-
-	src := entities[relationship.Source]
-	dest := entities[relationship.Destination]
-	err := setSourceEntityProperties(attrs, src, resourceAttrs)
-	if err != nil {
-		return
-	}
-	err = setDestinationEntityProperties(attrs, dest, resourceAttrs)
-	if err != nil {
+	src, ok := entities[relationship.Source]
+	if !ok {
+		zap.L().Debug("source entity not found", zap.String("entity", relationship.Source))
 		return
 	}
 
-	setEventType(attrs, relationshipUpdateEventType)
-	setAttributes(attrs, relationship.Attributes, resourceAttrs, swoRelationshipAttributes)
-	attrs.PutStr(swoRelationshipType, relationship.Type)
-	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
+	dest, ok := entities[relationship.Destination]
+	if !ok {
+		zap.L().Debug("destination entity not found", zap.String("entity", relationship.Destination))
+		return
+	}
+
+	event, err := CreateRelationshipEvent(resourceAttrs, relationship, src, dest)
+	if err != nil {
+		zap.L().Debug("failed to create relationship update event", zap.Error(err))
+		return
+	}
+
+	event.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
+	event.Attributes().PutStr(swoEntityEventType, relationshipUpdateEventType)
 
 	eventLog := lrs.AppendEmpty()
-	lr.CopyTo(eventLog)
+	event.CopyTo(eventLog)
 }
