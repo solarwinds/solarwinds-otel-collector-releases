@@ -26,7 +26,7 @@ import (
 func BuildEventLog(logs *plog.Logs) *plog.LogRecordSlice {
 	resourceLog := logs.ResourceLogs().AppendEmpty()
 	scopeLog := resourceLog.ScopeLogs().AppendEmpty()
-	scopeLog.Scope().Attributes().PutBool(swoEntityEventAsLog, true)
+	scopeLog.Scope().Attributes().PutBool(entityEventAsLog, true)
 	lrs := scopeLog.LogRecords()
 
 	return &lrs
@@ -88,13 +88,13 @@ func putAttribute(dest *pcommon.Map, key string, attrValue pcommon.Value) {
 func CreateEntityEvent(resourceAttrs pcommon.Map, entity Entity) (plog.LogRecord, error) {
 	lr := plog.NewLogRecord()
 	attrs := lr.Attributes()
-	attrs.PutStr(swoEntityType, entity.Type)
+	attrs.PutStr(entityType, entity.Type)
 
-	if err := setIdAttributes(attrs, entity.IDs, resourceAttrs, swoEntityIds); err != nil {
+	if err := setIdAttributes(attrs, entity.IDs, resourceAttrs, entityIds); err != nil {
 		return plog.LogRecord{}, err
 	}
 
-	setAttributes(attrs, entity.Attributes, resourceAttrs, swoEntityAttributes)
+	setAttributes(attrs, entity.Attributes, resourceAttrs, entityAttributes)
 
 	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
 
@@ -105,19 +105,19 @@ func CreateRelationshipEvent(resourceAttrs pcommon.Map, relationship Relationshi
 	lr := plog.NewLogRecord()
 	attrs := lr.Attributes()
 
-	attrs.PutStr(swoRelationshipType, relationship.Type)
-	attrs.PutStr(swoSourceEntityType, source.Type)
-	attrs.PutStr(swoDestinationEntityType, dest.Type)
+	attrs.PutStr(relationshipType, relationship.Type)
+	attrs.PutStr(srcEntityType, source.Type)
+	attrs.PutStr(destEntityType, dest.Type)
 
-	if err := setIdAttributes(attrs, source.IDs, resourceAttrs, swoSourceEntityIds); err != nil {
+	if err := setIdAttributes(attrs, source.IDs, resourceAttrs, relationshipSrcEntityIds); err != nil {
 		return plog.LogRecord{}, fmt.Errorf("source entity: %w", err)
 	}
 
-	if err := setIdAttributes(attrs, dest.IDs, resourceAttrs, swoDestinationEntityIds); err != nil {
+	if err := setIdAttributes(attrs, dest.IDs, resourceAttrs, relationshipDestEntityIds); err != nil {
 		return plog.LogRecord{}, fmt.Errorf("destination entity: %w", err)
 	}
 
-	setAttributes(attrs, relationship.Attributes, resourceAttrs, swoRelationshipAttributes)
+	setAttributes(attrs, relationship.Attributes, resourceAttrs, relationshipAttributes)
 
 	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
 	return lr, nil

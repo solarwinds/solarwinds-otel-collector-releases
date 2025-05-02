@@ -41,12 +41,12 @@ func TestAppendEntityUpdateEventWhenAttributesArePresent(t *testing.T) {
 	assertEntityType(t, actualLogRecord.Attributes(), testEntity.Type)
 	assertEventType(t, actualLogRecord.Attributes(), entityUpdateEventType)
 
-	ids := getMap(actualLogRecord.Attributes(), swoEntityIds)
+	ids := getMap(actualLogRecord.Attributes(), entityIds)
 	assert.Equal(t, 2, ids.Len())
 	assertAttributeIsPresent(t, ids, "id1", "idvalue1")
 	assertAttributeIsPresent(t, ids, "id2", "idvalue2")
 
-	attrs := getMap(actualLogRecord.Attributes(), swoEntityAttributes)
+	attrs := getMap(actualLogRecord.Attributes(), entityAttributes)
 	assert.Equal(t, 2, attrs.Len())
 	assertAttributeIsPresent(t, attrs, "attr1", "attrvalue1")
 	assertAttributeIsPresent(t, attrs, "attr2", "attrvalue2")
@@ -87,24 +87,24 @@ func TestAppendEntityUpdateEventWhenAttributeIsMissing(t *testing.T) {
 	assertEventType(t, actualLogRecord.Attributes(), entityUpdateEventType)
 	assertOtelEventAsLogIsPresent(t, logs)
 
-	ids := getMap(actualLogRecord.Attributes(), swoEntityIds)
+	ids := getMap(actualLogRecord.Attributes(), entityIds)
 	assert.Equal(t, 1, ids.Len())
 	assertAttributeIsPresent(t, ids, "id1", "idvalue1")
 
-	attrs := getMap(actualLogRecord.Attributes(), swoEntityAttributes)
+	attrs := getMap(actualLogRecord.Attributes(), entityAttributes)
 	assert.Equal(t, 1, attrs.Len())
 	assertAttributeIsPresent(t, attrs, "attr1", "attrvalue1")
 }
 
 func assertEventType(t *testing.T, attrs pcommon.Map, expected string) {
-	if val, ok := attrs.Get(swoEntityEventType); ok {
+	if val, ok := attrs.Get(entityEventType); ok {
 		assert.Equal(t, true, ok)
 		assert.Equal(t, expected, val.Str())
 	}
 }
 
 func assertEntityType(t *testing.T, attrs pcommon.Map, expected string) {
-	if val, ok := attrs.Get(swoEntityType); ok {
+	if val, ok := attrs.Get(entityType); ok {
 		assert.Equal(t, true, ok)
 		assert.Equal(t, expected, val.Str())
 	}
@@ -118,7 +118,7 @@ func assertAttributeIsPresent(t *testing.T, attrs pcommon.Map, key string, expec
 }
 
 func assertOtelEventAsLogIsPresent(t *testing.T, logs plog.Logs) {
-	isEntityEvent, ok := logs.ResourceLogs().At(0).ScopeLogs().At(0).Scope().Attributes().Get(swoEntityEventAsLog)
+	isEntityEvent, ok := logs.ResourceLogs().At(0).ScopeLogs().At(0).Scope().Attributes().Get(entityEventAsLog)
 	assert.Equal(t, true, ok)
 	assert.Equal(t, true, isEntityEvent.Bool())
 }

@@ -28,7 +28,7 @@ func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity Entity, resourceAt
 		return
 	}
 	event.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
-	event.Attributes().PutStr(swoEntityEventType, entityUpdateEventType)
+	event.Attributes().PutStr(entityEventType, entityUpdateEventType)
 	eventLog := lrs.AppendEmpty()
 	event.CopyTo(eventLog)
 }
@@ -53,7 +53,7 @@ func AppendRelationshipUpdateEvent(lrs *plog.LogRecordSlice, relationship Relati
 	}
 
 	event.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
-	event.Attributes().PutStr(swoEntityEventType, relationshipUpdateEventType)
+	event.Attributes().PutStr(entityEventType, relationshipUpdateEventType)
 
 	eventLog := lrs.AppendEmpty()
 	event.CopyTo(eventLog)
