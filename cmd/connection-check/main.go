@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// The goal of this connectioncheck is be able to perform GRPC endpoint check.
+// The goal of this connection-check is to be able to perform GRPC endpoint check.
 // This feature is mainly intended for kubernetes use
-package connectioncheck
+package main
 
 import (
 	"context"
+	"flag"
+	"log"
 	"time"
-
-	"github.com/spf13/cobra"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -86,25 +86,21 @@ func (d *OtelErrorHandler) Handle(err error) {
 	}
 }
 
-func NewCommand(logger *zap.Logger) *cobra.Command {
+func main() {
 	var clusterUid, endpoint, apiToken string
 	var insecure bool
 
-	testCommand := &cobra.Command{
-		Use:   "test-connection",
-		Short: "Sends a single log to the provided endpoint",
-		Args:  cobra.ExactArgs(0),
-		Run: func(cmd *cobra.Command, args []string) {
-			sendTestMessage(logger, endpoint, apiToken, clusterUid, insecure)
-		},
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatalf("Failed to create logger: %v", err)
 	}
-	testCommand.Flags().StringVar(&clusterUid, "clusteruid", "", "")
-	testCommand.Flags().StringVar(&endpoint, "endpoint", "", "")
-	testCommand.Flags().StringVar(&apiToken, "apitoken", "", "")
-	testCommand.Flags().BoolVar(&insecure, "insecure", false, "")
-	testCommand.MarkFlagRequired("clusteruid")
-	testCommand.MarkFlagRequired("endpoint")
-	testCommand.MarkFlagRequired("apitoken")
+	defer logger.Sync()
 
-	return testCommand
+	flag.StringVar(&clusterUid, "clusteruid", "", "Cluster UID")
+	flag.StringVar(&endpoint, "endpoint", "", "Endpoint")
+	flag.StringVar(&apiToken, "apitoken", "", "Api token")
+	flag.BoolVar(&insecure, "insecure", false, "Insecure")
+
+	flag.Parse()
+	sendTestMessage(logger, endpoint, apiToken, clusterUid, insecure)
 }
