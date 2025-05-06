@@ -31,8 +31,6 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	"github.com/solarwinds/solarwinds-otel-collector-releases/pkg/version"
 )
 
 func sendTestMessage(logger *zap.Logger, endpoint, apiToken, clusterUid string, insecure bool) {
@@ -60,7 +58,7 @@ func sendTestMessage(logger *zap.Logger, endpoint, apiToken, clusterUid string, 
 	)
 	defer loggerProvider.Shutdown(ctx)
 
-	otelLogger := loggerProvider.Logger("solarwinds-otel-collector", otellog.WithInstrumentationVersion(version.Version))
+	otelLogger := loggerProvider.Logger("connection-check")
 
 	record := otellog.Record{}
 	record.SetSeverityText("INFO")

@@ -3,7 +3,6 @@ module github.com/solarwinds/solarwinds-otel-collector-releases/connection-check
 go 1.24.2
 
 require (
-	github.com/solarwinds/solarwinds-otel-collector-releases/pkg/version v0.123.1
 	go.opentelemetry.io/otel v1.35.0
 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.11.0
 	go.opentelemetry.io/otel/log v0.11.0
