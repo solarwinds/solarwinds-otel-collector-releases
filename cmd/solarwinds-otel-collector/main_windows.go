@@ -21,11 +21,12 @@ import (
 	"fmt"
 
 	"go.opentelemetry.io/collector/otelcol"
+	"go.uber.org/zap"
 	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/svc"
 )
 
-func run(params otelcol.CollectorSettings) error {
+func run(params otelcol.CollectorSettings, logger *zap.Logger) error {
 	// No need to supply service name when startup is invoked through
 	// the Service Control Manager directly.
 	if err := svc.Run("", otelcol.NewSvcHandler(params)); err != nil {
