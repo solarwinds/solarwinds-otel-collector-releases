@@ -87,17 +87,20 @@ func (d *OtelErrorHandler) Handle(err error) {
 }
 
 func main() {
+	var clusterUid, endpoint, apiToken string
+	var insecure bool
+
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("Failed to create logger: %v", err)
 	}
 	defer logger.Sync()
 
-	clusterUid := flag.String("clusteruid", "", "Cluster UID")
-	endpoint := flag.String("endpoint", "", "Endpoint")
-	apiToken := flag.String("apitoken", "", "Api token")
-	insecure := flag.Bool("insecure", false, "Insecure")
+	flag.StringVar(&clusterUid, "clusteruid", "", "Cluster UID")
+	flag.StringVar(&endpoint, "endpoint", "", "Endpoint")
+	flag.StringVar(&apiToken, "apitoken", "", "Api token")
+	flag.BoolVar(&insecure, "insecure", false, "Insecure")
 
 	flag.Parse()
-	sendTestMessage(logger, *endpoint, *apiToken, *clusterUid, *insecure)
+	sendTestMessage(logger, endpoint, apiToken, clusterUid, insecure)
 }
