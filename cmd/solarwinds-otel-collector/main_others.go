@@ -18,9 +18,8 @@ package main
 
 import (
 	"go.opentelemetry.io/collector/otelcol"
-	"go.uber.org/zap"
 )
 
-func run(params otelcol.CollectorSettings, logger *zap.Logger) error {
+func run(params otelcol.CollectorSettings) error {
 	return runInteractive(params)
 }

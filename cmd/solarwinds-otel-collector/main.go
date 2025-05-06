@@ -63,7 +63,7 @@ func main() {
 				},
 			},
 		},
-	}, logger)
+	})
 
 	if err != nil {
 		logger.Fatal("collector server run finished with error", zap.Error(err))
