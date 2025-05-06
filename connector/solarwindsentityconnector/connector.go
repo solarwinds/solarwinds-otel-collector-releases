@@ -19,6 +19,7 @@ import (
 	"go.opentelemetry.io/collector/connector"
 
 	"context"
+
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/pdata/plog"
@@ -45,13 +46,13 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 	logs := plog.NewLogs()
 	events := internal.BuildEventLog(&logs)
 
-	for i := 0; i < logs.ResourceLogs().Len(); i++ {
+	for i := 0; i < metrics.ResourceMetrics().Len(); i++ {
 		resourceMetric := metrics.ResourceMetrics().At(i)
 		resourceAttrs := resourceMetric.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
 		internal.AppendEntityUpdateEvent(events, s.entities["Snowflake"], resourceAttrs)
-		for r := 0; r < len(s.relationships); i++ {
+		for r := 0; r < len(s.relationships); r++ {
 			internal.AppendRelationshipUpdateEvent(events, s.relationships[r], resourceAttrs, s.entities)
 		}
 	}
