@@ -9,12 +9,10 @@ ARG CGO_ENABLED=0
 ARG GOEXPERIMENT=boringcrypto
 
 RUN cd /src/cmd/solarwinds-otel-collector && go build -tags full -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
-RUN cd /src/cmd/connection-check && go build -trimpath -o /src/bin/connection-check "-ldflags=-s -w"
 
 FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
 
 COPY --from=builder /src/bin/solarwinds-otel-collector /solarwinds-otel-collector.exe
-COPY --from=builder /src/bin/connection-check /connection-check.exe
 
 ENTRYPOINT ["solarwinds-otel-collector.exe"]
 CMD ["--config=/opt/default-config.yaml"]
