@@ -16,6 +16,9 @@ package solarwindsentityconnector
 
 import (
 	"context"
+	"path/filepath"
+	"testing"
+
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/golden"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest/plogtest"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
@@ -27,8 +30,6 @@ import (
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/consumer/consumertest"
 	"go.opentelemetry.io/collector/pdata/plog"
-	"path/filepath"
-	"testing"
 )
 
 type testLogsConsumer struct {
@@ -55,18 +56,15 @@ func TestLogsToLogs(t *testing.T) {
 		name         string
 		inputFile    string
 		expectedFile string
-		expectedLogs int
 	}{
 		{
 			name:         "when entity is inferred log event is sent",
 			inputFile:    "input-log.yaml",
 			expectedFile: "expected-log.yaml",
-			expectedLogs: 1,
 		},
 		{
-			name:         "when entity is not inferred no log is sent",
-			inputFile:    "input-log-nomatch.yaml",
-			expectedLogs: 0,
+			name:      "when entity is not inferred no log is sent",
+			inputFile: "input-log-nomatch.yaml",
 		},
 	}
 
@@ -89,13 +87,15 @@ func TestLogsToLogs(t *testing.T) {
 			assert.NoError(t, conn.ConsumeLogs(context.Background(), testLogs))
 
 			allLogs := sink.AllLogs()
-			assert.Len(t, allLogs, tc.expectedLogs)
-
-			if tc.expectedLogs > 0 {
-				expected, err := golden.ReadLogs(filepath.Join("testdata", "logsToLogs", tc.expectedFile))
-				assert.NoError(t, err)
-				assert.NoError(t, plogtest.CompareLogs(expected, allLogs[0], plogtest.IgnoreObservedTimestamp()))
+			if len(tc.expectedFile) == 0 {
+				assert.Len(t, allLogs, 0)
+				return
 			}
+
+			expected, err := golden.ReadLogs(filepath.Join("testdata", "logsToLogs", tc.expectedFile))
+			assert.NoError(t, err)
+			assert.Equal(t, allLogs[0].LogRecordCount(), expected.LogRecordCount())
+			assert.NoError(t, plogtest.CompareLogs(expected, allLogs[0], plogtest.IgnoreObservedTimestamp()))
 		})
 	}
 }
@@ -105,18 +105,15 @@ func TestMetricsToLogs(t *testing.T) {
 		name         string
 		inputFile    string
 		expectedFile string
-		expectedLogs int
 	}{
 		{
 			name:         "when entity is inferred, log event is sent",
 			inputFile:    "input-metric.yaml",
 			expectedFile: "expected-log.yaml",
-			expectedLogs: 1,
 		},
 		{
-			name:         "when entity is not inferred, no log is sent",
-			inputFile:    "input-metric-nomatch.yaml",
-			expectedLogs: 0,
+			name:      "when entity is not inferred, no log is sent",
+			inputFile: "input-metric-nomatch.yaml",
 		},
 	}
 
@@ -139,13 +136,15 @@ func TestMetricsToLogs(t *testing.T) {
 			assert.NoError(t, conn.ConsumeMetrics(context.Background(), testMetrics))
 
 			allLogs := sink.AllLogs()
-			assert.Len(t, allLogs, tc.expectedLogs)
-
-			if tc.expectedLogs > 0 {
-				expected, err := golden.ReadLogs(filepath.Join("testdata", "metricsToLogs", tc.expectedFile))
-				assert.NoError(t, err)
-				assert.NoError(t, plogtest.CompareLogs(expected, allLogs[0], plogtest.IgnoreObservedTimestamp()))
+			if len(tc.expectedFile) == 0 {
+				assert.Len(t, allLogs, 0)
+				return
 			}
+
+			expected, err := golden.ReadLogs(filepath.Join("testdata", "metricsToLogs", tc.expectedFile))
+			assert.NoError(t, err)
+			assert.Equal(t, allLogs[0].LogRecordCount(), expected.LogRecordCount())
+			assert.NoError(t, plogtest.CompareLogs(expected, allLogs[0], plogtest.IgnoreObservedTimestamp()))
 		})
 	}
 }
