@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"strconv"
 	"testing"
@@ -106,6 +107,16 @@ func runTestedSolarWindsOTELCollector(
 	)
 }
 
+// build pipeline can test against both playground || verified
+func getImageTagFromEnv() string {
+	const defaultValue = "latest-playground"
+	imageTag := os.Getenv("IMAGE_TAG")
+	if imageTag == "" {
+		return defaultValue
+	}
+	return imageTag
+}
+
 func runSolarWindsOTELCollector(
 	ctx context.Context,
 	networkName string,
@@ -124,9 +135,9 @@ func runSolarWindsOTELCollector(
 		},
 	}
 	files = append(files, additionalFiles...)
-
+	tag := getImageTagFromEnv()
 	req := testcontainers.ContainerRequest{
-		Image: "solarwinds-otel-collector:latest",
+		Image: fmt.Sprintf("solarwinds-otel-collector:%s", tag),
 		LogConsumerCfg: &testcontainers.LogConsumerConfig{
 			Consumers: []testcontainers.LogConsumer{lc},
 		},

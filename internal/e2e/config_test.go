@@ -18,6 +18,7 @@ package e2e
 
 import (
 	"context"
+	"fmt"
 	"path/filepath"
 	"testing"
 
@@ -36,8 +37,9 @@ func TestConfigIsNotProvided_FailsToRun(t *testing.T) {
 	lc := new(logConsumer)
 	lc.Prefix = containerName
 
+	tag := getImageTagFromEnv()
 	req := testcontainers.ContainerRequest{
-		Image: "solarwinds-otel-collector:latest",
+		Image: fmt.Sprintf("solarwinds-otel-collector:%s", tag),
 		LogConsumerCfg: &testcontainers.LogConsumerConfig{
 			Consumers: []testcontainers.LogConsumer{lc},
 		},
@@ -70,8 +72,9 @@ func TestInvalidConfigProvided_FailsToRun(t *testing.T) {
 	lc := new(logConsumer)
 	lc.Prefix = containerName
 
+	tag := getImageTagFromEnv()
 	req := testcontainers.ContainerRequest{
-		Image: "solarwinds-otel-collector:latest",
+		Image: fmt.Sprintf("solarwinds-otel-collector:%s", tag),
 		LogConsumerCfg: &testcontainers.LogConsumerConfig{
 			Consumers: []testcontainers.LogConsumer{lc},
 		},
