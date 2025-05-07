@@ -3,9 +3,9 @@ FROM docker.io/library/golang:1.24.2-bookworm AS base
 COPY /LICENSE /LICENSE
 COPY ./ /src
 
+ARG BUILD_TAG="playground"
 FROM base AS builder
-
-RUN cd /src/cmd/solarwinds-otel-collector && CGO_ENABLED=0 GOEXPERIMENT=boringcrypto go build -tags full \
+RUN cd /src/cmd/solarwinds-otel-collector && CGO_ENABLED=0 GOEXPERIMENT=boringcrypto go build -tags "${BUILD_TAG}" \
     -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
 
 FROM builder AS tests

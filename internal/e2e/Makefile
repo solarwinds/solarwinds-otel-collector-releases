@@ -1,3 +1,6 @@
+
+tag_arg ?= latest-playground
+
 .PHONY: e2e-tests
 e2e-tests:
-	go test -tags=e2e
+	IMAGE_TAG=$(tag_arg) go test -tags=e2e

@@ -74,7 +74,7 @@ jobs:
           username: ${{ vars.DOCKER_SOLARWINDS_ORG_LOGIN }}
           password: ${{ secrets.ENOPS5919_OPENTELEMETRYCOLLECTOR_DOCKER_HUB_CI_OAT }}
 
-      - name: Build and Push - Full
+      - name: Build and Push - Playground
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -85,7 +85,20 @@ jobs:
           push: true
           tags: |
             ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}
-            ${{ env.DOCKERHUB_IMAGE }}:latest
+            ${{ env.DOCKERHUB_IMAGE }}:latest-playground
+      
+      - name: Build and Push - Verified
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: build/docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          provenance: false
+          sbom: false
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}
+            ${{ env.DOCKERHUB_IMAGE }}:latest-verified
 
       - name: Build and Push - k8s
         uses: docker/build-push-action@v6
