@@ -15,11 +15,10 @@
 package solarwindsentityconnector
 
 import (
-	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
-	"go.opentelemetry.io/collector/connector"
-
 	"context"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
 	"go.opentelemetry.io/collector/component"
+	"go.opentelemetry.io/collector/connector"
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.opentelemetry.io/collector/pdata/pmetric"
@@ -45,13 +44,17 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 	logs := plog.NewLogs()
 	events := internal.BuildEventLog(&logs)
 
-	for i := 0; i < logs.ResourceLogs().Len(); i++ {
+	for i := 0; i < metrics.ResourceMetrics().Len(); i++ {
 		resourceMetric := metrics.ResourceMetrics().At(i)
 		resourceAttrs := resourceMetric.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		internal.AppendEntityUpdateEvent(events, s.entities["Snowflake"], resourceAttrs)
-		for r := 0; r < len(s.relationships); i++ {
+		for k := range s.entities {
+			internal.AppendEntityUpdateEvent(events, s.entities[k], resourceAttrs)
+		}
+
+		// This will be replaced with actual logic when conditions are introduced
+		for r := 0; r < len(s.relationships); r++ {
 			internal.AppendRelationshipUpdateEvent(events, s.relationships[r], resourceAttrs, s.entities)
 		}
 	}
@@ -70,7 +73,11 @@ func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) erro
 	for i := 0; i < logs.ResourceLogs().Len(); i++ {
 		resourceLog := logs.ResourceLogs().At(i)
 		resourceAttrs := resourceLog.Resource().Attributes()
-		internal.AppendEntityUpdateEvent(events, s.entities["Snowflake"], resourceAttrs)
+
+		// This will be replaced with actual logic when conditions are introduced
+		for k := range s.entities {
+			internal.AppendEntityUpdateEvent(events, s.entities[k], resourceAttrs)
+		}
 
 		// This will be replaced with actual logic when conditions are introduced
 		for r := 0; r < len(s.relationships); r++ {
