@@ -1,5 +1,5 @@
 
-tag_arg ?= playground
+tag_arg ?= latest-playground
 
 .PHONY: e2e-tests
 e2e-tests:
