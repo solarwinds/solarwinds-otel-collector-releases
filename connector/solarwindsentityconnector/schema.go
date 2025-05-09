@@ -24,11 +24,7 @@ type Schema struct {
 func (s *Schema) NewEntities() map[string]internal.Entity {
 	entities := make(map[string]internal.Entity, len(s.Entities))
 	for _, entity := range s.Entities {
-		entities[entity.Type] = internal.Entity{
-			Type:       entity.Type,
-			IDs:        entity.IDs,
-			Attributes: entity.Attributes,
-		}
+		entities[entity.Type] = entity
 	}
 
 	return entities
