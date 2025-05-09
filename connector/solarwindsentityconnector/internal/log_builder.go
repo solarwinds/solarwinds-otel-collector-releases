@@ -16,6 +16,7 @@ package internal
 
 import (
 	"fmt"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"time"
@@ -85,7 +86,7 @@ func putAttribute(dest *pcommon.Map, key string, attrValue pcommon.Value) {
 	}
 }
 
-func CreateEntityEvent(resourceAttrs pcommon.Map, entity Entity) (plog.LogRecord, error) {
+func CreateEntityEvent(resourceAttrs pcommon.Map, entity config.Entity) (plog.LogRecord, error) {
 	lr := plog.NewLogRecord()
 	attrs := lr.Attributes()
 	attrs.PutStr(entityType, entity.Type)
@@ -101,7 +102,7 @@ func CreateEntityEvent(resourceAttrs pcommon.Map, entity Entity) (plog.LogRecord
 	return lr, nil
 }
 
-func CreateRelationshipEvent(resourceAttrs pcommon.Map, relationship Relationship, source, dest Entity) (plog.LogRecord, error) {
+func CreateRelationshipEvent(resourceAttrs pcommon.Map, relationship config.Relationship, source, dest config.Entity) (plog.LogRecord, error) {
 	lr := plog.NewLogRecord()
 	attrs := lr.Attributes()
 

@@ -16,12 +16,12 @@ package solarwindsentityconnector
 
 import (
 	"context"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
 	"path/filepath"
 	"testing"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/golden"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest/plogtest"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal/metadata"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -46,7 +46,7 @@ func (t *testLogsConsumer) ConsumeLogs(ctx context.Context, ld plog.Logs) error 
 var _ consumer.Logs = (*testLogsConsumer)(nil)
 
 var (
-	expectedEntities = []internal.Entity{
+	expectedEntities = []config.Entity{
 		{Type: "Snowflake", IDs: []string{"id1"}, Attributes: []string{"attr1"}},
 	}
 )

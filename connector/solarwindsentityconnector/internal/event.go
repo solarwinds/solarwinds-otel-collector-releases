@@ -15,13 +15,14 @@
 package internal
 
 import (
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.uber.org/zap"
 	"time"
 )
 
-func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity Entity, resourceAttrs pcommon.Map) {
+func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity config.Entity, resourceAttrs pcommon.Map) {
 	event, err := CreateEntityEvent(resourceAttrs, entity)
 	if err != nil {
 		zap.L().Debug("failed to create update event", zap.Error(err))
@@ -33,7 +34,7 @@ func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity Entity, resourceAt
 	event.CopyTo(eventLog)
 }
 
-func AppendRelationshipUpdateEvent(lrs *plog.LogRecordSlice, relationship Relationship, resourceAttrs pcommon.Map, entities map[string]Entity) {
+func AppendRelationshipUpdateEvent(lrs *plog.LogRecordSlice, relationship config.Relationship, resourceAttrs pcommon.Map, entities map[string]config.Entity) {
 	src, ok := entities[relationship.Source]
 	if !ok {
 		zap.L().Debug("source entity not found", zap.String("entity", relationship.Source))

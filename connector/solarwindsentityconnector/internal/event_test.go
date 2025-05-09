@@ -15,6 +15,7 @@
 package internal
 
 import (
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
 	"github.com/stretchr/testify/assert"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
@@ -25,7 +26,7 @@ func TestAppendEntityUpdateEventWhenAttributesArePresent(t *testing.T) {
 	// arrange
 	logs := plog.NewLogs()
 	lrs := BuildEventLog(&logs)
-	testEntity := Entity{"testEntityType", []string{"id1", "id2"}, []string{"attr1", "attr2"}}
+	testEntity := config.Entity{Type: "testEntityType", IDs: []string{"id1", "id2"}, Attributes: []string{"attr1", "attr2"}}
 	resourceAttrs := pcommon.NewMap()
 	resourceAttrs.PutStr("id1", "idvalue1")
 	resourceAttrs.PutStr("id2", "idvalue2")
@@ -57,7 +58,7 @@ func TestDoesNotAppendEntityUpdateEventWhenIDAttributeIsMissing(t *testing.T) {
 	// arrange
 	logs := plog.NewLogs()
 	lrs := BuildEventLog(&logs)
-	testEntity := Entity{"testEntityType", []string{"id1", "id2"}, []string{}}
+	testEntity := config.Entity{Type: "testEntityType", IDs: []string{"id1", "id2"}, Attributes: []string{}}
 	resourceAttrs := pcommon.NewMap()
 	resourceAttrs.PutStr("id1", "idvalue1")
 
@@ -72,7 +73,7 @@ func TestAppendEntityUpdateEventWhenAttributeIsMissing(t *testing.T) {
 	// arrange
 	logs := plog.NewLogs()
 	lrs := BuildEventLog(&logs)
-	testEntity := Entity{"testEntityType", []string{"id1"}, []string{"attr1", "attr2"}}
+	testEntity := config.Entity{Type: "testEntityType", IDs: []string{"id1"}, Attributes: []string{"attr1", "attr2"}}
 	resourceAttrs := pcommon.NewMap()
 	resourceAttrs.PutStr("id1", "idvalue1")
 	resourceAttrs.PutStr("attr1", "attrvalue1")
