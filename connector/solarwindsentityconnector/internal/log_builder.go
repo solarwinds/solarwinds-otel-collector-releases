@@ -16,16 +16,10 @@ package internal
 
 import (
 	"fmt"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
-)
-
-const (
-	swoEntityEventAsLog = "otel.entity.event_as_log"
-	swoEntityEventType  = "otel.entity.event.type"
-	swoEntityType       = "otel.entity.type"
-	swoEntityIds        = "otel.entity.id"
-	swoEntityAttributes = "otel.entity.attributes"
+	"time"
 )
 
 // BuildEventLog prepares a clean LogRecordSlice, where log records representing events should be appended.
@@ -33,7 +27,7 @@ const (
 func BuildEventLog(logs *plog.Logs) *plog.LogRecordSlice {
 	resourceLog := logs.ResourceLogs().AppendEmpty()
 	scopeLog := resourceLog.ScopeLogs().AppendEmpty()
-	scopeLog.Scope().Attributes().PutBool(swoEntityEventAsLog, true)
+	scopeLog.Scope().Attributes().PutBool(entityEventAsLog, true)
 	lrs := scopeLog.LogRecords()
 
 	return &lrs
@@ -44,8 +38,12 @@ func BuildEventLog(logs *plog.Logs) *plog.LogRecordSlice {
 //
 // Returns error if any of the attributes are missing in the resourceAttrs.
 // If any ID attribute is missing, the entity would not be inferred.
-func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map) error {
-	logIds := attrs.PutEmptyMap(swoEntityIds)
+func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map, name string) error {
+	if len(entityIds) == 0 {
+		return fmt.Errorf("entity id attributes are empty")
+	}
+
+	logIds := attrs.PutEmptyMap(name)
 	for _, id := range entityIds {
 		value, exists := findAttribute(id, resourceAttrs)
 		if !exists {
@@ -58,8 +56,12 @@ func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommo
 
 // setEntityAttributes sets the entity attributes in the log record as needed by SWO.
 // Attributes are used to update the entity.
-func setEntityAttributes(attrs pcommon.Map, entityAttrs []string, resourceAttrs pcommon.Map) {
-	logIds := attrs.PutEmptyMap(swoEntityAttributes)
+func setAttributes(attrs pcommon.Map, entityAttrs []string, resourceAttrs pcommon.Map, name string) {
+	if len(entityAttrs) == 0 {
+		return
+	}
+
+	logIds := attrs.PutEmptyMap(name)
 	for _, attr := range entityAttrs {
 		value, exists := findAttribute(attr, resourceAttrs)
 		if !exists {
@@ -67,16 +69,6 @@ func setEntityAttributes(attrs pcommon.Map, entityAttrs []string, resourceAttrs 
 		}
 		putAttribute(&logIds, attr, value)
 	}
-}
-
-// setEventType sets the event type in the log record as needed by SWO.
-func setEventType(attributes pcommon.Map, eventType string) {
-	attributes.PutStr(swoEntityEventType, eventType)
-}
-
-// setEntityType sets the entity type in the log record as needed by SWO.
-func setEntityType(attributes pcommon.Map, entityType string) {
-	attributes.PutStr(swoEntityType, entityType)
 }
 
 // findAttribute checks if the attribute identified as key exists in the source pcommon.Map.
@@ -100,4 +92,42 @@ func putAttribute(dest *pcommon.Map, key string, attrValue pcommon.Value) {
 	default:
 		dest.PutStr(key, attrValue.Str())
 	}
+}
+
+func CreateEntityEvent(resourceAttrs pcommon.Map, entity config.Entity) (plog.LogRecord, error) {
+	lr := plog.NewLogRecord()
+	attrs := lr.Attributes()
+	attrs.PutStr(entityType, entity.Type)
+
+	if err := setIdAttributes(attrs, entity.IDs, resourceAttrs, entityIds); err != nil {
+		return plog.LogRecord{}, err
+	}
+
+	setAttributes(attrs, entity.Attributes, resourceAttrs, entityAttributes)
+
+	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
+
+	return lr, nil
+}
+
+func CreateRelationshipEvent(resourceAttrs pcommon.Map, relationship config.Relationship, source, dest config.Entity) (plog.LogRecord, error) {
+	lr := plog.NewLogRecord()
+	attrs := lr.Attributes()
+
+	attrs.PutStr(relationshipType, relationship.Type)
+	attrs.PutStr(srcEntityType, source.Type)
+	attrs.PutStr(destEntityType, dest.Type)
+
+	if err := setIdAttributes(attrs, source.IDs, resourceAttrs, relationshipSrcEntityIds); err != nil {
+		return plog.LogRecord{}, fmt.Errorf("source entity: %w", err)
+	}
+
+	if err := setIdAttributes(attrs, dest.IDs, resourceAttrs, relationshipDestEntityIds); err != nil {
+		return plog.LogRecord{}, fmt.Errorf("destination entity: %w", err)
+	}
+
+	setAttributes(attrs, relationship.Attributes, resourceAttrs, relationshipAttributes)
+
+	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
+	return lr, nil
 }

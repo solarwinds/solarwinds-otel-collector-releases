@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package solarwindsentityconnector
-
-import "github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
+package config
 
 type Schema struct {
-	Entities []internal.Entity `mapstructure:"entities"`
+	Entities []Entity `mapstructure:"entities"`
+	Events   Events   `mapstructure:"events"`
 }
 
-func (s *Schema) NewEntities() map[string]internal.Entity {
-	entities := make(map[string]internal.Entity, len(s.Entities))
+func (s *Schema) NewEntities() map[string]Entity {
+	entities := make(map[string]Entity, len(s.Entities))
 	for _, entity := range s.Entities {
-		entities[entity.Type] = internal.Entity{
-			Type:       entity.Type,
-			IDs:        entity.IDs,
-			Attributes: entity.Attributes}
+		entities[entity.Type] = entity
 	}
 
 	return entities
+}
+
+func (s *Schema) NewRelationships() []Relationship {
+	return s.Events.Relationships
 }

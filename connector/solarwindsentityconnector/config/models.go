@@ -12,17 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package solarwindsentityconnector
+package config
 
-import (
-	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
-	"go.opentelemetry.io/collector/component"
-)
-
-type Config struct {
-	Schema config.Schema `mapstructure:"schema"`
+type Entity struct {
+	Type       string   `mapstructure:"entity"`
+	IDs        []string `mapstructure:"id"`
+	Attributes []string `mapstructure:"attributes"`
 }
 
-func NewDefaultConfig() component.Config {
-	return &Config{}
+type Events struct {
+	Relationships []Relationship `mapstructure:"relationships"`
+}
+
+type Relationship struct {
+	Type        string   `mapstructure:"type"`
+	Source      string   `mapstructure:"source_entity"`
+	Destination string   `mapstructure:"destination_entity"`
+	Attributes  []string `mapstructure:"attributes"`
 }
