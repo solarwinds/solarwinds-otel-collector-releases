@@ -51,13 +51,13 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 		resourceAttrs := resourceMetric.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		for k := range s.entities {
-			internal.AppendEntityUpdateEvent(events, s.entities[k], resourceAttrs)
+		for _, entity := range s.entities {
+			internal.AppendEntityUpdateEvent(events, entity, resourceAttrs)
 		}
 
 		// This will be replaced with actual logic when conditions are introduced
-		for r := 0; r < len(s.relationships); r++ {
-			internal.AppendRelationshipUpdateEvent(events, s.relationships[r], resourceAttrs, s.entities)
+		for _, relationship := range s.relationships {
+			internal.AppendRelationshipUpdateEvent(events, relationship, resourceAttrs, s.entities)
 		}
 	}
 
@@ -77,13 +77,13 @@ func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) erro
 		resourceAttrs := resourceLog.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		for k := range s.entities {
-			internal.AppendEntityUpdateEvent(events, s.entities[k], resourceAttrs)
+		for _, entity := range s.entities {
+			internal.AppendEntityUpdateEvent(events, entity, resourceAttrs)
 		}
 
 		// This will be replaced with actual logic when conditions are introduced
-		for r := 0; r < len(s.relationships); r++ {
-			internal.AppendRelationshipUpdateEvent(events, s.relationships[r], resourceAttrs, s.entities)
+		for _, relationship := range s.relationships {
+			internal.AppendRelationshipUpdateEvent(events, relationship, resourceAttrs, s.entities)
 		}
 	}
 
