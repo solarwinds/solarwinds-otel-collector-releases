@@ -6,6 +6,10 @@ type Entity struct {
 	Attributes []string `mapstructure:"attributes"`
 }
 
+type Events struct {
+	Relationships []Relationship `mapstructure:"relationships"`
+}
+
 type Relationship struct {
 	Type        string   `mapstructure:"type"`
 	Source      string   `mapstructure:"source_entity"`
