@@ -63,16 +63,15 @@ func main() {
 				},
 			},
 		},
-	}, logger)
+	})
 
 	if err != nil {
 		logger.Fatal("collector server run finished with error", zap.Error(err))
 	}
 }
 
-func runInteractive(params otelcol.CollectorSettings, logger *zap.Logger) error {
+func runInteractive(params otelcol.CollectorSettings) error {
 	cmd := otelcol.NewCommand(params)
-	addCommands(cmd, logger)
 	err := cmd.Execute()
 	return err
 }
