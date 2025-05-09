@@ -97,6 +97,99 @@ func TestAppendEntityUpdateEventWhenAttributeIsMissing(t *testing.T) {
 	assertAttributeIsPresent(t, attrs, "attr1", "attrvalue1")
 }
 
+func TestAppendRelationshipUpdateEventWhenAttributesArePresent(t *testing.T) {
+	// arrange
+	logs := plog.NewLogs()
+	lrs := BuildEventLog(&logs)
+	srcEntity := config.Entity{Type: "KubernetesCluster", IDs: []string{"id1"}, Attributes: []string{"attr1"}}
+	destEntity := config.Entity{Type: "KubernetesNamespace", IDs: []string{"id2"}, Attributes: []string{"attr2"}}
+	testRelationship := config.Relationship{Source: "KubernetesCluster", Destination: "KubernetesNamespace"}
+	resourceAttrs := pcommon.NewMap()
+	resourceAttrs.PutStr("id1", "idvalue1")
+	resourceAttrs.PutStr("id2", "idvalue2")
+	resourceAttrs.PutStr("attr1", "attrvalue1")
+	resourceAttrs.PutStr("attr2", "attrvalue2")
+
+	// act
+	AppendRelationshipUpdateEvent(lrs, testRelationship, resourceAttrs, map[string]config.Entity{
+		"KubernetesCluster":   srcEntity,
+		"KubernetesNamespace": destEntity,
+	})
+
+	// assert
+	assert.Equal(t, 1, logs.LogRecordCount())
+	actualLogRecord := logs.ResourceLogs().At(0).ScopeLogs().At(0).LogRecords().At(0)
+	assertEventType(t, actualLogRecord.Attributes(), relationshipUpdateEventType)
+	assertOtelEventAsLogIsPresent(t, logs)
+
+	srcIds := getMap(actualLogRecord.Attributes(), relationshipSrcEntityIds)
+	assert.Equal(t, 1, srcIds.Len())
+	assertAttributeIsPresent(t, srcIds, "id1", "idvalue1")
+	assertAttributeIsPresent(t, srcIds, "attr1", "attrvalue1")
+	assertRelationshipEntityType(t, actualLogRecord.Attributes(), srcEntity.Type, srcEntityType)
+
+	destIds := getMap(actualLogRecord.Attributes(), relationshipDestEntityIds)
+	assert.Equal(t, 1, destIds.Len())
+	assertAttributeIsPresent(t, destIds, "id2", "idvalue2")
+	assertAttributeIsPresent(t, destIds, "attr2", "attrvalue2")
+	assertRelationshipEntityType(t, actualLogRecord.Attributes(), destEntity.Type, destEntityType)
+}
+
+func TestDoesNotAppendRelationshipUpdateEventWhenIDAttributeIsMissing(t *testing.T) {
+	// arrange
+	logs := plog.NewLogs()
+	lrs := BuildEventLog(&logs)
+	srcEntity := config.Entity{Type: "KubernetesCluster", IDs: []string{"id1"}, Attributes: []string{}}
+	destEntity := config.Entity{Type: "KubernetesNamespace", IDs: []string{"id2"}, Attributes: []string{}}
+	testRelationship := config.Relationship{Source: "KubernetesCluster", Destination: "KubernetesNamespace"}
+	resourceAttrs := pcommon.NewMap()
+	resourceAttrs.PutStr("id1", "idvalue1")
+
+	// act
+	AppendRelationshipUpdateEvent(lrs, testRelationship, resourceAttrs, map[string]config.Entity{
+		"srcEntity":   srcEntity,
+		"destination": destEntity,
+	})
+
+	// assert
+	assert.Equal(t, 0, logs.LogRecordCount())
+}
+
+func TestAppendRelationshipUpdateEventWithRelationshipAttribute(t *testing.T) {
+	// arrange
+	logs := plog.NewLogs()
+	lrs := BuildEventLog(&logs)
+	srcEntity := config.Entity{Type: "KubernetesCluster", IDs: []string{"id1"}}
+	destEntity := config.Entity{Type: "KubernetesNamespace", IDs: []string{"id2"}}
+	testRelationship := config.Relationship{Source: "KubernetesCluster", Destination: "KubernetesNamespace", Attributes: []string{"relationshipAttr"}}
+	resourceAttrs := pcommon.NewMap()
+	resourceAttrs.PutStr("id1", "idvalue1")
+	resourceAttrs.PutStr("id2", "idvalue2")
+	resourceAttrs.PutStr("relationshipAttr", "relationshipValue")
+
+	// act
+	AppendRelationshipUpdateEvent(lrs, testRelationship, resourceAttrs, map[string]config.Entity{
+		"KubernetesCluster":   srcEntity,
+		"KubernetesNamespace": destEntity,
+	})
+
+	// assert
+	assert.Equal(t, 1, logs.LogRecordCount())
+	actualLogRecord := logs.ResourceLogs().At(0).ScopeLogs().At(0).LogRecords().At(0)
+	assertOtelEventAsLogIsPresent(t, logs)
+
+	attrs := getMap(actualLogRecord.Attributes(), relationshipAttributes)
+	assert.Equal(t, 1, attrs.Len())
+	assertAttributeIsPresent(t, attrs, "relationshipAttr", "relationshipValue")
+}
+
+func assertRelationshipEntityType(t *testing.T, attrs pcommon.Map, expected string, accessor string) {
+	if val, ok := attrs.Get(accessor); ok {
+		assert.Equal(t, true, ok)
+		assert.Equal(t, expected, val.Str())
+	}
+}
+
 func assertEventType(t *testing.T, attrs pcommon.Map, expected string) {
 	if val, ok := attrs.Get(entityEventType); ok {
 		assert.Equal(t, true, ok)
