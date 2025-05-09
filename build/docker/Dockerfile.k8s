@@ -9,6 +9,7 @@ FROM base AS builder
 
 RUN cd /src/cmd/solarwinds-otel-collector && CGO_ENABLED=0 GOEXPERIMENT=boringcrypto go build -tags k8s \
     -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
+RUN cd /src/cmd/connection-check && CGO_ENABLED=0 GOEXPERIMENT=boringcrypto go build -trimpath -o /src/bin/connection-check "-ldflags=-s -w"
 
 # Copy the journactl binary from this Debian image with
 # systemd (using the copy-journal-binary.sh script).
@@ -25,6 +26,7 @@ ARG USER_UID=10001
 USER ${USER_UID}
 
 COPY --from=builder /src/bin/solarwinds-otel-collector /solarwinds-otel-collector
+COPY --from=builder /src/bin/connection-check /connection-check
 COPY --from=journal /journalctl-deps/ /
 
 ENTRYPOINT ["/solarwinds-otel-collector"]

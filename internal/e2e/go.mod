@@ -5,7 +5,7 @@ go 1.24.2
 require (
 	github.com/mdelapenya/tlscert v0.1.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest v0.123.0
-	github.com/solarwinds/solarwinds-otel-collector-releases/pkg/version v0.123.1
+	github.com/solarwinds/solarwinds-otel-collector-releases/pkg/version v0.123.2
 	github.com/stretchr/testify v1.10.0
 	github.com/testcontainers/testcontainers-go v0.36.0
 	go.opentelemetry.io/collector/pdata v1.29.0
