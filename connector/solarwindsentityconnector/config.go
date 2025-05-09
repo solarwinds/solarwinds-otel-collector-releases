@@ -14,10 +14,13 @@
 
 package solarwindsentityconnector
 
-import "go.opentelemetry.io/collector/component"
+import (
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
+	"go.opentelemetry.io/collector/component"
+)
 
 type Config struct {
-	Schema Schema `mapstructure:"schema"`
+	Schema config.Schema `mapstructure:"schema"`
 }
 
 func NewDefaultConfig() component.Config {

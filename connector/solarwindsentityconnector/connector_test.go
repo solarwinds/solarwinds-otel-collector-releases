@@ -73,7 +73,7 @@ func TestLogsToLogs(t *testing.T) {
 			factory := NewFactory()
 			sink := &consumertest.LogsSink{}
 			conn, err := factory.CreateLogsToLogs(context.Background(),
-				connectortest.NewNopSettings(metadata.Type), &Config{Schema{Entities: expectedEntities}}, sink)
+				connectortest.NewNopSettings(metadata.Type), &Config{config.Schema{Entities: expectedEntities}}, sink)
 			require.NoError(t, err)
 			require.NotNil(t, conn)
 
@@ -122,7 +122,7 @@ func TestMetricsToLogs(t *testing.T) {
 			factory := NewFactory()
 			sink := &consumertest.LogsSink{}
 			conn, err := factory.CreateMetricsToLogs(context.Background(),
-				connectortest.NewNopSettings(metadata.Type), &Config{Schema{Entities: expectedEntities}}, sink)
+				connectortest.NewNopSettings(metadata.Type), &Config{config.Schema{Entities: expectedEntities}}, sink)
 			require.NoError(t, err)
 			require.NotNil(t, conn)
 
