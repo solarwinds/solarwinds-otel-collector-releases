@@ -111,6 +111,7 @@ jobs:
           push: true
           tags: |
             ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-k8s
+            ${{ env.DOCKERHUB_IMAGE }}:latest-k8s
 
   deploy_dockerhub_windows:
     runs-on: windows-2022
@@ -227,17 +228,29 @@ jobs:
           username: ${{ vars.DOCKER_SOLARWINDS_ORG_LOGIN }}
           password: ${{ secrets.ENOPS5919_OPENTELEMETRYCOLLECTOR_DOCKER_HUB_CI_OAT }}
 
-      - name: Get Manifest for Full Image
+      - name: Get Manifest for Playground Image
         run: |
-          docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }} > manifest-full.json
+          docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-playground > manifest-playground.json
 
-      - name: Create Multi-arch Manifest for Full Image
+      - name: Create Multi-arch Manifest for Playground Image
         run: |
-          docker manifest create ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}  \
-            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022 \
-            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019 \
-            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-full.json) \
-            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-full.json)
+          docker manifest create ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-playground \
+            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-playground \
+            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-playground \
+            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-playground.json) \
+            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-playground.json)
+
+      - name: Get Manifest for Verified Image
+        run: |
+          docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-playground > manifest-verified.json
+
+      - name: Create Multi-arch Manifest for Verified Image
+        run: |
+          docker manifest create ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-verified \
+            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-verified \
+            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-verified \
+            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-verified.json) \
+            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-verified.json)
 
       - name: Get Manifest for K8s Image
         run: |
@@ -251,9 +264,13 @@ jobs:
             --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-k8s.json) \
             --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-k8s.json)
 
-      - name: Push multi-arch full manifest
+      - name: Push multi-arch playground manifest
         run: |
-          docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}
+          docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-playground
+
+      - name: Push multi-arch verified manifest
+        run: |
+          docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-verified
 
       - name: Push multi-arch k8s manifest
         run: |
