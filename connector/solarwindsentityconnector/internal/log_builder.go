@@ -38,43 +38,37 @@ func BuildEventLog(logs *plog.Logs) *plog.LogRecordSlice {
 //
 // Returns error if any of the attributes are missing in the resourceAttrs.
 // If any ID attribute is missing, the entity would not be inferred.
-func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map, name string) error {
+func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs Attributes, name string, dir config.Direction) error {
 	if len(entityIds) == 0 {
 		return fmt.Errorf("entity id attributes are empty")
 	}
 
 	logIds := attrs.PutEmptyMap(name)
 	for _, id := range entityIds {
-		value, exists := findAttribute(id, resourceAttrs)
+		value, exists := resourceAttrs.findAttributeValue(id, dir)
 		if !exists {
 			return fmt.Errorf("failed to find entity id attribute %s", id)
 		}
 		putAttribute(&logIds, id, value)
 	}
+
 	return nil
 }
 
 // setEntityAttributes sets the entity attributes in the log record as needed by SWO.
 // Attributes are used to update the entity.
-func setAttributes(attrs pcommon.Map, entityAttrs []string, resourceAttrs pcommon.Map, name string) {
+func setAttributes(attrs pcommon.Map, entityAttrs []string, resourceAttrs Attributes, name string) {
 	if len(entityAttrs) == 0 {
 		return
 	}
 
 	logIds := attrs.PutEmptyMap(name)
 	for _, attr := range entityAttrs {
-		value, exists := findAttribute(attr, resourceAttrs)
-		if !exists {
-			continue
+		value, exists := resourceAttrs.findAttributeValue(attr, config.None)
+		if exists {
+			putAttribute(&logIds, attr, value)
 		}
-		putAttribute(&logIds, attr, value)
 	}
-}
-
-// findAttribute checks if the attribute identified as key exists in the source pcommon.Map.
-func findAttribute(key string, src pcommon.Map) (pcommon.Value, bool) {
-	attrVal, ok := src.Get(key)
-	return attrVal, ok
 }
 
 // putAttribute copies the value of attribute identified as key, to destination pcommon.Map.
@@ -94,12 +88,12 @@ func putAttribute(dest *pcommon.Map, key string, attrValue pcommon.Value) {
 	}
 }
 
-func CreateEntityEvent(resourceAttrs pcommon.Map, entity config.Entity) (plog.LogRecord, error) {
+func CreateEntityEvent(resourceAttrs Attributes, entity config.Entity) (plog.LogRecord, error) {
 	lr := plog.NewLogRecord()
 	attrs := lr.Attributes()
 	attrs.PutStr(entityType, entity.Type)
 
-	if err := setIdAttributes(attrs, entity.IDs, resourceAttrs, entityIds); err != nil {
+	if err := setIdAttributes(attrs, entity.IDs, resourceAttrs, entityIds, config.Source); err != nil {
 		return plog.LogRecord{}, err
 	}
 
@@ -110,7 +104,7 @@ func CreateEntityEvent(resourceAttrs pcommon.Map, entity config.Entity) (plog.Lo
 	return lr, nil
 }
 
-func CreateRelationshipEvent(resourceAttrs pcommon.Map, relationship config.Relationship, source, dest config.Entity) (plog.LogRecord, error) {
+func CreateRelationshipEvent(resourceAttrs Attributes, relationship config.Relationship, source, dest config.Entity) (plog.LogRecord, error) {
 	lr := plog.NewLogRecord()
 	attrs := lr.Attributes()
 
@@ -118,11 +112,11 @@ func CreateRelationshipEvent(resourceAttrs pcommon.Map, relationship config.Rela
 	attrs.PutStr(srcEntityType, source.Type)
 	attrs.PutStr(destEntityType, dest.Type)
 
-	if err := setIdAttributes(attrs, source.IDs, resourceAttrs, relationshipSrcEntityIds); err != nil {
+	if err := setIdAttributes(attrs, source.IDs, resourceAttrs, relationshipSrcEntityIds, config.Source); err != nil {
 		return plog.LogRecord{}, fmt.Errorf("source entity: %w", err)
 	}
 
-	if err := setIdAttributes(attrs, dest.IDs, resourceAttrs, relationshipDestEntityIds); err != nil {
+	if err := setIdAttributes(attrs, dest.IDs, resourceAttrs, relationshipDestEntityIds, config.Destination); err != nil {
 		return plog.LogRecord{}, fmt.Errorf("destination entity: %w", err)
 	}
 

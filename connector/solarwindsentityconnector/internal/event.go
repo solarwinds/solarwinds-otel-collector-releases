@@ -22,7 +22,7 @@ import (
 	"time"
 )
 
-func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity config.Entity, resourceAttrs pcommon.Map) {
+func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity config.Entity, resourceAttrs Attributes) {
 	event, err := CreateEntityEvent(resourceAttrs, entity)
 	if err != nil {
 		zap.L().Debug("failed to create update event", zap.Error(err))
@@ -34,7 +34,7 @@ func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity config.Entity, res
 	event.CopyTo(eventLog)
 }
 
-func AppendRelationshipUpdateEvent(lrs *plog.LogRecordSlice, relationship config.Relationship, resourceAttrs pcommon.Map, entities map[string]config.Entity) {
+func AppendRelationshipUpdateEvent(lrs *plog.LogRecordSlice, relationship config.Relationship, resourceAttrs Attributes, entities map[string]config.Entity) {
 	src, ok := entities[relationship.Source]
 	if !ok {
 		zap.L().Debug("source entity not found", zap.String("entity", relationship.Source))

@@ -17,6 +17,8 @@ package solarwindsentityconnector
 import (
 	"context"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
+	"go.opentelemetry.io/collector/pdata/pcommon"
+	"strings"
 
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
 	"go.opentelemetry.io/collector/component"
@@ -27,9 +29,11 @@ import (
 )
 
 type solarwindsentity struct {
-	logsConsumer  consumer.Logs
-	entities      map[string]config.Entity
-	relationships []config.Relationship
+	logsConsumer      consumer.Logs
+	entities          map[string]config.Entity
+	relationships     []config.Relationship
+	sourcePrefix      string
+	destinationPrefix string
 
 	component.StartFunc
 	component.ShutdownFunc
@@ -48,7 +52,7 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 
 	for i := 0; i < metrics.ResourceMetrics().Len(); i++ {
 		resourceMetric := metrics.ResourceMetrics().At(i)
-		resourceAttrs := resourceMetric.Resource().Attributes()
+		resourceAttrs := internal.NewAttributes(resourceMetric.Resource().Attributes(), s.sourcePrefix, s.destinationPrefix)
 
 		// This will be replaced with actual logic when conditions are introduced
 		for _, entity := range s.entities {
@@ -74,7 +78,7 @@ func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) erro
 
 	for i := 0; i < logs.ResourceLogs().Len(); i++ {
 		resourceLog := logs.ResourceLogs().At(i)
-		resourceAttrs := resourceLog.Resource().Attributes()
+		resourceAttrs := internal.NewAttributes(resourceLog.Resource().Attributes(), s.sourcePrefix, s.destinationPrefix)
 
 		// This will be replaced with actual logic when conditions are introduced
 		for _, entity := range s.entities {

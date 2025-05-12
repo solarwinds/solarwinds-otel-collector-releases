@@ -14,6 +14,14 @@
 
 package config
 
+type Direction int
+
+const (
+	Source Direction = iota
+	Destination
+	None
+)
+
 type Entity struct {
 	Type       string   `mapstructure:"entity"`
 	IDs        []string `mapstructure:"id"`
