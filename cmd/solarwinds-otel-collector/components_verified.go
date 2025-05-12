@@ -17,33 +17,52 @@
 package main
 
 import (
-	// all ours
-	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/exporter/solarwindsexporter"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/extension/solarwindsextension"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/processor/k8seventgenerationprocessor"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/processor/swok8sworkloadtypeprocessor"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swohostmetricsreceiver"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swok8sobjectsreceiver"
-
-	// copy paste from k8s, minus above
-	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/fileexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/observer/k8sobserver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/solarwindsapmsettingsextension"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/receivercreator"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/simpleprometheusreceiver"
-	"go.opentelemetry.io/collector/connector"
-	"go.opentelemetry.io/collector/connector/forwardconnector"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/extension/solarwindsextension"
+	"go.opentelemetry.io/collector/extension"
+	"go.opentelemetry.io/collector/extension/memorylimiterextension"
+	"go.opentelemetry.io/collector/otelcol"
+
+	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/fileexporter"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/exporter/solarwindsexporter"
+	"go.opentelemetry.io/collector/exporter"
 	"go.opentelemetry.io/collector/exporter/debugexporter"
 	"go.opentelemetry.io/collector/exporter/nopexporter"
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
 
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector"
+	"go.opentelemetry.io/collector/connector"
+	"go.opentelemetry.io/collector/connector/forwardconnector"
+
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/apachereceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/dockerstatsreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/elasticsearchreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/haproxyreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/iisreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8seventsreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8sobjectsreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/kafkareceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/memcachedreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/nginxreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/oracledbreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/rabbitmqreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/receivercreator"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/redisreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/simpleprometheusreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/snowflakereceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/statsdreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zookeeperreceiver"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swohostmetricsreceiver"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swok8sobjectsreceiver"
+	"go.opentelemetry.io/collector/receiver"
+	"go.opentelemetry.io/collector/receiver/nopreceiver"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor"
@@ -59,44 +78,11 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/processor/k8seventgenerationprocessor"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/processor/swok8sworkloadtypeprocessor"
+	"go.opentelemetry.io/collector/processor"
 	"go.opentelemetry.io/collector/processor/batchprocessor"
 	"go.opentelemetry.io/collector/processor/memorylimiterprocessor"
-
-	"go.opentelemetry.io/collector/exporter"
-	"go.opentelemetry.io/collector/extension"
-	"go.opentelemetry.io/collector/otelcol"
-	"go.opentelemetry.io/collector/processor"
-	"go.opentelemetry.io/collector/receiver"
-
-	// cherry picks from playground, only things required by integrations, minus the things above
-
-	// extension picks
-	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/solarwindsapmsettingsextension"
-	"go.opentelemetry.io/collector/extension/memorylimiterextension"
-
-	// receivers minus the ones above
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/apachereceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/dockerstatsreceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/elasticsearchreceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/haproxyreceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/iisreceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/kafkareceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/memcachedreceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/nginxreceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/oracledbreceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/rabbitmqreceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/redisreceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/snowflakereceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/statsdreceiver"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zookeeperreceiver"
-	"go.opentelemetry.io/collector/receiver/nopreceiver"
-	// all necessary vanilla processors are already part of the k8s bunch
-	// missing utf8consistency
-	// missing hostinfo processor
-	// missing hostvolumes processor
-	// missing uuid processor
-	// missing uams processor
 )
 
 func components() (otelcol.Factories, error) {
