@@ -67,7 +67,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-playground
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-tag: latest-playground
+          compare-to-tag: latest # to be updated
 
   build_and_test_verified:
     runs-on: ubuntu-latest
@@ -94,7 +94,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-verified
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-tag: latest-verified
+          compare-to-tag: latest # to be updated
 
   build_windows:
     runs-on: windows-2022
