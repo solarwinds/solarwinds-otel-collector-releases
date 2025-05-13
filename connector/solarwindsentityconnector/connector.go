@@ -15,19 +15,21 @@
 package solarwindsentityconnector
 
 import (
-	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
-	"go.opentelemetry.io/collector/connector"
-
 	"context"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
+
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
 	"go.opentelemetry.io/collector/component"
+	"go.opentelemetry.io/collector/connector"
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 )
 
 type solarwindsentity struct {
-	logsConsumer consumer.Logs
-	entities     map[string]internal.Entity
+	logsConsumer  consumer.Logs
+	entities      map[string]config.Entity
+	relationships []config.Relationship
 
 	component.StartFunc
 	component.ShutdownFunc
@@ -44,12 +46,19 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 	logs := plog.NewLogs()
 	events := internal.BuildEventLog(&logs)
 
-	for i := 0; i < logs.ResourceLogs().Len(); i++ {
+	for i := 0; i < metrics.ResourceMetrics().Len(); i++ {
 		resourceMetric := metrics.ResourceMetrics().At(i)
 		resourceAttrs := resourceMetric.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		internal.AppendEntityUpdateEvent(events, s.entities["Snowflake"], resourceAttrs)
+		for _, entity := range s.entities {
+			internal.AppendEntityUpdateEvent(events, entity, resourceAttrs)
+		}
+
+		// This will be replaced with actual logic when conditions are introduced
+		for _, relationship := range s.relationships {
+			internal.AppendRelationshipUpdateEvent(events, relationship, resourceAttrs, s.entities)
+		}
 	}
 
 	if logs.LogRecordCount() == 0 {
@@ -68,7 +77,14 @@ func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) erro
 		resourceAttrs := resourceLog.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		internal.AppendEntityUpdateEvent(events, s.entities["Snowflake"], resourceAttrs)
+		for _, entity := range s.entities {
+			internal.AppendEntityUpdateEvent(events, entity, resourceAttrs)
+		}
+
+		// This will be replaced with actual logic when conditions are introduced
+		for _, relationship := range s.relationships {
+			internal.AppendRelationshipUpdateEvent(events, relationship, resourceAttrs, s.entities)
+		}
 	}
 
 	if newLogs.LogRecordCount() == 0 {
