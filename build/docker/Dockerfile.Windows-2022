@@ -13,7 +13,7 @@ FROM base AS builder
 
 RUN echo %BUILD_TAG%
 
-RUN cd /src/cmd/solarwinds-otel-collector && go build -tags $env:BUILD_TAG -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
+RUN cd /src/cmd/solarwinds-otel-collector && go build -tags %BUILD_TAG% -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
 
 FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
 
