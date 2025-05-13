@@ -114,7 +114,7 @@ jobs:
           docker build . --file build/docker/Dockerfile.Windows-2022
           --build-arg BUILD_TAG=playground
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-playground
-          --tag solarwinds-otel-collector:nanoserver-ltsc2022-playground-latest
+          --tag solarwinds-otel-collector:latest-nanoserver-ltsc2022-playground
 
       - name: CP assets
         run: |
@@ -126,7 +126,7 @@ jobs:
           docker build . --file build/docker/Dockerfile.Windows-Runtime
           --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-playground
-          --tag solarwinds-otel-collector:nanoserver-ltsc2019-playground-latest
+          --tag solarwinds-otel-collector:latest-nanoserver-ltsc2019-playground
 
       - name: Docker scout image scan for Windows 2019
         uses: ./.github/actions/dockerScoutScan
@@ -176,6 +176,7 @@ jobs:
           docker build . --file build/docker/Dockerfile.Windows-2022
           --build-arg BUILD_TAG=verified
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-verified
+          --tag solarwinds-otel-collector:latest-nanoserver-ltsc2022-verified
 
       - name: CP assets
         run: |
@@ -187,6 +188,7 @@ jobs:
           docker build . --file build/docker/Dockerfile.Windows-Runtime
           --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-verified
+          --tag solarwinds-otel-collector:latest-nanoserver-ltsc2019-verified
 
       - name: Docker scout image scan for Windows 2019
         uses: ./.github/actions/dockerScoutScan
@@ -232,6 +234,7 @@ jobs:
         run: >
           docker build . --file build/docker/Dockerfile.k8s
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-k8s
+          --tag solarwinds-otel-collector:latest-k8s
 
       - name: Docker scout image scan
         uses: ./.github/actions/dockerScoutScan
@@ -255,8 +258,10 @@ jobs:
 
       - name: Build K8s
         run: |
-          docker build -t solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-k8s -f build/docker/Dockerfile.k8s.Windows-2022 . 
-          
+          docker build . --file build/docker/Dockerfile.k8s.Windows-2022
+          --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-k8s
+          --tag solarwinds-otel-collector:latest-nanoserver-ltsc2022-k8s
+
       - name: CP assets
         run: |
           docker create --name assets-k8s solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-k8s
@@ -268,6 +273,7 @@ jobs:
           docker build . --file build/docker/Dockerfile.k8s.Windows-Runtime
           --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-k8s
+          --tag solarwinds-otel-collector:latest-nanoserver-ltsc2019-k8s
 
       - name: Docker scout image scan for Windows 2019
         uses: ./.github/actions/dockerScoutScan
