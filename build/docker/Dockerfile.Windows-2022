@@ -9,7 +9,7 @@ ARG BUILD_TAG="playground"
 
 FROM base AS builder
 
-RUN cd /src/cmd/solarwinds-otel-collector && go build -tags %BUILD_TAG% -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
+RUN cd /src/cmd/solarwinds-otel-collector && go build -tags "%BUILD_TAG%" -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
 
 FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
 
