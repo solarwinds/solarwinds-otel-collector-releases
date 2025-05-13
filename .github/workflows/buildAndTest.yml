@@ -111,6 +111,7 @@ jobs:
           docker build . --file build/docker/Dockerfile.Windows-2022
           --build-arg BUILD_TAG=playground
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-playground
+          --tag solarwinds-otel-collector:nanoserver-ltsc2022-playground-latest
 
       - name: CP assets
         run: |
@@ -122,6 +123,7 @@ jobs:
           docker build . --file build/docker/Dockerfile.Windows-Runtime
           --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019-playground
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-playground
+          --tag solarwinds-otel-collector:nanoserver-ltsc2019-playground-latest
 
       - name: Docker scout image scan for Windows 2019
         uses: ./.github/actions/dockerScoutScan
