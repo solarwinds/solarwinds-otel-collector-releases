@@ -19,6 +19,7 @@ import (
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -45,11 +46,45 @@ func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommo
 
 	logIds := attrs.PutEmptyMap(name)
 	for _, id := range entityIds {
-		value, exists := findAttribute(id, resourceAttrs)
+		value, exists := findAttribute(id, resourceAttrs, nil)
 		if !exists {
 			return fmt.Errorf("failed to find entity id attribute %s", id)
 		}
 		putAttribute(&logIds, id, value)
+	}
+	return nil
+}
+
+// setIdAttributes sets the entity id attributes in the log record as needed by SWO.
+// Attributes are used to infer the entity in the system.
+//
+// Returns error if any of the attributes are missing in the resourceAttrs.
+// If any ID attribute is missing, the entity would not be inferred.
+func setIdAttributes2(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map, name, prefix string, logger *zap.Logger) error {
+	if len(entityIds) == 0 {
+		return fmt.Errorf("entity id attributes are empty")
+	}
+
+	logIds := attrs.PutEmptyMap(name)
+	for _, id := range entityIds {
+		logger.Info("Prefix", zap.String("with prefix", prefix+id))
+		logger.Info("Prefix", zap.String("without prefix", id))
+
+		value, exists := findAttribute(prefix+id, resourceAttrs, logger)
+		if exists {
+			logger.Info("Found entity id", zap.String("with prefix", prefix+id))
+			putAttribute(&logIds, id, value)
+			continue
+		}
+
+		value, exists = findAttribute(id, resourceAttrs, logger)
+		if exists {
+			logger.Info("Found entity id", zap.String("without prefix", id))
+			putAttribute(&logIds, id, value)
+			continue
+		}
+
+		return fmt.Errorf("failed to find entity id attribute %s", id)
 	}
 	return nil
 }
@@ -63,7 +98,7 @@ func setAttributes(attrs pcommon.Map, entityAttrs []string, resourceAttrs pcommo
 
 	logIds := attrs.PutEmptyMap(name)
 	for _, attr := range entityAttrs {
-		value, exists := findAttribute(attr, resourceAttrs)
+		value, exists := findAttribute(attr, resourceAttrs, nil)
 		if !exists {
 			continue
 		}
@@ -72,8 +107,18 @@ func setAttributes(attrs pcommon.Map, entityAttrs []string, resourceAttrs pcommo
 }
 
 // findAttribute checks if the attribute identified as key exists in the source pcommon.Map.
-func findAttribute(key string, src pcommon.Map) (pcommon.Value, bool) {
+func findAttribute(key string, src pcommon.Map, logger *zap.Logger) (pcommon.Value, bool) {
 	attrVal, ok := src.Get(key)
+	if logger != nil {
+		logger.Info(key, zap.String("key", key))
+		logger.Info(key, zap.Any("attrVal", attrVal))
+		logger.Info(key, zap.Any("src", src.Len()))
+		src.Range(func(k string, v pcommon.Value) bool {
+			logger.Info("src", zap.String("key", k), zap.Any("value", v))
+			return true
+		})
+	}
+
 	return attrVal, ok
 }
 

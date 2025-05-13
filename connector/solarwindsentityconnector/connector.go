@@ -17,8 +17,9 @@ package solarwindsentityconnector
 import (
 	"context"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
-
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
+	"go.uber.org/zap"
+
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/connector"
 	"go.opentelemetry.io/collector/consumer"
@@ -27,9 +28,13 @@ import (
 )
 
 type solarwindsentity struct {
-	logsConsumer  consumer.Logs
-	entities      map[string]config.Entity
-	relationships []config.Relationship
+	logger *zap.Logger
+
+	logsConsumer      consumer.Logs
+	entities          map[string]config.Entity
+	relationships     []config.Relationship
+	sourcePrefix      string
+	destinationPrefix string
 
 	component.StartFunc
 	component.ShutdownFunc
@@ -44,7 +49,7 @@ func (s *solarwindsentity) Capabilities() consumer.Capabilities {
 
 func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.Metrics) error {
 	logs := plog.NewLogs()
-	events := internal.BuildEventLog(&logs)
+	eventBuilder := internal.NewEventBuilder(s.entities, s.relationships, s.sourcePrefix, s.destinationPrefix, &logs, s.logger)
 
 	for i := 0; i < metrics.ResourceMetrics().Len(); i++ {
 		resourceMetric := metrics.ResourceMetrics().At(i)
@@ -52,12 +57,12 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 
 		// This will be replaced with actual logic when conditions are introduced
 		for _, entity := range s.entities {
-			internal.AppendEntityUpdateEvent(events, entity, resourceAttrs)
+			eventBuilder.AppendEntityUpdateEvent(entity, resourceAttrs)
 		}
 
 		// This will be replaced with actual logic when conditions are introduced
 		for _, relationship := range s.relationships {
-			internal.AppendRelationshipUpdateEvent(events, relationship, resourceAttrs, s.entities)
+			eventBuilder.AppendRelationshipUpdateEvent(relationship, resourceAttrs)
 		}
 	}
 
@@ -70,20 +75,19 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 
 func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) error {
 	newLogs := plog.NewLogs()
-	events := internal.BuildEventLog(&newLogs)
-
+	eventBuilder := internal.NewEventBuilder(s.entities, s.relationships, s.sourcePrefix, s.destinationPrefix, &logs, s.logger)
 	for i := 0; i < logs.ResourceLogs().Len(); i++ {
 		resourceLog := logs.ResourceLogs().At(i)
 		resourceAttrs := resourceLog.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
 		for _, entity := range s.entities {
-			internal.AppendEntityUpdateEvent(events, entity, resourceAttrs)
+			eventBuilder.AppendEntityUpdateEvent(entity, resourceAttrs)
 		}
 
 		// This will be replaced with actual logic when conditions are introduced
 		for _, relationship := range s.relationships {
-			internal.AppendRelationshipUpdateEvent(events, relationship, resourceAttrs, s.entities)
+			eventBuilder.AppendRelationshipUpdateEvent(relationship, resourceAttrs)
 		}
 	}
 
