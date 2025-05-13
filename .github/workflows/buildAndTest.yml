@@ -51,7 +51,8 @@ jobs:
 
       - name: Build and Test - Playground Image
         run: >
-          docker build . --file build/docker/Dockerfile --build-arg BUILD_TAG=playground
+          docker build . --file build/docker/Dockerfile
+          --build-arg BUILD_TAG=playground
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-playground
           --tag solarwinds-otel-collector:latest-playground
 
@@ -78,7 +79,8 @@ jobs:
 
       - name: Build and Test - Verified Image
         run: >
-          docker build . --file build/docker/Dockerfile --build-arg BUILD_TAG=verified
+          docker build . --file build/docker/Dockerfile
+          --build-arg BUILD_TAG=verified
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-verified
           --tag solarwinds-otel-collector:latest-verified
           --tag solarwinds-otel-collector:latest
@@ -97,7 +99,7 @@ jobs:
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
           compare-to-tag: latest # to be updated
 
-  build_windows:
+  build_windows_playground:
     runs-on: windows-2022
     # this job takes a long time to run (20 minutes), so run it on main and release branches to have some continuous check that build on windows 
     # still works. Also run it on workflow_dispatch to allow manual runs.
@@ -107,21 +109,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build Full
+      - name: Build Playground
         run: >
           docker build . --file build/docker/Dockerfile.Windows-2022
-          --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022 
+          --build-arg BUILD_TAG=playground
+          --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-playground
+          --tag solarwinds-otel-collector:nanoserver-ltsc2022-playground-latest
 
       - name: CP assets
         run: |
-          docker create --name assets solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022
+          docker create --name assets solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-playground
           docker cp assets:/solarwinds-otel-collector.exe solarwinds-otel-collector.exe
 
-      - name: Build 2019 Full
+      - name: Build 2019 Playground
         run: >
           docker build . --file build/docker/Dockerfile.Windows-Runtime
           --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019
-          --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019
+          --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-playground
+          --tag solarwinds-otel-collector:nanoserver-ltsc2019-playground-latest
 
       - name: Docker scout image scan for Windows 2019
         uses: ./.github/actions/dockerScoutScan
@@ -129,9 +134,9 @@ jobs:
           username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
           token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
           current-image: solarwinds-otel-collector
-          current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019
+          current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-playground
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2019$'
+          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2019$' # to be updated
 
       - name: Docker scout image scan for Windows 2022
         uses: ./.github/actions/dockerScoutScan
@@ -139,21 +144,81 @@ jobs:
           username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
           token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
           current-image: solarwinds-otel-collector
-          current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022
+          current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-playground
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2022$'
+          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2022$' # to be updated
 
       - name: Save image
         run: |
-          docker save --output solarwinds-otel-collector-windows-ltsc2022.tar solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022
-          docker save --output solarwinds-otel-collector-windows-ltsc2019.tar solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019
+          docker save --output solarwinds-otel-collector-windows-ltsc2022-playground.tar solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-playground
+          docker save --output solarwinds-otel-collector-windows-ltsc2019-playground.tar solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-playground
 
       - uses: actions/upload-artifact@v4
         with:
-          name: windows-image-full
+          name: windows-image-playground
           path: |
-            solarwinds-otel-collector-windows-ltsc2022.tar
-            solarwinds-otel-collector-windows-ltsc2019.tar
+            solarwinds-otel-collector-windows-ltsc2022-playground.tar
+            solarwinds-otel-collector-windows-ltsc2019-playground.tar
+          retention-days: 2
+
+  build_windows_verified:
+    runs-on: windows-2022
+    # this job takes a long time to run (20 minutes), so run it on main and release branches to have some continuous check that build on windows
+    # still works. Also run it on workflow_dispatch to allow manual runs.
+    if: github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    needs: generate_tag
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Verified
+        run: >
+          docker build . --file build/docker/Dockerfile.Windows-2022
+          --build-arg BUILD_TAG=verified
+          --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-verified
+
+      - name: CP assets
+        run: |
+          docker create --name assets solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-verified
+          docker cp assets:/solarwinds-otel-collector.exe solarwinds-otel-collector.exe
+
+      - name: Build 2019 Verified
+        run: >
+          docker build . --file build/docker/Dockerfile.Windows-Runtime
+          --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019
+          --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-verified
+
+      - name: Docker scout image scan for Windows 2019
+        uses: ./.github/actions/dockerScoutScan
+        with:
+          username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
+          token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
+          current-image: solarwinds-otel-collector
+          current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-verified
+          compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
+          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2019$' # to be updated
+
+      - name: Docker scout image scan for Windows 2022
+        uses: ./.github/actions/dockerScoutScan
+        with:
+          username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
+          token: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
+          current-image: solarwinds-otel-collector
+          current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-verified
+          compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
+          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2022$' # to be updated
+
+      - name: Save image
+        run: |
+          docker save --output solarwinds-otel-collector-windows-ltsc2022-verified.tar solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-verified
+          docker save --output solarwinds-otel-collector-windows-ltsc2019-verified.tar solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-verified
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-image-verified
+          path: |
+            solarwinds-otel-collector-windows-ltsc2022-verified.tar
+            solarwinds-otel-collector-windows-ltsc2019-verified.tar
           retention-days: 2
  
   build_k8s:
