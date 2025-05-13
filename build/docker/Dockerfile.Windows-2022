@@ -7,10 +7,14 @@ ARG CGO_ENABLED=0
 ARG GOEXPERIMENT=boringcrypto
 ARG BUILD_TAG="playground"
 
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
+RUN Write-Host Powershell: $env:BUILD_TAG
+
 FROM base AS builder
 
-ENV BUILD_TAG=$BUILD_TAG
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
+RUN Write-Host Powershell: $env:BUILD_TAG
+
 RUN cd /src/cmd/solarwinds-otel-collector && go build -tags $env:BUILD_TAG -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
 
 FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
