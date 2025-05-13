@@ -44,7 +44,7 @@ func NewEventBuilder(entities map[string]config.Entity, relationships []config.R
 
 func (e *EventBuilder) AppendEntityUpdateEvent(entity config.Entity, resourceAttrs pcommon.Map) {
 
-	event, err := CreateEntityEvent(resourceAttrs, entity)
+	event, err := e.createEntityEvent(resourceAttrs, entity)
 	if err != nil {
 		zap.L().Debug("failed to create update event", zap.Error(err))
 		return
@@ -53,6 +53,22 @@ func (e *EventBuilder) AppendEntityUpdateEvent(entity config.Entity, resourceAtt
 	event.Attributes().PutStr(entityEventType, entityUpdateEventType)
 	eventLog := e.Result.AppendEmpty()
 	event.CopyTo(eventLog)
+}
+
+func (e *EventBuilder) createEntityEvent(resourceAttrs pcommon.Map, entity config.Entity) (plog.LogRecord, error) {
+	lr := plog.NewLogRecord()
+	attrs := lr.Attributes()
+	attrs.PutStr(entityType, entity.Type)
+
+	if err := setIdAttributes(attrs, entity.IDs, resourceAttrs, entityIds); err != nil {
+		return plog.LogRecord{}, err
+	}
+
+	setAttributes(attrs, entity.Attributes, resourceAttrs, entityAttributes)
+
+	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
+
+	return lr, nil
 }
 
 func (e *EventBuilder) AppendRelationshipUpdateEvent(relationship config.Relationship, resourceAttrs pcommon.Map) {

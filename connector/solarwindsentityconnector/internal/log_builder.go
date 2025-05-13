@@ -16,11 +16,9 @@ package internal
 
 import (
 	"fmt"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.uber.org/zap"
-	"time"
 )
 
 // BuildEventLog prepares a clean LogRecordSlice, where log records representing events should be appended.
@@ -137,42 +135,4 @@ func putAttribute(dest *pcommon.Map, key string, attrValue pcommon.Value) {
 	default:
 		dest.PutStr(key, attrValue.Str())
 	}
-}
-
-func CreateEntityEvent(resourceAttrs pcommon.Map, entity config.Entity) (plog.LogRecord, error) {
-	lr := plog.NewLogRecord()
-	attrs := lr.Attributes()
-	attrs.PutStr(entityType, entity.Type)
-
-	if err := setIdAttributes(attrs, entity.IDs, resourceAttrs, entityIds); err != nil {
-		return plog.LogRecord{}, err
-	}
-
-	setAttributes(attrs, entity.Attributes, resourceAttrs, entityAttributes)
-
-	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
-
-	return lr, nil
-}
-
-func CreateRelationshipEvent(resourceAttrs pcommon.Map, relationship config.Relationship, source, dest config.Entity) (plog.LogRecord, error) {
-	lr := plog.NewLogRecord()
-	attrs := lr.Attributes()
-
-	attrs.PutStr(relationshipType, relationship.Type)
-	attrs.PutStr(srcEntityType, source.Type)
-	attrs.PutStr(destEntityType, dest.Type)
-
-	if err := setIdAttributes(attrs, source.IDs, resourceAttrs, relationshipSrcEntityIds); err != nil {
-		return plog.LogRecord{}, fmt.Errorf("source entity: %w", err)
-	}
-
-	if err := setIdAttributes(attrs, dest.IDs, resourceAttrs, relationshipDestEntityIds); err != nil {
-		return plog.LogRecord{}, fmt.Errorf("destination entity: %w", err)
-	}
-
-	setAttributes(attrs, relationship.Attributes, resourceAttrs, relationshipAttributes)
-
-	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
-	return lr, nil
 }
