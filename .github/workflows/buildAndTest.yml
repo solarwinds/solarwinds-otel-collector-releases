@@ -51,7 +51,8 @@ jobs:
 
       - name: Build and Test - Playground Image
         run: >
-          docker build . --file build/docker/Dockerfile --build-arg BUILD_TAG=playground
+          docker build . --file build/docker/Dockerfile
+          --build-arg BUILD_TAG=playground
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-playground
           --tag solarwinds-otel-collector:latest-playground
 
@@ -78,7 +79,8 @@ jobs:
 
       - name: Build and Test - Verified Image
         run: >
-          docker build . --file build/docker/Dockerfile --build-arg BUILD_TAG=verified
+          docker build . --file build/docker/Dockerfile
+          --build-arg BUILD_TAG=verified
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-verified
           --tag solarwinds-otel-collector:latest-verified
           --tag solarwinds-otel-collector:latest
@@ -107,6 +109,7 @@ jobs:
       - name: Build Playground
         run: >
           docker build . --file build/docker/Dockerfile.Windows-2022
+          --build-arg BUILD_TAG=playground
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-playground
 
       - name: CP assets
@@ -114,7 +117,7 @@ jobs:
           docker create --name assets solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-playground
           docker cp assets:/solarwinds-otel-collector.exe solarwinds-otel-collector.exe
 
-      - name: Build 2019 Full
+      - name: Build 2019 Playground
         run: >
           docker build . --file build/docker/Dockerfile.Windows-Runtime
           --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019-playground
@@ -147,7 +150,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: windows-image-full
+          name: windows-image-playground
           path: |
             solarwinds-otel-collector-windows-ltsc2022-playground.tar
             solarwinds-otel-collector-windows-ltsc2019-playground.tar
@@ -163,6 +166,7 @@ jobs:
       - name: Build Verified
         run: >
           docker build . --file build/docker/Dockerfile.Windows-2022
+          --build-arg BUILD_TAG=verified
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-verified
 
       - name: CP assets
@@ -170,7 +174,7 @@ jobs:
           docker create --name assets solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-verified
           docker cp assets:/solarwinds-otel-collector.exe solarwinds-otel-collector.exe
 
-      - name: Build 2019 Full
+      - name: Build 2019 Verified
         run: >
           docker build . --file build/docker/Dockerfile.Windows-Runtime
           --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019-verified
@@ -203,7 +207,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: windows-image-full
+          name: windows-image-verified
           path: |
             solarwinds-otel-collector-windows-ltsc2022-verified.tar
             solarwinds-otel-collector-windows-ltsc2019-verified.tar
