@@ -16,6 +16,7 @@ package solarwindsentityconnector
 
 import (
 	"context"
+
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
 	"go.uber.org/zap"
@@ -48,8 +49,8 @@ func (s *solarwindsentity) Capabilities() consumer.Capabilities {
 }
 
 func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.Metrics) error {
-	logs := plog.NewLogs()
-	eventBuilder := internal.NewEventBuilder(s.entities, s.relationships, s.sourcePrefix, s.destinationPrefix, &logs, s.logger)
+	newLogs := plog.NewLogs()
+	eventBuilder := internal.NewEventBuilder(s.entities, s.relationships, s.sourcePrefix, s.destinationPrefix, &newLogs, s.logger)
 
 	for i := 0; i < metrics.ResourceMetrics().Len(); i++ {
 		resourceMetric := metrics.ResourceMetrics().At(i)
@@ -66,16 +67,17 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 		}
 	}
 
-	if logs.LogRecordCount() == 0 {
+	if newLogs.LogRecordCount() == 0 {
 		return nil
 	}
 
-	return s.logsConsumer.ConsumeLogs(ctx, logs)
+	return s.logsConsumer.ConsumeLogs(ctx, newLogs)
 }
 
 func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) error {
 	newLogs := plog.NewLogs()
 	eventBuilder := internal.NewEventBuilder(s.entities, s.relationships, s.sourcePrefix, s.destinationPrefix, &newLogs, s.logger)
+
 	for i := 0; i < logs.ResourceLogs().Len(); i++ {
 		resourceLog := logs.ResourceLogs().At(i)
 		resourceAttrs := resourceLog.Resource().Attributes()
