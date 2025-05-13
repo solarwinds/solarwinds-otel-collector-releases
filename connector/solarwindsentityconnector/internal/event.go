@@ -15,37 +15,47 @@
 package internal
 
 import (
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"go.uber.org/zap"
 	"time"
 )
 
-const (
-	entityUpdateEventType = "entity_state"
-)
-
-type Entity struct {
-	Type       string   `mapstructure:"entity"`
-	IDs        []string `mapstructure:"id"`
-	Attributes []string `mapstructure:"attributes"`
-}
-
-func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity Entity, resourceAttrs pcommon.Map) {
-	lr := plog.NewLogRecord()
-	attrs := lr.Attributes()
-
-	err := setIdAttributes(attrs, entity.IDs, resourceAttrs)
+func AppendEntityUpdateEvent(lrs *plog.LogRecordSlice, entity config.Entity, resourceAttrs pcommon.Map) {
+	event, err := CreateEntityEvent(resourceAttrs, entity)
 	if err != nil {
 		zap.L().Debug("failed to create update event", zap.Error(err))
 		return
 	}
+	event.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
+	event.Attributes().PutStr(entityEventType, entityUpdateEventType)
+	eventLog := lrs.AppendEmpty()
+	event.CopyTo(eventLog)
+}
 
-	setEventType(attrs, entityUpdateEventType)
-	setEntityType(attrs, entity.Type)
-	setEntityAttributes(attrs, entity.Attributes, resourceAttrs)
-	lr.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
+func AppendRelationshipUpdateEvent(lrs *plog.LogRecordSlice, relationship config.Relationship, resourceAttrs pcommon.Map, entities map[string]config.Entity) {
+	src, ok := entities[relationship.Source]
+	if !ok {
+		zap.L().Debug("source entity not found", zap.String("entity", relationship.Source))
+		return
+	}
+
+	dest, ok := entities[relationship.Destination]
+	if !ok {
+		zap.L().Debug("destination entity not found", zap.String("entity", relationship.Destination))
+		return
+	}
+
+	event, err := CreateRelationshipEvent(resourceAttrs, relationship, src, dest)
+	if err != nil {
+		zap.L().Debug("failed to create relationship update event", zap.Error(err))
+		return
+	}
+
+	event.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
+	event.Attributes().PutStr(entityEventType, relationshipUpdateEventType)
 
 	eventLog := lrs.AppendEmpty()
-	lr.CopyTo(eventLog)
+	event.CopyTo(eventLog)
 }
