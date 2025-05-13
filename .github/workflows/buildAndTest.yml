@@ -121,7 +121,7 @@ jobs:
       - name: Build 2019 Playground
         run: >
           docker build . --file build/docker/Dockerfile.Windows-Runtime
-          --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019-playground
+          --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-playground
           --tag solarwinds-otel-collector:nanoserver-ltsc2019-playground-latest
 
@@ -179,7 +179,7 @@ jobs:
       - name: Build 2019 Verified
         run: >
           docker build . --file build/docker/Dockerfile.Windows-Runtime
-          --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019-verified
+          --build-arg WINBASE=mcr.microsoft.com/windows/nanoserver:ltsc2019
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-verified
 
       - name: Docker scout image scan for Windows 2019
