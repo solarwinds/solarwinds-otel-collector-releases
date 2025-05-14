@@ -1,6 +1,8 @@
 # Changelog
 
 ## vNext
+
+## v0.123.3
 - Publishing `verified` and `playground` docker images.
 
 ## v0.123.2
