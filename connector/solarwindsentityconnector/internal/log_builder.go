@@ -38,17 +38,19 @@ func BuildEventLog(logs *plog.Logs) *plog.LogRecordSlice {
 //
 // Returns error if any of the attributes are missing in the resourceAttrs.
 // If any ID attribute is missing, the entity would not be inferred.
-func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map, name, prefix string) error {
+func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map, name, prefix string) (bool, error) {
 	if len(entityIds) == 0 {
-		return fmt.Errorf("entity id attributes are empty")
+		return false, fmt.Errorf("entity id attributes are empty")
 	}
 
+	hasPrefix := false
 	logIds := attrs.PutEmptyMap(name)
 	for _, id := range entityIds {
 
 		value, exists := findAttribute(prefix+id, resourceAttrs)
 		if exists {
 			putAttribute(&logIds, id, value)
+			hasPrefix = true
 			continue
 		}
 
@@ -58,9 +60,9 @@ func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommo
 			continue
 		}
 
-		return fmt.Errorf("failed to find entity id attribute %s", id)
+		return false, fmt.Errorf("failed to find entity id attribute %s", id)
 	}
-	return nil
+	return hasPrefix, nil
 }
 
 // setEntityAttributes sets the entity attributes in the log record as needed by SWO.
