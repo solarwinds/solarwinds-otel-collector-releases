@@ -1,0 +1,4 @@
+resourceLogs:
+  - resource:
+      attributes: [ { "key": "awsID", "value":{"stringValue": "aws-instance"}},
+                    { "key": "snowflakeID", "value":{"stringValue": "snowflake-instance"}}]

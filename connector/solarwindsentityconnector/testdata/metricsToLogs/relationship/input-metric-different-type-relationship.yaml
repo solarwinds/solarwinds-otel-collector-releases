@@ -1,0 +1,11 @@
+resourceMetrics:
+  - resource:
+      attributes: [ { "key": "awsID", "value":{"stringValue": "aws-instance-first"}},
+                    { "key": "snowflakeID", "value":{"stringValue": "snowflake-instance-first"}}]
+    scopeMetrics:
+      - metrics:
+  - resource:
+      attributes: [ { "key": "awsID", "value":{"stringValue": "aws-instance-second"}},
+                    { "key": "snowflakeID", "value":{"stringValue": "snowflake-instance-second"}}]
+    scopeMetrics:
+      - metrics:

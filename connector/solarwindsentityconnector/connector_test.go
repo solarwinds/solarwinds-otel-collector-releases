@@ -16,9 +16,10 @@ package solarwindsentityconnector
 
 import (
 	"context"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
 	"path/filepath"
 	"testing"
+
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/golden"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest/plogtest"
@@ -45,26 +46,63 @@ func (t *testLogsConsumer) ConsumeLogs(ctx context.Context, ld plog.Logs) error 
 
 var _ consumer.Logs = (*testLogsConsumer)(nil)
 
+// Test configuration for the entites, relationships and events.
 var (
-	expectedEntities = []config.Entity{
-		{Type: "Snowflake", IDs: []string{"id1"}, Attributes: []string{"attr1"}},
+	configuredEntities = []config.Entity{
+		{Type: "Snowflake", IDs: []string{"snowflakeID"}, Attributes: []string{"attr1"}},
+		{Type: "AWS", IDs: []string{"awsID"}, Attributes: []string{"attr2"}},
+	}
+
+	configuredRelationships = []config.Relationship{
+		{
+			Type:        "MemberOf",
+			Source:      "Snowflake",
+			Destination: "AWS",
+			Attributes:  []string{},
+		},
+		{
+			Type:        "VirtualizationTopologyConnection",
+			Source:      "Snowflake",
+			Destination: "Snowflake",
+			Attributes:  []string{},
+		},
+	}
+
+	configuredEvents = config.Events{
+		Relationships: configuredRelationships,
 	}
 )
 
 func TestLogsToLogs(t *testing.T) {
+
 	testCases := []struct {
 		name         string
 		inputFile    string
 		expectedFile string
 	}{
 		{
+			name:         "when relationship for different type is inferred log event is sent",
+			inputFile:    "relationship/input-log-different-type-relationship.yaml",
+			expectedFile: "relationship/expected-log-different-type-relationship.yaml",
+		},
+		{
+			name:         "when relationship for same type is inferred log event is sent",
+			inputFile:    "relationship/input-log-same-type-relationship.yaml",
+			expectedFile: "relationship/expected-log-same-type-relationship.yaml",
+		},
+		{
+			name:         "when relationship for same type is not inferred no log is sent",
+			inputFile:    "relationship/input-log-same-type-relationship-nomatch.yaml",
+			expectedFile: "relationship/expected-log-same-type-relationship-nomatch.yaml",
+		},
+		{
 			name:         "when entity is inferred log event is sent",
-			inputFile:    "input-log.yaml",
-			expectedFile: "expected-log.yaml",
+			inputFile:    "entity/input-log.yaml",
+			expectedFile: "entity/expected-log.yaml",
 		},
 		{
 			name:      "when entity is not inferred no log is sent",
-			inputFile: "input-log-nomatch.yaml",
+			inputFile: "entity/input-log-nomatch.yaml",
 		},
 	}
 
@@ -73,7 +111,14 @@ func TestLogsToLogs(t *testing.T) {
 			factory := NewFactory()
 			sink := &consumertest.LogsSink{}
 			conn, err := factory.CreateLogsToLogs(context.Background(),
-				connectortest.NewNopSettings(metadata.Type), &Config{config.Schema{Entities: expectedEntities}}, sink)
+				connectortest.NewNopSettings(metadata.Type), &Config{
+					Schema: config.Schema{
+						Entities: configuredEntities,
+						Events:   configuredEvents,
+					},
+					SourcePrefix:      "src.",
+					DestinationPrefix: "dst.",
+				}, sink)
 			require.NoError(t, err)
 			require.NotNil(t, conn)
 
@@ -83,6 +128,7 @@ func TestLogsToLogs(t *testing.T) {
 			}()
 
 			testLogs, err := golden.ReadLogs(filepath.Join("testdata", "logsToLogs", tc.inputFile))
+
 			assert.NoError(t, err)
 			assert.NoError(t, conn.ConsumeLogs(context.Background(), testLogs))
 
@@ -91,8 +137,9 @@ func TestLogsToLogs(t *testing.T) {
 				assert.Len(t, allLogs, 0)
 				return
 			}
-
+			// err = golden.WriteLogs(t, filepath.Join("testdata", "logsToLogs", "actual.yaml"), allLogs[0])
 			expected, err := golden.ReadLogs(filepath.Join("testdata", "logsToLogs", tc.expectedFile))
+
 			assert.NoError(t, err)
 			assert.Equal(t, allLogs[0].LogRecordCount(), expected.LogRecordCount())
 			assert.NoError(t, plogtest.CompareLogs(expected, allLogs[0], plogtest.IgnoreObservedTimestamp()))
@@ -108,12 +155,27 @@ func TestMetricsToLogs(t *testing.T) {
 	}{
 		{
 			name:         "when entity is inferred, log event is sent",
-			inputFile:    "input-metric.yaml",
-			expectedFile: "expected-log.yaml",
+			inputFile:    "entity/input-metric.yaml",
+			expectedFile: "entity/expected-log.yaml",
 		},
 		{
 			name:      "when entity is not inferred, no log is sent",
-			inputFile: "input-metric-nomatch.yaml",
+			inputFile: "entity/input-metric-nomatch.yaml",
+		},
+		{
+			name:         "when relationship for different type is inferred log event is sent",
+			inputFile:    "relationship/input-metric-different-type-relationship.yaml",
+			expectedFile: "relationship/expected-metric-different-type-relationship.yaml",
+		},
+		{
+			name:         "when relationship for same type is inferred log event is sent",
+			inputFile:    "relationship/input-metric-same-type-relationship.yaml",
+			expectedFile: "relationship/expected-metric-same-type-relationship.yaml",
+		},
+		{
+			name:         "when relationship for same type is not inferred no log is sent",
+			inputFile:    "relationship/input-metric-same-type-relationship-nomatch.yaml",
+			expectedFile: "relationship/expected-metric-same-type-relationship-nomatch.yaml",
 		},
 	}
 
@@ -122,7 +184,14 @@ func TestMetricsToLogs(t *testing.T) {
 			factory := NewFactory()
 			sink := &consumertest.LogsSink{}
 			conn, err := factory.CreateMetricsToLogs(context.Background(),
-				connectortest.NewNopSettings(metadata.Type), &Config{config.Schema{Entities: expectedEntities}}, sink)
+				connectortest.NewNopSettings(metadata.Type), &Config{
+					Schema: config.Schema{
+						Entities: configuredEntities,
+						Events:   configuredEvents,
+					},
+					SourcePrefix:      "src.",
+					DestinationPrefix: "dst.",
+				}, sink)
 			require.NoError(t, err)
 			require.NotNil(t, conn)
 

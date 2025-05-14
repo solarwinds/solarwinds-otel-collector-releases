@@ -1,0 +1,8 @@
+resourceLogs:
+  - resource:
+      attributes: [ { "key": "snowflakeID", "value":{"stringValue": "first-snowflake-instance"}}]
+  - resource:
+      attributes: [ { "key": "snowflakeID", "value":{"stringValue": "second-snowflake-instance"}}]
+  - resource:
+      attributes: [ { "key": "src.snowflakeID", "value":{"stringValue": "first-snowflake-instance"}},
+                    { "key": "snowflakeID", "value":{"stringValue": "second-snowflake-instance"}}]

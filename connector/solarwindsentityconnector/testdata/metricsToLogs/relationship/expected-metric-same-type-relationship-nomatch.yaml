@@ -1,0 +1,72 @@
+resourceLogs:
+  - resource: {}
+    scopeLogs:
+      - logRecords:
+          - attributes:
+              - key: otel.entity.type
+                value:
+                  stringValue: Snowflake
+              - key: otel.entity.id
+                value:
+                  kvlistValue:
+                    values:
+                      - key: snowflakeID
+                        value:
+                          stringValue: snowflake-instance-first
+              - key: otel.entity.attributes
+                value:
+                  kvlistValue: {}
+              - key: otel.entity.event.type
+                value:
+                  stringValue: entity_state
+            body: {}
+            observedTimeUnixNano: "1747234668060934000"
+            spanId: ""
+            traceId: ""
+          - attributes:
+              - key: otel.entity.type
+                value:
+                  stringValue: Snowflake
+              - key: otel.entity.id
+                value:
+                  kvlistValue:
+                    values:
+                      - key: snowflakeID
+                        value:
+                          stringValue: snowflake-instance-second
+              - key: otel.entity.attributes
+                value:
+                  kvlistValue: {}
+              - key: otel.entity.event.type
+                value:
+                  stringValue: entity_state
+            body: {}
+            observedTimeUnixNano: "1747234668060949000"
+            spanId: ""
+            traceId: ""
+          - attributes:
+              - key: otel.entity.type
+                value:
+                  stringValue: Snowflake
+              - key: otel.entity.id
+                value:
+                  kvlistValue:
+                    values:
+                      - key: snowflakeID
+                        value:
+                          stringValue: snowflake-instance-second
+              - key: otel.entity.attributes
+                value:
+                  kvlistValue: {}
+              - key: otel.entity.event.type
+                value:
+                  stringValue: entity_state
+            body: {}
+            observedTimeUnixNano: "1747234668060951000"
+            spanId: ""
+            traceId: ""
+        scope:
+          attributes:
+            - key: otel.entity.event_as_log
+              value:
+                boolValue: true

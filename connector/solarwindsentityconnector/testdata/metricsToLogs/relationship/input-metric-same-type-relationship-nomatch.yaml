@@ -1,0 +1,14 @@
+resourceMetrics:
+  - resource:
+      attributes: [ { "key": "snowflakeID", "value":{"stringValue": "snowflake-instance-first"}}]
+    scopeMetrics:
+      - metrics:
+  - resource:
+      attributes: [ { "key": "snowflakeID", "value":{"stringValue": "snowflake-instance-second"}}]
+      scopeMetrics:
+        - metrics:
+  - resource:
+      attributes: [{ "key": "src.snowflakeID", "value":{"stringValue": "snowflake-instance-first"}},
+                   { "key": "snowflakeID", "value":{"stringValue": "snowflake-instance-second"}}]
+      scopeMetrics:
+        - metrics:

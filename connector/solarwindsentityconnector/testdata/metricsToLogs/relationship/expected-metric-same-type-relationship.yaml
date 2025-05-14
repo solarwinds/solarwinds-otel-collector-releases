@@ -1,0 +1,82 @@
+resourceLogs:
+  - resource: {}
+    scopeLogs:
+      - logRecords:
+          - attributes:
+              - key: otel.entity.type
+                value:
+                  stringValue: Snowflake
+              - key: otel.entity.id
+                value:
+                  kvlistValue:
+                    values:
+                      - key: snowflakeID
+                        value:
+                          stringValue: snowflake-instance-first
+              - key: otel.entity.attributes
+                value:
+                  kvlistValue: {}
+              - key: otel.entity.event.type
+                value:
+                  stringValue: entity_state
+            body: {}
+            observedTimeUnixNano: "1747234535456547000"
+            spanId: ""
+            traceId: ""
+          - attributes:
+              - key: otel.entity.type
+                value:
+                  stringValue: Snowflake
+              - key: otel.entity.id
+                value:
+                  kvlistValue:
+                    values:
+                      - key: snowflakeID
+                        value:
+                          stringValue: snowflake-instance-second
+              - key: otel.entity.attributes
+                value:
+                  kvlistValue: {}
+              - key: otel.entity.event.type
+                value:
+                  stringValue: entity_state
+            body: {}
+            observedTimeUnixNano: "1747234535456561000"
+            spanId: ""
+            traceId: ""
+          - attributes:
+              - key: otel.entity_relationship.source_entity.id
+                value:
+                  kvlistValue:
+                    values:
+                      - key: snowflakeID
+                        value:
+                          stringValue: snowflake-instance-first
+              - key: otel.entity_relationship.destination_entity.id
+                value:
+                  kvlistValue:
+                    values:
+                      - key: snowflakeID
+                        value:
+                          stringValue: snowflake-instance-second
+              - key: otel.entity_relationship.type
+                value:
+                  stringValue: VirtualizationTopologyConnection
+              - key: otel.entity_relationship.source_entity.type
+                value:
+                  stringValue: Snowflake
+              - key: otel.entity_relationship.destination_entity.type
+                value:
+                  stringValue: Snowflake
+              - key: otel.entity.event.type
+                value:
+                  stringValue: entity_relationship_state
+            body: {}
+            observedTimeUnixNano: "1747234535456569000"
+            spanId: ""
+            traceId: ""
+        scope:
+          attributes:
+            - key: otel.entity.event_as_log
+              value:
+                boolValue: true
