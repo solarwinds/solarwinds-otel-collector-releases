@@ -1,6 +1,7 @@
 # Changelog
 
 ## vNext
+- Publishing `verified` and `playground` docker images.
 
 ## v0.123.2
 - Moved connection-check code to separate binary. Binary is added to k8s docker images.
