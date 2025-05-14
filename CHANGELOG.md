@@ -2,6 +2,9 @@
 
 ## vNext
 
+## v0.123.4
+- Fixing issues with release of windows docker images.
+
 ## v0.123.3
 - Publishing `verified` and `playground` docker images.
 
