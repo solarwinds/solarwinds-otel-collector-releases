@@ -146,12 +146,23 @@ jobs:
 
       - name: Tag images
         run: |
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-playground ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-playground
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-playground ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-playground
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-verified ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-verified
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-verified ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-verified
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s
+          docker tag ${{ env.DOCKERHUB_IMAGE }}:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-playground ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2022-playground
+          docker tag ${{ env.DOCKERHUB_IMAGE }}:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-playground ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-playground
+          
+          docker tag ${{ env.DOCKERHUB_IMAGE }}:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-playground ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2019-playground
+          docker tag ${{ env.DOCKERHUB_IMAGE }}:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-playground ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-playground
+          
+          docker tag ${{ env.DOCKERHUB_IMAGE }}:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-verified ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2022-verified
+          docker tag ${{ env.DOCKERHUB_IMAGE }}:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-verified ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-verified
+          
+          docker tag ${{ env.DOCKERHUB_IMAGE }}:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-verified ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2019-verified
+          docker tag ${{ env.DOCKERHUB_IMAGE }}:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-verified ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-verified
+          
+          docker tag ${{ env.DOCKERHUB_IMAGE }}:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2022-k8s
+          docker tag ${{ env.DOCKERHUB_IMAGE }}:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s
+          
+          docker tag ${{ env.DOCKERHUB_IMAGE }}:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2019-k8s
+          docker tag ${{ env.DOCKERHUB_IMAGE }}:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s
 
       - name: Login to Docker to use Docker Scout
         uses: docker/login-action@v3
@@ -197,11 +208,22 @@ jobs:
 
       - name: Push as specific
         run: |
+          docker push ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2022-playground
           docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-playground
+          
+          docker push ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2019-playground
           docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-playground
+          
+          docker push ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2022-verified
           docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-verified
+          
+          docker push ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2019-verified
           docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-verified
+          
+          docker push ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2022-k8s
           docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s
+          
+          docker push ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2019-k8s
           docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s
 
   upload_sarif_files:

@@ -1,17 +1,29 @@
-# SolarWinds OTel Collector Docker Image
-Docker image for _SolarWinds OpenTelemetry Collector_:
- - contains full build of the Collector with full set of components registered
- - runs set of tests validating correct functionality of components used
- - starts the Collector at entrypoint, expecting input config located by default as `/opt/default-config.yaml`
+# SolarWinds OTel Collector Docker Images
+
+Docker images for _SolarWinds OpenTelemetry Collector_.
+
+There are several available images, differentiated by tags. They differ in the scope of available OpenTelemetry components.
+
+`playground` 
+- contains the full set of components provided by OpenTelemetry community, and component created for use in __SolarWinds Observability SaaS__.
+- list of included components can be found in [components_playground](/cmd/solarwinds-otel-collector/components_playground.go)
+`verified`   
+- contains limited set of components used by __SolarWinds Observability SaaS__, including components that are part of **k8s**.
+- list of included components can be found in  [components_verified](/cmd/solarwinds-otel-collector/components_verified.go)
+`k8s`
+- contains limited set of components __SolarWinds Observability SaaS__ for purposes of kubernetes monitoring feature.
+- list of included components can be found in [components_k8s](/cmd/solarwinds-otel-collector/components_k8s.go)
+
+There are also Windows images available. For details see [dockerhub](https://hub.docker.com/r/solarwinds/solarwinds-otel-collector/tags).
 
 ## Getting the Image
-Pull the image from DockerHub.
+Pull the image from DockerHub. You can use other available tags `k8s`, `verified`, `playground` and their windows variants.
 
 `docker pull solarwinds/solarwinds-otel-collector:latest`
 
 Optionally you can build the image yourself, simply run docker build command, i.e.
 
-`docker build . -f build/docker/Dockerfile -t solarwinds-otel-collector:local`
+`docker build . -f build/docker/Dockerfile --build-arg BUILD_TAG=playground -t solarwinds-otel-collector:local`
 
 ## How to Run
 To run the image utilize following command:
