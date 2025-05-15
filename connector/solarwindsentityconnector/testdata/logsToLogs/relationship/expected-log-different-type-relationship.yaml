@@ -10,9 +10,9 @@ resourceLogs:
                 value:
                   kvlistValue:
                     values:
-                      - key: snowflakeID
+                      - key: snowflake.id
                         value:
-                          stringValue: snowflake-instance
+                          stringValue: snowflake-instance-id-first
               - key: otel.entity.attributes
                 value:
                   kvlistValue: {}
@@ -20,7 +20,7 @@ resourceLogs:
                 value:
                   stringValue: entity_state
             body: {}
-            observedTimeUnixNano: "1747232297718399000"
+            observedTimeUnixNano: "1747299066557273000"
             spanId: ""
             traceId: ""
           - attributes:
@@ -31,9 +31,12 @@ resourceLogs:
                 value:
                   kvlistValue:
                     values:
-                      - key: awsID
+                      - key: aws.ec2.id
                         value:
-                          stringValue: aws-instance
+                          stringValue: aws-instance-id-first
+                      - key: aws.ec2.name
+                        value:
+                          stringValue: aws-instance-name-first
               - key: otel.entity.attributes
                 value:
                   kvlistValue: {}
@@ -41,7 +44,7 @@ resourceLogs:
                 value:
                   stringValue: entity_state
             body: {}
-            observedTimeUnixNano: "1747232297718416000"
+            observedTimeUnixNano: "1747299066557288000"
             spanId: ""
             traceId: ""
           - attributes:
@@ -49,16 +52,19 @@ resourceLogs:
                 value:
                   kvlistValue:
                     values:
-                      - key: snowflakeID
+                      - key: snowflake.id
                         value:
-                          stringValue: snowflake-instance
+                          stringValue: snowflake-instance-id-first
               - key: otel.entity_relationship.destination_entity.id
                 value:
                   kvlistValue:
                     values:
-                      - key: awsID
+                      - key: aws.ec2.id
                         value:
-                          stringValue: aws-instance
+                          stringValue: aws-instance-id-first
+                      - key: aws.ec2.name
+                        value:
+                          stringValue: aws-instance-name-first
               - key: otel.entity_relationship.type
                 value:
                   stringValue: MemberOf
@@ -72,7 +78,7 @@ resourceLogs:
                 value:
                   stringValue: entity_relationship_state
             body: {}
-            observedTimeUnixNano: "1747232297718417000"
+            observedTimeUnixNano: "1747299066557290000"
             spanId: ""
             traceId: ""
         scope:

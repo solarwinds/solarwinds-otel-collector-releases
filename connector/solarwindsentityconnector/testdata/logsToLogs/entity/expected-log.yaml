@@ -7,9 +7,9 @@ resourceLogs:
                 value:
                   kvlistValue:
                     values:
-                      - key: snowflakeID
+                      - key: snowflake.id
                         value:
-                          stringValue: test-snowflakeID
+                          stringValue: test-snowflake-id
               - key: otel.entity.event.type
                 value:
                   stringValue: entity_state
@@ -24,6 +24,31 @@ resourceLogs:
                         value:
                           stringValue: test-attr1
             body: {}
+            observedTimeUnixNano: "1745488809224774000"
+            spanId: ""
+            traceId: ""
+          - attributes:
+              - key: otel.entity.id
+                value:
+                  kvlistValue:
+                    values:
+                      - key: snowflake.id
+                        value:
+                          stringValue: test-id2
+              - key: otel.entity.event.type
+                value:
+                  stringValue: entity_state
+              - key: otel.entity.type
+                value:
+                  stringValue: Snowflake
+              - key: otel.entity.attributes
+                value:
+                  kvlistValue:
+                    values:
+                      - key: attr1
+                        value:
+                          stringValue: test-attr2
+            body: {}
             observedTimeUnixNano: "1745488726999834000"
             spanId: ""
             traceId: ""
@@ -32,3 +57,4 @@ resourceLogs:
             - key: otel.entity.event_as_log
               value:
                 boolValue: true
+          

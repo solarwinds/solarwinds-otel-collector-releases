@@ -5,14 +5,17 @@ resourceLogs:
           - attributes:
               - key: otel.entity.type
                 value:
-                  stringValue: Snowflake
+                  stringValue: AWS
               - key: otel.entity.id
                 value:
                   kvlistValue:
                     values:
-                      - key: snowflakeID
+                      - key: aws.ec2.id
                         value:
-                          stringValue: snowflake-instance-first
+                          stringValue: aws-instance-id-first
+                      - key: aws.ec2.name
+                        value:
+                          stringValue: aws-instance-name-first
               - key: otel.entity.attributes
                 value:
                   kvlistValue: {}
@@ -20,49 +23,7 @@ resourceLogs:
                 value:
                   stringValue: entity_state
             body: {}
-            observedTimeUnixNano: "1747234668060934000"
-            spanId: ""
-            traceId: ""
-          - attributes:
-              - key: otel.entity.type
-                value:
-                  stringValue: Snowflake
-              - key: otel.entity.id
-                value:
-                  kvlistValue:
-                    values:
-                      - key: snowflakeID
-                        value:
-                          stringValue: snowflake-instance-second
-              - key: otel.entity.attributes
-                value:
-                  kvlistValue: {}
-              - key: otel.entity.event.type
-                value:
-                  stringValue: entity_state
-            body: {}
-            observedTimeUnixNano: "1747234668060949000"
-            spanId: ""
-            traceId: ""
-          - attributes:
-              - key: otel.entity.type
-                value:
-                  stringValue: Snowflake
-              - key: otel.entity.id
-                value:
-                  kvlistValue:
-                    values:
-                      - key: snowflakeID
-                        value:
-                          stringValue: snowflake-instance-second
-              - key: otel.entity.attributes
-                value:
-                  kvlistValue: {}
-              - key: otel.entity.event.type
-                value:
-                  stringValue: entity_state
-            body: {}
-            observedTimeUnixNano: "1747234668060951000"
+            observedTimeUnixNano: "1747298411790242000"
             spanId: ""
             traceId: ""
         scope:

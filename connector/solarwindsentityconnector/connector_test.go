@@ -49,8 +49,8 @@ var _ consumer.Logs = (*testLogsConsumer)(nil)
 // Test configuration for the entites, relationships and events.
 var (
 	configuredEntities = []config.Entity{
-		{Type: "Snowflake", IDs: []string{"snowflakeID"}, Attributes: []string{"attr1"}},
-		{Type: "AWS", IDs: []string{"awsID"}, Attributes: []string{"attr2"}},
+		{Type: "Snowflake", IDs: []string{"snowflake.id"}, Attributes: []string{"attr1"}},
+		{Type: "AWS", IDs: []string{"aws.ec2.id", "aws.ec2.name"}, Attributes: []string{"attr2"}},
 	}
 
 	configuredRelationships = []config.Relationship{
@@ -62,8 +62,8 @@ var (
 		},
 		{
 			Type:        "VirtualizationTopologyConnection",
-			Source:      "Snowflake",
-			Destination: "Snowflake",
+			Source:      "AWS",
+			Destination: "AWS",
 			Attributes:  []string{},
 		},
 	}
@@ -209,8 +209,9 @@ func TestMetricsToLogs(t *testing.T) {
 				assert.Len(t, allLogs, 0)
 				return
 			}
-
+			// err = golden.WriteLogs(t, filepath.Join("testdata", "metricsToLogs", "actual.yaml"), allLogs[0])
 			expected, err := golden.ReadLogs(filepath.Join("testdata", "metricsToLogs", tc.expectedFile))
+
 			assert.NoError(t, err)
 			assert.Equal(t, allLogs[0].LogRecordCount(), expected.LogRecordCount())
 			assert.NoError(t, plogtest.CompareLogs(expected, allLogs[0], plogtest.IgnoreObservedTimestamp()))
