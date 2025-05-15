@@ -3,7 +3,7 @@
 ## vNext
 
 ## v0.123.5
-- No changes, previous release failed to finish properly.
+- No changes, previous release failed to finish properly. Trigger
 
 ## v0.123.4
 - Fixing issues with release of windows docker images.
