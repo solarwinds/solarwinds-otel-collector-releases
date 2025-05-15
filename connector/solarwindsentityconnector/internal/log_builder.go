@@ -18,27 +18,34 @@ import (
 	"fmt"
 
 	"go.opentelemetry.io/collector/pdata/pcommon"
-	"go.opentelemetry.io/collector/pdata/plog"
 )
 
-// BuildEventLog prepares a clean LogRecordSlice, where log records representing events should be appended.
-// In given plog.Logs creates a resource log with one scope log and set attributes needed by SWO ingestion.
-func BuildEventLog(logs *plog.Logs) *plog.LogRecordSlice {
-	resourceLog := logs.ResourceLogs().AppendEmpty()
-	scopeLog := resourceLog.ScopeLogs().AppendEmpty()
-	scopeLog.Scope().Attributes().PutBool(entityEventAsLog, true)
-	lrs := scopeLog.LogRecords()
-
-	return &lrs
-}
-
-// setIdAttributes sets the entity id attributes in the log record as needed by SWO.
+// setIdAttributesDefault sets the entity id attributes in the log record as needed by SWO.
 // Attributes are used to infer the entity in the system.
-// Support same type relationship.
 //
 // Returns error if any of the attributes are missing in the resourceAttrs.
 // If any ID attribute is missing, the entity would not be inferred.
-func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map, name, prefix string) (bool, error) {
+func setIdAttributesDefault(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map, name string) error {
+	if len(entityIds) == 0 {
+		return fmt.Errorf("entity id attributes are empty")
+	}
+
+	logIds := attrs.PutEmptyMap(name)
+	for _, id := range entityIds {
+
+		value, exists := findAttribute(id, resourceAttrs)
+		if !exists {
+			return fmt.Errorf("missing entity ID attribute: %s", id)
+		}
+
+		putAttribute(&logIds, id, value)
+	}
+	return nil
+}
+
+// setIdAttributesSameType sets the entity id attributes in the log record as needed by SWO for same type relationships.
+// Verifies that prefix is present in the resource attributes at least once for each entities.
+func setIdAttributesSameType(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map, name, prefix string) (bool, error) {
 	if len(entityIds) == 0 {
 		return false, fmt.Errorf("entity id attributes are empty")
 	}
@@ -60,7 +67,7 @@ func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommo
 			continue
 		}
 
-		return false, fmt.Errorf("failed to find entity id attribute %s", id)
+		return false, fmt.Errorf("missing entity ID attribute: %s", id)
 	}
 	return hasPrefix, nil
 }
