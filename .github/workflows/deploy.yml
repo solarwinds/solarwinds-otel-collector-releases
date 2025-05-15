@@ -84,7 +84,7 @@ jobs:
           sbom: false
           push: true
           tags: |
-            ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}
+            ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-playground
             ${{ env.DOCKERHUB_IMAGE }}:latest-playground
       
       - name: Build and Push - Verified
@@ -97,7 +97,7 @@ jobs:
           sbom: false
           push: true
           tags: |
-            ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}
+            ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-verified
             ${{ env.DOCKERHUB_IMAGE }}:latest-verified
 
       - name: Build and Push - k8s
