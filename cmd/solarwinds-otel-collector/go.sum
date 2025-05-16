@@ -2618,6 +2618,8 @@ github.com/snowflakedb/gosnowflake v1.12.0/go.mod h1:wHfYmZi3zvtWItojesAhWWXBN7+
 github.com/soheilhy/cmux v0.1.4/go.mod h1:IM3LyeVVIOuxMH7sFAkER9+bJ4dT7Ms6E4xg4kGIyLM=
 github.com/soheilhy/cmux v0.1.5 h1:jjzc5WVemNEDTLwv9tlmemhC73tI08BNOIGwBOo10Js=
 github.com/soheilhy/cmux v0.1.5/go.mod h1:T7TcVDs9LWfQgPlPsdngu6I6QIoyIFZDDC6sNE1GqG0=
+github.com/solarwinds/solarwinds-otel-collector-contrib/connector/solarwindsentityconnector v0.123.2 h1:zCr33kMEdZu8j2NrauouCocUe9csUjeHo12Q8sQmxwU=
+github.com/solarwinds/solarwinds-otel-collector-contrib/connector/solarwindsentityconnector v0.123.2/go.mod h1:pZDZH/VEhGnGvE/bL7DnCKngtJWOki+tQ6TE32Vtoec=
 github.com/solarwindscloud/apm-proto v1.0.8 h1:a5A0s+5RmMB6LNBs32qQ+oL26rltw5b2cbUhqhJPne0=
 github.com/solarwindscloud/apm-proto v1.0.8/go.mod h1:PIMzXc8HpB0ryT4Oci4pUz8F0m1X7Q/hVXkQE4jGv6Y=
 github.com/sony/gobreaker v0.4.1/go.mod h1:ZKptC7FHNvhBz7dN2LGjPVBz2sZJmc0/PkyDJOjmxWY=
