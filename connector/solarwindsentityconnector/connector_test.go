@@ -137,7 +137,7 @@ func TestLogsToLogs(t *testing.T) {
 				assert.Len(t, allLogs, 0)
 				return
 			}
-			// err = golden.WriteLogs(t, filepath.Join("testdata", "logsToLogs", "actual.yaml"), allLogs[0])
+
 			expected, err := golden.ReadLogs(filepath.Join("testdata", "logsToLogs", tc.expectedFile))
 
 			assert.NoError(t, err)
@@ -209,7 +209,7 @@ func TestMetricsToLogs(t *testing.T) {
 				assert.Len(t, allLogs, 0)
 				return
 			}
-			// err = golden.WriteLogs(t, filepath.Join("testdata", "metricsToLogs", "actual.yaml"), allLogs[0])
+
 			expected, err := golden.ReadLogs(filepath.Join("testdata", "metricsToLogs", tc.expectedFile))
 
 			assert.NoError(t, err)
