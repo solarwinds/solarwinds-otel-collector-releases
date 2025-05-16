@@ -68,7 +68,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-playground
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-tag: latest # to be updated
+          compare-to-tag: latest-playground
 
   build_and_test_verified:
     runs-on: ubuntu-latest
@@ -97,7 +97,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-verified
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-tag: latest # to be updated
+          compare-to-tag: latest-verified
 
   build_windows_playground:
     runs-on: windows-2022
@@ -136,7 +136,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-playground
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2019$' # to be updated
+          compare-to-tag: 'latest-nanoserver-ltsc2019-playground'
 
       - name: Docker scout image scan for Windows 2022
         uses: ./.github/actions/dockerScoutScan
@@ -146,7 +146,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-playground
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2022$' # to be updated
+          compare-to-tag: 'latest-nanoserver-ltsc2022-playground'
 
       - name: Save image
         run: |
@@ -198,7 +198,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-verified
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2019$' # to be updated
+          compare-to-tag: 'latest-nanoserver-ltsc2019-verified'
 
       - name: Docker scout image scan for Windows 2022
         uses: ./.github/actions/dockerScoutScan
@@ -208,7 +208,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-verified
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2022$' # to be updated
+          compare-to-tag: 'latest-nanoserver-ltsc2022-verified'
 
       - name: Save image
         run: |
@@ -244,7 +244,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-k8s
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-k8s$'
+          compare-to-tag: 'latest-k8s'
 
   build_windows_k8s:
     runs-on: windows-2022
@@ -283,7 +283,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-k8s
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2019-k8s$'
+          compare-to-tag: 'latest-nanoserver-ltsc2019-k8s'
 
       - name: Docker scout image scan for Windows 2022
         uses: ./.github/actions/dockerScoutScan
@@ -293,7 +293,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-k8s
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-regex: '^[0-9]+\.[0-9]+\.[0-9]+-nanoserver-ltsc2022-k8s$'
+          compare-to-tag: 'latest-nanoserver-ltsc2022-k8s'
             
       - name: Save image
         run: |
