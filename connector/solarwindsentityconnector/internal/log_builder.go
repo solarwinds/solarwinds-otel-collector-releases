@@ -20,14 +20,14 @@ import (
 	"go.opentelemetry.io/collector/pdata/pcommon"
 )
 
-// setIdAttributesDefault sets the entity id attributes in the log record as needed by SWO.
+// setIdAttributes sets the entity id attributes in the log record as needed by SWO.
 // Attributes are used to infer the entity in the system.
 //
 // Returns error if any of the attributes are missing in the resourceAttrs.
 // If any ID attribute is missing, the entity would not be inferred.
-func setIdAttributesDefault(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map, name string) error {
+func setIdAttributes(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map, name string) error {
 	if len(entityIds) == 0 {
-		return fmt.Errorf("entity id attributes are empty")
+		return fmt.Errorf("entity ID attributes are empty")
 	}
 
 	logIds := attrs.PutEmptyMap(name)
@@ -43,11 +43,11 @@ func setIdAttributesDefault(attrs pcommon.Map, entityIds []string, resourceAttrs
 	return nil
 }
 
-// setIdAttributesSameType sets the entity id attributes in the log record as needed by SWO for same type relationships.
-// Verifies that prefix is present in the resource attributes at least once for each entities.
-func setIdAttributesSameType(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map, name, prefix string) (bool, error) {
+// setIdAttributesWithPrefix sets the entity id attributes in the log record as needed by SWO for same type relationships.
+// Verifies that prefix is present in the resource attributes at least once within entity IDs.
+func setIdAttributesWithPrefix(attrs pcommon.Map, entityIds []string, resourceAttrs pcommon.Map, name, prefix string) (bool, error) {
 	if len(entityIds) == 0 {
-		return false, fmt.Errorf("entity id attributes are empty")
+		return false, fmt.Errorf("entity ID attributes are empty")
 	}
 
 	hasPrefix := false
