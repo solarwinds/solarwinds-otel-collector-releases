@@ -23,6 +23,7 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/receivercreator"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/simpleprometheusreceiver"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/exporter/solarwindsexporter"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/extension/solarwindsextension"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/processor/k8seventgenerationprocessor"
@@ -132,6 +133,7 @@ func components() (otelcol.Factories, error) {
 	}
 
 	factories.Connectors, err = otelcol.MakeFactoryMap[connector.Factory](
+		solarwindsentityconnector.NewFactory(),
 		forwardconnector.NewFactory(),
 	)
 
