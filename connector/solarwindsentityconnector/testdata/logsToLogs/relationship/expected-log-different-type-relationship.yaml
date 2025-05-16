@@ -12,7 +12,7 @@ resourceLogs:
                     values:
                       - key: snowflake.id
                         value:
-                          stringValue: snowflake-instance-id-first
+                          stringValue: snowflake-instance-id
               - key: otel.entity.attributes
                 value:
                   kvlistValue: {}
@@ -26,17 +26,17 @@ resourceLogs:
           - attributes:
               - key: otel.entity.type
                 value:
-                  stringValue: AWS
+                  stringValue: AWS EC2
               - key: otel.entity.id
                 value:
                   kvlistValue:
                     values:
                       - key: aws.ec2.id
                         value:
-                          stringValue: aws-instance-id-first
+                          stringValue: aws-instance-id
                       - key: aws.ec2.name
                         value:
-                          stringValue: aws-instance-name-first
+                          stringValue: aws-instance-name
               - key: otel.entity.attributes
                 value:
                   kvlistValue: {}
@@ -54,17 +54,17 @@ resourceLogs:
                     values:
                       - key: snowflake.id
                         value:
-                          stringValue: snowflake-instance-id-first
+                          stringValue: snowflake-instance-id
               - key: otel.entity_relationship.destination_entity.id
                 value:
                   kvlistValue:
                     values:
                       - key: aws.ec2.id
                         value:
-                          stringValue: aws-instance-id-first
+                          stringValue: aws-instance-id
                       - key: aws.ec2.name
                         value:
-                          stringValue: aws-instance-name-first
+                          stringValue: aws-instance-name
               - key: otel.entity_relationship.type
                 value:
                   stringValue: MemberOf
@@ -73,7 +73,7 @@ resourceLogs:
                   stringValue: Snowflake
               - key: otel.entity_relationship.destination_entity.type
                 value:
-                  stringValue: AWS
+                  stringValue: AWS EC2
               - key: otel.entity.event.type
                 value:
                   stringValue: entity_relationship_state

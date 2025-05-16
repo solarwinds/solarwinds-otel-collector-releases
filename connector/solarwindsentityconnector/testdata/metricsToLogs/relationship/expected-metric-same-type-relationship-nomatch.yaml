@@ -5,7 +5,7 @@ resourceLogs:
           - attributes:
               - key: otel.entity.type
                 value:
-                  stringValue: AWS
+                  stringValue: AWS EC2
               - key: otel.entity.id
                 value:
                   kvlistValue:

@@ -50,20 +50,20 @@ var _ consumer.Logs = (*testLogsConsumer)(nil)
 var (
 	configuredEntities = []config.Entity{
 		{Type: "Snowflake", IDs: []string{"snowflake.id"}, Attributes: []string{"attr1"}},
-		{Type: "AWS", IDs: []string{"aws.ec2.id", "aws.ec2.name"}, Attributes: []string{"attr2"}},
+		{Type: "AWS EC2", IDs: []string{"aws.ec2.id", "aws.ec2.name"}, Attributes: []string{"attr2"}},
 	}
 
 	configuredRelationships = []config.Relationship{
 		{
 			Type:        "MemberOf",
 			Source:      "Snowflake",
-			Destination: "AWS",
+			Destination: "AWS EC2",
 			Attributes:  []string{},
 		},
 		{
-			Type:        "VirtualizationTopologyConnection",
-			Source:      "AWS",
-			Destination: "AWS",
+			Type:        "TestRelationshipType",
+			Source:      "AWS EC2",
+			Destination: "AWS EC2",
 			Attributes:  []string{},
 		},
 	}
