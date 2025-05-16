@@ -16,9 +16,12 @@ package solarwindsentityconnector
 
 import (
 	"context"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
+	"sort"
 
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
+	"go.uber.org/zap"
+
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/connector"
 	"go.opentelemetry.io/collector/consumer"
@@ -27,9 +30,13 @@ import (
 )
 
 type solarwindsentity struct {
-	logsConsumer  consumer.Logs
-	entities      map[string]config.Entity
-	relationships []config.Relationship
+	logger *zap.Logger
+
+	logsConsumer      consumer.Logs
+	entities          map[string]config.Entity
+	relationships     []config.Relationship
+	sourcePrefix      string
+	destinationPrefix string
 
 	component.StartFunc
 	component.ShutdownFunc
@@ -42,54 +49,68 @@ func (s *solarwindsentity) Capabilities() consumer.Capabilities {
 	return consumer.Capabilities{MutatesData: false}
 }
 
+// temporary function to get keys in reverse sorted order
+func getReverseSortKeys(m map[string]config.Entity) []string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
+	return keys
+}
+
 func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.Metrics) error {
-	logs := plog.NewLogs()
-	events := internal.BuildEventLog(&logs)
+	eventLogs := plog.NewLogs()
+	eventBuilder := internal.NewEventBuilder(s.entities, s.relationships, s.sourcePrefix, s.destinationPrefix, &eventLogs, s.logger)
 
 	for i := 0; i < metrics.ResourceMetrics().Len(); i++ {
 		resourceMetric := metrics.ResourceMetrics().At(i)
 		resourceAttrs := resourceMetric.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		for _, entity := range s.entities {
-			internal.AppendEntityUpdateEvent(events, entity, resourceAttrs)
+		keys := getReverseSortKeys(s.entities) // temporary logic for getting keys in deterministic order
+		for _, k := range keys {
+			entity := s.entities[k]
+			eventBuilder.AppendEntityUpdateEvent(entity, resourceAttrs)
 		}
 
 		// This will be replaced with actual logic when conditions are introduced
 		for _, relationship := range s.relationships {
-			internal.AppendRelationshipUpdateEvent(events, relationship, resourceAttrs, s.entities)
+			eventBuilder.AppendRelationshipUpdateEvent(relationship, resourceAttrs)
 		}
 	}
 
-	if logs.LogRecordCount() == 0 {
+	if eventLogs.LogRecordCount() == 0 {
 		return nil
 	}
 
-	return s.logsConsumer.ConsumeLogs(ctx, logs)
+	return s.logsConsumer.ConsumeLogs(ctx, eventLogs)
 }
 
 func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) error {
-	newLogs := plog.NewLogs()
-	events := internal.BuildEventLog(&newLogs)
+	eventLogs := plog.NewLogs()
+	eventBuilder := internal.NewEventBuilder(s.entities, s.relationships, s.sourcePrefix, s.destinationPrefix, &eventLogs, s.logger)
 
 	for i := 0; i < logs.ResourceLogs().Len(); i++ {
 		resourceLog := logs.ResourceLogs().At(i)
 		resourceAttrs := resourceLog.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		for _, entity := range s.entities {
-			internal.AppendEntityUpdateEvent(events, entity, resourceAttrs)
+		keys := getReverseSortKeys(s.entities) // temporary logic for getting keys in deterministic order
+		for _, k := range keys {
+			entity := s.entities[k]
+			eventBuilder.AppendEntityUpdateEvent(entity, resourceAttrs)
 		}
 
 		// This will be replaced with actual logic when conditions are introduced
 		for _, relationship := range s.relationships {
-			internal.AppendRelationshipUpdateEvent(events, relationship, resourceAttrs, s.entities)
+			eventBuilder.AppendRelationshipUpdateEvent(relationship, resourceAttrs)
 		}
 	}
 
-	if newLogs.LogRecordCount() == 0 {
+	if eventLogs.LogRecordCount() == 0 {
 		return nil
 	}
 
-	return s.logsConsumer.ConsumeLogs(ctx, newLogs)
+	return s.logsConsumer.ConsumeLogs(ctx, eventLogs)
 }
