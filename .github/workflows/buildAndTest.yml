@@ -133,7 +133,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-playground
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-tag: 'latest-nanoserver-ltsc2019'
+          compare-to-tag: 'latest-nanoserver-ltsc2019-playground'
 
       - name: Docker scout image scan for Windows 2022
         uses: ./.github/actions/dockerScoutScan
@@ -143,7 +143,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-playground
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-tag: 'latest-nanoserver-ltsc2022'
+          compare-to-tag: 'latest-nanoserver-ltsc2022-playground'
 
       - name: Save image
         run: |
@@ -192,7 +192,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2019-verified
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-tag: 'latest-nanoserver-ltsc2019'
+          compare-to-tag: 'latest-nanoserver-ltsc2019-verified'
 
       - name: Docker scout image scan for Windows 2022
         uses: ./.github/actions/dockerScoutScan
@@ -202,7 +202,7 @@ jobs:
           current-image: solarwinds-otel-collector
           current-tag: ${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-verified
           compare-to-image: ${{ env.DOCKERHUB_IMAGE }}
-          compare-to-tag: 'latest-nanoserver-ltsc2022'
+          compare-to-tag: 'latest-nanoserver-ltsc2022-verified'
 
       - name: Save image
         run: |
