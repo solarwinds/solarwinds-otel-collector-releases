@@ -16,6 +16,7 @@ package solarwindsentityconnector
 
 import (
 	"context"
+	"sort"
 
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/config"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector/internal"
@@ -48,6 +49,16 @@ func (s *solarwindsentity) Capabilities() consumer.Capabilities {
 	return consumer.Capabilities{MutatesData: false}
 }
 
+// temporary function to get keys in reverse sorted order
+func getReverseSortKeys(m map[string]config.Entity) []string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
+	return keys
+}
+
 func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.Metrics) error {
 	newLogs := plog.NewLogs()
 	eventBuilder := internal.NewEventBuilder(s.entities, s.relationships, s.sourcePrefix, s.destinationPrefix, &newLogs, s.logger)
@@ -57,7 +68,9 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 		resourceAttrs := resourceMetric.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		for _, entity := range s.entities {
+		keys := getReverseSortKeys(s.entities) // temporary logic for getting keys in deterministic order
+		for _, k := range keys {
+			entity := s.entities[k]
 			eventBuilder.AppendEntityUpdateEvent(entity, resourceAttrs)
 		}
 
@@ -83,7 +96,9 @@ func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) erro
 		resourceAttrs := resourceLog.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		for _, entity := range s.entities {
+		keys := getReverseSortKeys(s.entities) // temporary logic for getting keys in deterministic order
+		for _, k := range keys {
+			entity := s.entities[k]
 			eventBuilder.AppendEntityUpdateEvent(entity, resourceAttrs)
 		}
 
