@@ -29,7 +29,7 @@ func TestSetIdAttributesDefaultEmpty(t *testing.T) {
 	resourceAttrs.PutStr("id2", "idvalue2")
 
 	destination := plog.NewLogRecord()
-	err := setIdAttributesDefault(destination.Attributes(), []string{}, resourceAttrs, entityIds)
+	err := setIdAttributes(destination.Attributes(), []string{}, resourceAttrs, entityIds)
 	assert.NotNil(t, err)
 }
 
@@ -39,7 +39,7 @@ func TestSetIdAttributesSameTypeEmpty(t *testing.T) {
 	resourceAttrs.PutStr("dst.id", "idvalue2")
 
 	destination := plog.NewLogRecord()
-	hasPrefix, err := setIdAttributesSameType(destination.Attributes(), []string{}, resourceAttrs, entityIds, "src.")
+	hasPrefix, err := setIdAttributesWithPrefix(destination.Attributes(), []string{}, resourceAttrs, entityIds, "src.")
 	assert.NotNil(t, err)
 	assert.False(t, hasPrefix)
 }
@@ -50,7 +50,7 @@ func TestSetIdAttributesDefaultNoMatch(t *testing.T) {
 	resourceAttrs.PutStr("id2", "idvalue2")
 
 	destination := plog.NewLogRecord()
-	err := setIdAttributesDefault(destination.Attributes(), []string{"id3"}, resourceAttrs, entityIds)
+	err := setIdAttributes(destination.Attributes(), []string{"id3"}, resourceAttrs, entityIds)
 	assert.NotNil(t, err)
 	ids, exists := destination.Attributes().Get(entityIds)
 	assert.True(t, exists)
@@ -63,7 +63,7 @@ func TestSetIdAttributesSameTypetIdNoMatch(t *testing.T) {
 	resourceAttrs.PutStr("dst.id", "idvalue2")
 
 	destination := plog.NewLogRecord()
-	hasPrefix, err := setIdAttributesSameType(destination.Attributes(), []string{"id2"}, resourceAttrs, entityIds, "src.")
+	hasPrefix, err := setIdAttributesWithPrefix(destination.Attributes(), []string{"id2"}, resourceAttrs, entityIds, "src.")
 	assert.False(t, hasPrefix)
 	assert.NotNil(t, err)
 	ids, exists := destination.Attributes().Get(entityIds)
@@ -77,7 +77,7 @@ func TestSetIdAttributesSameTypePrefixNoMatch(t *testing.T) {
 	resourceAttrs.PutStr("dst.id", "idvalue2")
 
 	destination := plog.NewLogRecord()
-	hasPrefix, err := setIdAttributesSameType(destination.Attributes(), []string{"id"}, resourceAttrs, entityIds, "prefix.")
+	hasPrefix, err := setIdAttributesWithPrefix(destination.Attributes(), []string{"id"}, resourceAttrs, entityIds, "prefix.")
 	assert.False(t, hasPrefix)
 	assert.NotNil(t, err)
 	ids, exists := destination.Attributes().Get(entityIds)
@@ -91,7 +91,7 @@ func TestSetIdAttributesDefaultMultiple(t *testing.T) {
 	resourceAttrs.PutStr("id2", "idvalue2")
 
 	destination := plog.NewLogRecord()
-	err := setIdAttributesDefault(destination.Attributes(), []string{"id1"}, resourceAttrs, entityIds)
+	err := setIdAttributes(destination.Attributes(), []string{"id1"}, resourceAttrs, entityIds)
 	assert.Nil(t, err)
 	ids, exists := destination.Attributes().Get(entityIds)
 	assert.True(t, exists)
@@ -107,7 +107,7 @@ func TestSetIdAttributesSameTypeMultiple(t *testing.T) {
 	resourceAttrs.PutStr("dst.id", "idvalue2")
 
 	destination := plog.NewLogRecord()
-	hasPrefix, err := setIdAttributesSameType(destination.Attributes(), []string{"id"}, resourceAttrs, entityIds, "src.")
+	hasPrefix, err := setIdAttributesWithPrefix(destination.Attributes(), []string{"id"}, resourceAttrs, entityIds, "src.")
 	assert.True(t, hasPrefix)
 	assert.Nil(t, err)
 	ids, exists := destination.Attributes().Get(entityIds)
