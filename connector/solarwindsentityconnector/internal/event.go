@@ -25,28 +25,28 @@ import (
 )
 
 type EventBuilder struct {
-	Entities       map[string]config.Entity
-	Relationships  []config.Relationship
-	SourcePrefix   string
-	DestPrefix     string
-	ResultEventLog *plog.LogRecordSlice
-	Logger         *zap.Logger
+	entities      map[string]config.Entity
+	relationships []config.Relationship
+	sourcePrefix  string
+	destPrefix    string
+	eventLogs     *plog.LogRecordSlice
+	logger        *zap.Logger
 }
 
 func NewEventBuilder(entities map[string]config.Entity, relationships []config.Relationship, sourcePrefix string, destPrefix string, events *plog.Logs, logger *zap.Logger) *EventBuilder {
 	return &EventBuilder{
-		Entities:       entities,
-		Relationships:  relationships,
-		SourcePrefix:   sourcePrefix,
-		DestPrefix:     destPrefix,
-		ResultEventLog: CreateResultEventLog(events),
-		Logger:         logger,
+		entities:      entities,
+		relationships: relationships,
+		sourcePrefix:  sourcePrefix,
+		destPrefix:    destPrefix,
+		eventLogs:     createEventLog(events),
+		logger:        logger,
 	}
 }
 
-// CreateResultEventLog prepares a clean LogRecordSlice, where log records representing events should be appended.
-// In given plog.Logs creates a resource log with one scope log and set attributes needed by SWO ingestion.
-func CreateResultEventLog(logs *plog.Logs) *plog.LogRecordSlice {
+// createResultEventLog prepares a clean LogRecordSlice, where log records representing events should be appended.
+// Creates a resource log in input plog.Logs with single scope log decorated with attributes necessary for proper SWO ingestion.
+func createEventLog(logs *plog.Logs) *plog.LogRecordSlice {
 	resourceLog := logs.ResourceLogs().AppendEmpty()
 	scopeLog := resourceLog.ScopeLogs().AppendEmpty()
 	scopeLog.Scope().Attributes().PutBool(entityEventAsLog, true)
@@ -57,16 +57,16 @@ func CreateResultEventLog(logs *plog.Logs) *plog.LogRecordSlice {
 
 func (e *EventBuilder) AppendEntityUpdateEvent(entity config.Entity, resourceAttrs pcommon.Map) {
 
-	event, err := e.createEntityEvent(resourceAttrs, entity)
+	entityLog, err := e.createEntityEvent(resourceAttrs, entity)
 	if err != nil {
-		e.Logger.Debug("failed to create update event", zap.Error(err))
+		e.logger.Debug("failed to create update event", zap.Error(err))
 		return
 	}
 
-	event.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
-	event.Attributes().PutStr(entityEventType, entityUpdateEventType)
-	eventLog := e.ResultEventLog.AppendEmpty()
-	event.CopyTo(eventLog)
+	entityLog.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
+	entityLog.Attributes().PutStr(entityEventType, entityUpdateEventType)
+	eventLog := e.eventLogs.AppendEmpty()
+	entityLog.CopyTo(eventLog)
 }
 
 func (e *EventBuilder) createEntityEvent(resourceAttrs pcommon.Map, entity config.Entity) (plog.LogRecord, error) {
@@ -74,8 +74,8 @@ func (e *EventBuilder) createEntityEvent(resourceAttrs pcommon.Map, entity confi
 	attrs := lr.Attributes()
 	attrs.PutStr(entityType, entity.Type)
 
-	if err := setIdAttributesDefault(attrs, entity.IDs, resourceAttrs, entityIds); err != nil {
-		return plog.LogRecord{}, fmt.Errorf("failed to set id attributes: %w", err)
+	if err := setIdAttributes(attrs, entity.IDs, resourceAttrs, entityIds); err != nil {
+		return plog.LogRecord{}, fmt.Errorf("failed to set ID attributes: %w", err)
 	}
 
 	setAttributes(attrs, entity.Attributes, resourceAttrs, entityAttributes)
@@ -88,24 +88,24 @@ func (e *EventBuilder) createEntityEvent(resourceAttrs pcommon.Map, entity confi
 func (e *EventBuilder) AppendRelationshipUpdateEvent(relationship config.Relationship, resourceAttrs pcommon.Map) {
 	relationshipLog, err := e.createRelationshipEvent(relationship, resourceAttrs)
 	if err != nil {
-		e.Logger.Debug("Failed to create relationship event", zap.Error(err))
+		e.logger.Debug("failed to create relationship event", zap.Error(err))
 		return
 	}
 
 	relationshipLog.SetObservedTimestamp(pcommon.NewTimestampFromTime(time.Now()))
 	relationshipLog.Attributes().PutStr(entityEventType, relationshipUpdateEventType)
-	eventLog := e.ResultEventLog.AppendEmpty()
+	eventLog := e.eventLogs.AppendEmpty()
 	relationshipLog.CopyTo(eventLog)
 
 }
 
 func (e *EventBuilder) createRelationshipEvent(relationship config.Relationship, resourceAttrs pcommon.Map) (plog.LogRecord, error) {
-	source, ok := e.Entities[relationship.Source]
+	source, ok := e.entities[relationship.Source]
 	if !ok {
 		return plog.NewLogRecord(), fmt.Errorf("bad source entity")
 	}
 
-	dest, ok := e.Entities[relationship.Destination]
+	dest, ok := e.entities[relationship.Destination]
 	if !ok {
 		return plog.NewLogRecord(), fmt.Errorf("bad destination entity")
 	}
@@ -115,28 +115,24 @@ func (e *EventBuilder) createRelationshipEvent(relationship config.Relationship,
 
 	if source.Type == dest.Type {
 		// same type relationships
-		hasPrefixSrc, err := setIdAttributesSameType(attrs, source.IDs, resourceAttrs, relationshipSrcEntityIds, e.SourcePrefix)
-		if err != nil {
-			return plog.NewLogRecord(), fmt.Errorf("bad source entity id attributes")
+		hasPrefixSrc, err := setIdAttributesWithPrefix(attrs, source.IDs, resourceAttrs, relationshipSrcEntityIds, e.sourcePrefix)
+		if err != nil || !hasPrefixSrc {
+			return plog.NewLogRecord(), fmt.Errorf("missing prefixed ID attribute for source entity")
 		}
 
-		hasPrefixDst, err := setIdAttributesSameType(attrs, dest.IDs, resourceAttrs, relationshipDestEntityIds, e.DestPrefix)
-		if err != nil {
-			return plog.NewLogRecord(), fmt.Errorf("bad destination entity id attributes")
-		}
-
-		if !hasPrefixSrc || !hasPrefixDst {
-			return plog.NewLogRecord(), fmt.Errorf("same type entity ids are not prefixed")
+		hasPrefixDst, err := setIdAttributesWithPrefix(attrs, dest.IDs, resourceAttrs, relationshipDestEntityIds, e.destPrefix)
+		if err != nil || !hasPrefixDst {
+			return plog.NewLogRecord(), fmt.Errorf("missing prefixed ID attribute for destination entity")
 		}
 
 	} else {
 
-		if err := setIdAttributesDefault(attrs, source.IDs, resourceAttrs, relationshipSrcEntityIds); err != nil {
-			return plog.NewLogRecord(), fmt.Errorf("bad source entity id attributes")
+		if err := setIdAttributes(attrs, source.IDs, resourceAttrs, relationshipSrcEntityIds); err != nil {
+			return plog.NewLogRecord(), fmt.Errorf("missing ID attribute for source entity")
 		}
 
-		if err := setIdAttributesDefault(attrs, dest.IDs, resourceAttrs, relationshipDestEntityIds); err != nil {
-			return plog.NewLogRecord(), fmt.Errorf("bad destination entity id attributes")
+		if err := setIdAttributes(attrs, dest.IDs, resourceAttrs, relationshipDestEntityIds); err != nil {
+			return plog.NewLogRecord(), fmt.Errorf("missing ID attribute for destination entity")
 		}
 	}
 

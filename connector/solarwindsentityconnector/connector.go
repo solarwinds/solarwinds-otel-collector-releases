@@ -60,8 +60,8 @@ func getReverseSortKeys(m map[string]config.Entity) []string {
 }
 
 func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.Metrics) error {
-	newLogs := plog.NewLogs()
-	eventBuilder := internal.NewEventBuilder(s.entities, s.relationships, s.sourcePrefix, s.destinationPrefix, &newLogs, s.logger)
+	eventLogs := plog.NewLogs()
+	eventBuilder := internal.NewEventBuilder(s.entities, s.relationships, s.sourcePrefix, s.destinationPrefix, &eventLogs, s.logger)
 
 	for i := 0; i < metrics.ResourceMetrics().Len(); i++ {
 		resourceMetric := metrics.ResourceMetrics().At(i)
@@ -80,16 +80,16 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 		}
 	}
 
-	if newLogs.LogRecordCount() == 0 {
+	if eventLogs.LogRecordCount() == 0 {
 		return nil
 	}
 
-	return s.logsConsumer.ConsumeLogs(ctx, newLogs)
+	return s.logsConsumer.ConsumeLogs(ctx, eventLogs)
 }
 
 func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) error {
-	newLogs := plog.NewLogs()
-	eventBuilder := internal.NewEventBuilder(s.entities, s.relationships, s.sourcePrefix, s.destinationPrefix, &newLogs, s.logger)
+	eventLogs := plog.NewLogs()
+	eventBuilder := internal.NewEventBuilder(s.entities, s.relationships, s.sourcePrefix, s.destinationPrefix, &eventLogs, s.logger)
 
 	for i := 0; i < logs.ResourceLogs().Len(); i++ {
 		resourceLog := logs.ResourceLogs().At(i)
@@ -108,9 +108,9 @@ func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) erro
 		}
 	}
 
-	if newLogs.LogRecordCount() == 0 {
+	if eventLogs.LogRecordCount() == 0 {
 		return nil
 	}
 
-	return s.logsConsumer.ConsumeLogs(ctx, newLogs)
+	return s.logsConsumer.ConsumeLogs(ctx, eventLogs)
 }
