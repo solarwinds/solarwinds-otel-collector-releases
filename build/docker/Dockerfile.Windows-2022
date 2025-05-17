@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:1.24.2-nanoserver-ltsc2022@sha256:08fd9b7279e7e202bd5fc6230af558f7952532a0f584fefd4cda8e4ccbde3dad AS base
+FROM docker.io/library/golang:1.24.3-nanoserver-ltsc2022@sha256:ec526dd724502b3221cd796a0175070fed8b51b0c9d07d985ada2fd93c946d3a AS base
 
 COPY ./ /src
 WORKDIR /src
