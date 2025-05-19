@@ -1,6 +1,8 @@
 # Changelog
 
 ## vNext
+- Add `routingconnector` to the k8s distribution
+- Add `solarwindsentityconnector` to the k8s distribution
 
 ## v0.123.6
 - No changes, previous release failed to finish properly.
