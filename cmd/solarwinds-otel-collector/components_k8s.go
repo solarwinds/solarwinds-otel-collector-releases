@@ -17,6 +17,7 @@
 package main
 
 import (
+	"github.com/open-telemetry/opentelemetry-collector-contrib/connector/routingconnector"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/fileexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/observer/k8sobserver"
@@ -135,6 +136,7 @@ func components() (otelcol.Factories, error) {
 	factories.Connectors, err = otelcol.MakeFactoryMap[connector.Factory](
 		solarwindsentityconnector.NewFactory(),
 		forwardconnector.NewFactory(),
+		routingconnector.NewFactory(),
 	)
 
 	if err != nil {
