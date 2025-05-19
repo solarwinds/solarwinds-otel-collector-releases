@@ -1,9 +1,0 @@
-type: solarwindsentity
-github_project: solarwinds/solarwinds-otel-collector-releases
-
-status:
-  class: connector
-  stability:
-    development: [metrics_to_logs, logs_to_logs]
-
-tests:
