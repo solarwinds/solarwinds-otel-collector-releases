@@ -43,6 +43,10 @@ for f in $ALL_GO_MOD; do
     echo "References to 'github.com/solarwinds/solarwinds-otel-collector-contrib' in $f updated with version v$VERSION"
 done
 
+# We need to run go mod tidy after raising versions of solarwinds-otel-collector-contrib components
+echo "Running go mod tidy"
+find . -name "go.mod" -execdir sh -c 'go mod tidy' \;
+
 # update pkg\version\version.go to set the actual release version
 GO_VERSION_FILE="./pkg/version/version.go"
 if [ ! -f "$GO_VERSION_FILE" ]; then
