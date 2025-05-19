@@ -161,14 +161,14 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/windowsperfcountersreceiver v0.123.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zipkinreceiver v0.123.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zookeeperreceiver v0.123.0
-	github.com/solarwinds/solarwinds-otel-collector-contrib/connector/solarwindsentityconnector v0.123.2
-	github.com/solarwinds/solarwinds-otel-collector-contrib/exporter/solarwindsexporter v0.123.2
-	github.com/solarwinds/solarwinds-otel-collector-contrib/extension/solarwindsextension v0.123.2
-	github.com/solarwinds/solarwinds-otel-collector-releases/pkg/version v0.123.6
-	github.com/solarwinds/solarwinds-otel-collector-contrib/processor/k8seventgenerationprocessor v0.123.2
-	github.com/solarwinds/solarwinds-otel-collector-contrib/processor/swok8sworkloadtypeprocessor v0.123.2
-	github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swohostmetricsreceiver v0.123.2
-	github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swok8sobjectsreceiver v0.123.2
+	github.com/solarwinds/solarwinds-otel-collector-contrib/connector/solarwindsentityconnector v0.123.4
+	github.com/solarwinds/solarwinds-otel-collector-contrib/exporter/solarwindsexporter v0.123.4
+	github.com/solarwinds/solarwinds-otel-collector-contrib/extension/solarwindsextension v0.123.4
+	github.com/solarwinds/solarwinds-otel-collector-contrib/pkg/version v0.123.4
+	github.com/solarwinds/solarwinds-otel-collector-contrib/processor/k8seventgenerationprocessor v0.123.4
+	github.com/solarwinds/solarwinds-otel-collector-contrib/processor/swok8sworkloadtypeprocessor v0.123.4
+	github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swohostmetricsreceiver v0.123.4
+	github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swok8sobjectsreceiver v0.123.4
 	go.opentelemetry.io/collector/component v1.29.0
 	go.opentelemetry.io/collector/confmap v1.29.0
 	go.opentelemetry.io/collector/confmap/provider/envprovider v1.29.0
@@ -603,8 +603,8 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/snowflakedb/gosnowflake v1.12.0 // indirect
 	github.com/soheilhy/cmux v0.1.5 // indirect
-	github.com/solarwinds/solarwinds-otel-collector-releases/internal/k8sconfig v0.123.6 // indirect
-	github.com/solarwinds/solarwinds-otel-collector-releases/pkg/testutil v0.123.6 // indirect
+	github.com/solarwinds/solarwinds-otel-collector-contrib/internal/k8sconfig v0.123.4 // indirect
+	github.com/solarwinds/solarwinds-otel-collector-contrib/pkg/testutil v0.123.4 // indirect
 	github.com/solarwindscloud/apm-proto v1.0.8 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
@@ -758,8 +758,6 @@ require (
 	sigs.k8s.io/yaml v1.4.0 // indirect
 	skywalking.apache.org/repo/goapi v0.0.0-20240104145220-ba7202308dd4 // indirect
 )
-
-replace github.com/solarwinds/solarwinds-otel-collector-releases/pkg/version => ../../pkg/version
 
 // Temporary fix for https://github.com/solarwinds/solarwinds-otel-collector-releases/issues/69
 replace golang.org/x/crypto => golang.org/x/crypto v0.35.0
