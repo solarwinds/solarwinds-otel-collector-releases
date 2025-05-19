@@ -49,14 +49,15 @@ func (s *solarwindsentity) Capabilities() consumer.Capabilities {
 	return consumer.Capabilities{MutatesData: false}
 }
 
-// temporary function to get keys in reverse sorted order
+// Will be removed when condition logic is added.
+// getReverseSortKeys returns the entity types in reverse sorted order.
 func getReverseSortKeys(m map[string]config.Entity) []string {
-	keys := make([]string, 0, len(m))
+	entityTypes := make([]string, 0, len(m))
 	for k := range m {
-		keys = append(keys, k)
+		entityTypes = append(entityTypes, k)
 	}
-	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
-	return keys
+	sort.Sort(sort.Reverse(sort.StringSlice(entityTypes)))
+	return entityTypes
 }
 
 func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.Metrics) error {
@@ -68,8 +69,8 @@ func (s *solarwindsentity) ConsumeMetrics(ctx context.Context, metrics pmetric.M
 		resourceAttrs := resourceMetric.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		keys := getReverseSortKeys(s.entities) // temporary logic for getting keys in deterministic order
-		for _, k := range keys {
+		entityTypes := getReverseSortKeys(s.entities) // Will be removed when condition logic is added. Prevents random entity type order
+		for _, k := range entityTypes {
 			entity := s.entities[k]
 			eventBuilder.AppendEntityUpdateEvent(entity, resourceAttrs)
 		}
@@ -96,8 +97,8 @@ func (s *solarwindsentity) ConsumeLogs(ctx context.Context, logs plog.Logs) erro
 		resourceAttrs := resourceLog.Resource().Attributes()
 
 		// This will be replaced with actual logic when conditions are introduced
-		keys := getReverseSortKeys(s.entities) // temporary logic for getting keys in deterministic order
-		for _, k := range keys {
+		entityTypes := getReverseSortKeys(s.entities) // Will be removed when condition logic is added. Prevents random entity type order
+		for _, k := range entityTypes {
 			entity := s.entities[k]
 			eventBuilder.AppendEntityUpdateEvent(entity, resourceAttrs)
 		}
