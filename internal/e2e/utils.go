@@ -26,7 +26,7 @@ import (
 	"testing"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest/pmetrictest"
-	"github.com/solarwinds/solarwinds-otel-collector-contrib/pkg/version"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/pkg/version"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"go.opentelemetry.io/collector/pdata/pcommon"
