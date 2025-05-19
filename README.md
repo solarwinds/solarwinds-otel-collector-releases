@@ -18,7 +18,7 @@ To run the image utilize following command:
 See [complete docker documentation](./build/docker/README.md).
 
 ### Binary
-Build the binary in `cmd/solarwinds-otel-collector` with `go build -tags full .`
+Build the binary in `cmd/solarwinds-otel-collector` with `go build -tags playground .`
 
 After successful build, `solarwinds-otel-collector` should be present in `cmd/solarwinds-otel-collector`.
 
@@ -53,15 +53,16 @@ exporters:
 ```
 3. Pull the SolarWinds OTel Collector from DockerHub.
 ```
-docker pull solarwinds/solarwinds-otel-collector:latest
+docker pull solarwinds/solarwinds-otel-collector:playground
 ```
 4. Start the container with your `config.yaml`. 
 ```
-docker run  -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel-collector:latest
+docker run  -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel-collector:playground
 ```
 
 ## Components
-The SolarWinds OpenTelemetry collector contains following components:
+The `playground` distribution of SolarWinds OpenTelemetry collector contains following components:
+
 - receivers
   - full set of [opentelemetry-collector receivers](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.113.0/receiver)
   - full set of [opentelemetry-collector-contrib receivers](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.113.0/receiver)

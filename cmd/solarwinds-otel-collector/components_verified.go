@@ -12,34 +12,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build k8s
+//go:build verified
 
 package main
 
 import (
-	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/fileexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/observer/k8sobserver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/solarwindsapmsettingsextension"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/receivercreator"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/simpleprometheusreceiver"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/exporter/solarwindsexporter"
 	"github.com/solarwinds/solarwinds-otel-collector-releases/extension/solarwindsextension"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/processor/k8seventgenerationprocessor"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/processor/swok8sworkloadtypeprocessor"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swok8sobjectsreceiver"
-	"go.opentelemetry.io/collector/connector"
-	"go.opentelemetry.io/collector/connector/forwardconnector"
+	"go.opentelemetry.io/collector/extension"
+	"go.opentelemetry.io/collector/extension/memorylimiterextension"
+	"go.opentelemetry.io/collector/otelcol"
+
+	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/fileexporter"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/exporter/solarwindsexporter"
+	"go.opentelemetry.io/collector/exporter"
 	"go.opentelemetry.io/collector/exporter/debugexporter"
 	"go.opentelemetry.io/collector/exporter/nopexporter"
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
 
+	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector"
+	"go.opentelemetry.io/collector/connector"
+	"go.opentelemetry.io/collector/connector/forwardconnector"
+
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/apachereceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/dockerstatsreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/elasticsearchreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/haproxyreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/iisreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8seventsreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8sobjectsreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/kafkareceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/memcachedreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/nginxreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/oracledbreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/rabbitmqreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/receivercreator"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/redisreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/simpleprometheusreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/snowflakereceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/statsdreceiver"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zookeeperreceiver"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swohostmetricsreceiver"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swok8sobjectsreceiver"
+	"go.opentelemetry.io/collector/receiver"
+	"go.opentelemetry.io/collector/receiver/nopreceiver"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor"
@@ -55,14 +78,11 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/processor/k8seventgenerationprocessor"
+	"github.com/solarwinds/solarwinds-otel-collector-releases/processor/swok8sworkloadtypeprocessor"
+	"go.opentelemetry.io/collector/processor"
 	"go.opentelemetry.io/collector/processor/batchprocessor"
 	"go.opentelemetry.io/collector/processor/memorylimiterprocessor"
-
-	"go.opentelemetry.io/collector/exporter"
-	"go.opentelemetry.io/collector/extension"
-	"go.opentelemetry.io/collector/otelcol"
-	"go.opentelemetry.io/collector/processor"
-	"go.opentelemetry.io/collector/receiver"
 )
 
 func components() (otelcol.Factories, error) {
@@ -70,10 +90,12 @@ func components() (otelcol.Factories, error) {
 	factories := otelcol.Factories{}
 
 	factories.Extensions, err = otelcol.MakeFactoryMap[extension.Factory](
-		solarwindsextension.NewFactory(),
+		memorylimiterextension.NewFactory(),
 		healthcheckextension.NewFactory(),
-		filestorage.NewFactory(),
+		solarwindsapmsettingsextension.NewFactory(),
+		solarwindsextension.NewFactory(),
 		k8sobserver.NewFactory(),
+		filestorage.NewFactory(),
 	)
 
 	if err != nil {
@@ -81,15 +103,32 @@ func components() (otelcol.Factories, error) {
 	}
 
 	factories.Receivers, err = otelcol.MakeFactoryMap[receiver.Factory](
-		prometheusreceiver.NewFactory(),
+		apachereceiver.NewFactory(),
+		dockerstatsreceiver.NewFactory(),
+		elasticsearchreceiver.NewFactory(),
+		filelogreceiver.NewFactory(),
+		haproxyreceiver.NewFactory(),
+		hostmetricsreceiver.NewFactory(),
+		iisreceiver.NewFactory(),
+		journaldreceiver.NewFactory(),
 		k8seventsreceiver.NewFactory(),
 		k8sobjectsreceiver.NewFactory(),
-		filelogreceiver.NewFactory(),
-		journaldreceiver.NewFactory(),
-		otlpreceiver.NewFactory(),
-		receivercreator.NewFactory(),
+		kafkareceiver.NewFactory(),
+		memcachedreceiver.NewFactory(),
+		nginxreceiver.NewFactory(),
+		oracledbreceiver.NewFactory(),
+		prometheusreceiver.NewFactory(),
+		rabbitmqreceiver.NewFactory(),
+		redisreceiver.NewFactory(),
 		simpleprometheusreceiver.NewFactory(),
+		snowflakereceiver.NewFactory(),
+		statsdreceiver.NewFactory(),
+		swohostmetricsreceiver.NewFactory(),
+		zookeeperreceiver.NewFactory(),
+		nopreceiver.NewFactory(),
+		otlpreceiver.NewFactory(),
 		swok8sobjectsreceiver.NewFactory(),
+		receivercreator.NewFactory(),
 	)
 
 	if err != nil {
@@ -110,8 +149,8 @@ func components() (otelcol.Factories, error) {
 		resourcedetectionprocessor.NewFactory(),
 		resourceprocessor.NewFactory(),
 		transformprocessor.NewFactory(),
-		memorylimiterprocessor.NewFactory(),
 		batchprocessor.NewFactory(),
+		memorylimiterprocessor.NewFactory(),
 		k8seventgenerationprocessor.NewFactory(),
 		swok8sworkloadtypeprocessor.NewFactory(),
 	)

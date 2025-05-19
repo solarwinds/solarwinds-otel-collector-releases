@@ -2,6 +2,18 @@
 
 ## vNext
 
+## v0.123.6
+- No changes, previous release failed to finish properly.
+
+## v0.123.5
+- No changes, previous release failed to finish properly.
+
+## v0.123.4
+- Fixing issues with release of windows docker images.
+
+## v0.123.3
+- Publishing `verified` and `playground` docker images.
+
 ## v0.123.2
 - Moved connection-check code to separate binary. Binary is added to k8s docker images.
 - Adds [SolarWinds Kubernetes Workload Type Processor](./processor/swok8sworkloadtypeprocessor/README.md) for annotating metrics with a k8s workload type based on their attributes.
