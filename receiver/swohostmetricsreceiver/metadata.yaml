@@ -1,7 +1,0 @@
-type: swohostmetrics
-github_project: solarwinds/solarwinds-otel-collector-releases
-
-status:
-  class: receiver
-  stability:
-    development: [ metrics ]
