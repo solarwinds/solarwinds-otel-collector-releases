@@ -1,10 +1,10 @@
 # Changelog
 
 ## vNext
-- Add `routingconnector` to the k8s distribution
-- Add `solarwindsentityconnector` to the k8s distribution
 
 ## v0.123.7
+- Add `routingconnector` to the k8s distribution
+- Add `solarwindsentityconnector` to the k8s distribution
 - Consumed components from [solarwinds-otel-collector-contrib](https://github.com/solarwinds/solarwinds-otel-collector-contrib) repository. Moved components were removed from this repository but there should be no functional changes.
 
 ## v0.123.6
