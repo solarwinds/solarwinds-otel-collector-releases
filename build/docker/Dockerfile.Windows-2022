@@ -11,11 +11,13 @@ ARG BUILDER_VERSION="v0.123.0"
 WORKDIR /src
 
 RUN go install go.opentelemetry.io/collector/cmd/builder@%BUILDER_VERSION%
-RUN builder --config=/src/distributions/k8s/manifest.yaml
+RUN builder --config=/src/distributions/%BUILD_TAG%/manifest.yaml
+# unify binary name as solarwinds-otel-collector
+RUN move C:\src\_build\solarwinds-otel-collector-%BUILD_TAG% C:\src\_build\solarwinds-otel-collector
 
 FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
 
-COPY --from=builder /src/bin/solarwinds-otel-collector-k8s /solarwinds-otel-collector.exe
+COPY --from=builder /src/bin/solarwinds-otel-collector /solarwinds-otel-collector.exe
 
 ENTRYPOINT ["solarwinds-otel-collector.exe"]
 CMD ["--config=/opt/default-config.yaml"]
