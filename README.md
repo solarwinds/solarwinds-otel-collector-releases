@@ -18,11 +18,15 @@ To run the image utilize following command:
 See [complete docker documentation](./build/docker/README.md).
 
 ### Binary
-Build the binary in `cmd/solarwinds-otel-collector` with `go build -tags playground .`
+First you need to download the builder in the corresponding version.
+`go install go.opentelemetry.io/collector/cmd/builder@v0.123.0`
 
-After successful build, `solarwinds-otel-collector` should be present in `cmd/solarwinds-otel-collector`.
+Then you can build binary for any of the distributions. You can choose from `verified`, `playground` and `k8s`.
+`builder --config=./distributions/{distribution}/manifest.yaml`
 
-Run `solarwinds-otel-collector --config=config.yaml`.
+After successful build, `solarwinds-otel-collector-{distribution}` should be present in `_build` folder.
+
+Run `solarwinds-otel-collector-{distribution} --config=config.yaml`.
 
 ## Getting Started
 Configuration for SolarWinds OTel Collector has to contain [SolarWinds Extension](./extension/solarwindsextension/README.md) and [Solarwinds Exporter](./exporter/solarwindsexporter/README.md). 
