@@ -13,12 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <version>"
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <version> $1 <swi_contrib_version> $2 <builder_version>"
     exit 1
 fi
 
 VERSION=$1
+CONTRIB_VERSION=$2
+BUILDER_VERSION=$3
 
 # Update CHANGELOG.md
 CHANGELOG_FILE="./CHANGELOG.md"
@@ -33,19 +35,21 @@ else
     echo "CHANGELOG.md already contains 'v$VERSION', no update made."
 fi
 
-# Update go.mod files
-ALL_GO_MOD=$(find . -name "go.mod" -type f | sort)
-for f in $ALL_GO_MOD; do
-    perl -pi -e "s|^(\s+github.com/solarwinds/solarwinds-otel-collector-releases/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+(\s+// indirect)?$|\1 v$VERSION\2|" "$f"
-    echo "References to 'github.com/solarwinds/solarwinds-otel-collector-releases' in $f updated with version v$VERSION"
-
-    perl -pi -e "s|^(\s+github.com/solarwinds/solarwinds-otel-collector-contrib/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+(\s+// indirect)?$|\1 v$VERSION\2|" "$f"
-    echo "References to 'github.com/solarwinds/solarwinds-otel-collector-contrib' in $f updated with version v$VERSION"
+# Update release manifest files
+ALL_MANIFEST_YAML=$(find . -name "manifest.yaml" -type f | sort)
+for f in $ALL_MANIFEST_YAML; do
+    # update solarwinds contrib references
+    perl -pi -e "s|^(\s+- gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+$|\1 v$CONTRIB_VERSION|" "$f"
+    echo "References to 'github.com/solarwinds/solarwinds-otel-collector-contrib' in $f updated with version v$CONTRIB_VERSION"
 done
 
 # We need to run go mod tidy after raising versions of solarwinds-otel-collector-contrib components
 echo "Running go mod tidy"
 find . -name "go.mod" -execdir sh -c 'go mod tidy' \;
+
+# update BUILDER_VERSION env var in ./.github/workflows/buildAndTest.yml
+perl -pi -e "s|BUILDER_VERSION: \"v[0-9]+\.[0-9]+\.[0-9]+\"|BUILDER_VERSION: \"v$BUILDER_VERSION\"|g" ./.github/workflows/buildAndTest.yml
+echo "Updated BUILDER_VERSION in /.github/workflows/buildAndTest.yaml to version $BUILDER_VERSION"
 
 # update pkg\version\version.go to set the actual release version
 GO_VERSION_FILE="./pkg/version/version.go"

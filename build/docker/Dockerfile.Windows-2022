@@ -4,16 +4,18 @@ COPY ./ /src
 WORKDIR /src
 
 FROM base AS builder
-
 ARG CGO_ENABLED=0
 ARG GOEXPERIMENT=boringcrypto
 ARG BUILD_TAG="playground"
+ARG BUILDER_VERSION="v0.123.0"
+WORKDIR /src
 
-RUN cd /src/cmd/solarwinds-otel-collector && go build -tags %BUILD_TAG% -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
+RUN go install go.opentelemetry.io/collector/cmd/builder@${BUILDER_VERSION}
+RUN builder --config=/src/distributions/k8s/manifest.yaml
 
 FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
 
-COPY --from=builder /src/bin/solarwinds-otel-collector /solarwinds-otel-collector.exe
+COPY --from=builder /src/bin/solarwinds-otel-collector-k8s /solarwinds-otel-collector.exe
 
 ENTRYPOINT ["solarwinds-otel-collector.exe"]
 CMD ["--config=/opt/default-config.yaml"]

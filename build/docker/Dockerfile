@@ -3,10 +3,15 @@ FROM docker.io/library/golang:1.24.2-bookworm AS base
 COPY /LICENSE /LICENSE
 COPY ./ /src
 
-ARG BUILD_TAG="playground"
 FROM base AS builder
-RUN cd /src/cmd/solarwinds-otel-collector && CGO_ENABLED=0 GOEXPERIMENT=boringcrypto go build -tags "${BUILD_TAG}" \
-    -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
+ARG BUILD_TAG="playground"
+ARG BUILDER_VERSION="v0.123.0"
+WORKDIR /src
+
+RUN go install go.opentelemetry.io/collector/cmd/builder@${BUILDER_VERSION}
+RUN builder --config=/src/distributions/${BUILD_TAG}/manifest.yaml
+# unify binary name as solarwinds-otel-collector
+RUN mv /src/_build/solarwinds-otel-collector-${BUILD_TAG} /src/_build/solarwinds-otel-collector
 
 FROM builder AS tests
 WORKDIR /src
@@ -19,7 +24,7 @@ FROM gcr.io/distroless/static-debian12@sha256:3d0f463de06b7ddff27684ec3bfd0b54a4
 ARG USER_UID=10001
 USER ${USER_UID}
 
-COPY --from=tests /src/bin/solarwinds-otel-collector /solarwinds-otel-collector
+COPY --from=tests /src/_build/solarwinds-otel-collector /solarwinds-otel-collector
 
 ENTRYPOINT ["/solarwinds-otel-collector"]
 CMD ["--config=/opt/default-config.yaml"]

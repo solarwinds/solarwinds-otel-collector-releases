@@ -51,10 +51,11 @@ To release a new version of SolarWinds OpenTelemetry Collector:
 2. Run
 
     ```shell
-    make prepare-release version=0.113.0
+    make prepare-release version=0.123.7 swi_contrib_version=0.123.7 builder_version=0.123.0
     ```
-
-    replacing `0.113.0` with an actual version to release.
-
+    Replace versions accordingly.
+    `version` - the actual release version
+    `swi_contrib_version` - version of packages from [solarwinds-otel-collector-contrib](https://github.com/solarwinds/solarwinds-otel-collector-contrib/releases)
+    `builder_version` - version of [builder](https://github.com/open-telemetry/opentelemetry-collector/tree/main/cmd/builder) to be used.
 3. Verify the generated changes, prepare a PR and merge it.
 4. This will trigger a build pipeline that will release a new version of the collector.

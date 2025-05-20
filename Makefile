@@ -25,4 +25,4 @@ check-licenses:
 
 .PHONY: prepare-release
 prepare-release:
-	@build/prepare-release.sh $(version)
+	@build/prepare-release.sh $(version) $(swi_contrib_version) $(builder_version)
