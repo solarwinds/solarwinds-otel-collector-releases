@@ -18,11 +18,11 @@ package main
 
 import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/fileexporter"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/connector/solarwindsentityconnector"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/exporter/solarwindsexporter"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/extension/solarwindsextension"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/processor/k8seventgenerationprocessor"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/processor/swok8sworkloadtypeprocessor"
+	"github.com/solarwinds/solarwinds-otel-collector-contrib/connector/solarwindsentityconnector"
+	"github.com/solarwinds/solarwinds-otel-collector-contrib/exporter/solarwindsexporter"
+	"github.com/solarwinds/solarwinds-otel-collector-contrib/extension/solarwindsextension"
+	"github.com/solarwinds/solarwinds-otel-collector-contrib/processor/k8seventgenerationprocessor"
+	"github.com/solarwinds/solarwinds-otel-collector-contrib/processor/swok8sworkloadtypeprocessor"
 	"go.opentelemetry.io/collector/exporter/debugexporter"
 	"go.opentelemetry.io/collector/exporter/nopexporter"
 	"go.opentelemetry.io/collector/exporter/otlpexporter"
@@ -162,8 +162,8 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/windowsperfcountersreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zipkinreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zookeeperreceiver"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swohostmetricsreceiver"
-	"github.com/solarwinds/solarwinds-otel-collector-releases/receiver/swok8sobjectsreceiver"
+	"github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swohostmetricsreceiver"
+	"github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swok8sobjectsreceiver"
 	"go.opentelemetry.io/collector/receiver/nopreceiver"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
 
