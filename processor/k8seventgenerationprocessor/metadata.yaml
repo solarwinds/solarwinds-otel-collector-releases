@@ -1,8 +1,0 @@
-type: k8seventgeneration
-github_project: solarwinds/solarwinds-otel-collector-releases
-
-status:
-  class: processor
-  stability:
-    development: [ logs ]
-  distributions: [full, k8s]
