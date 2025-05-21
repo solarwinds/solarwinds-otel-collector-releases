@@ -14,13 +14,13 @@
 # limitations under the License.
 
 if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 <version> $1 <swi_contrib_version> $2 <builder_version>"
+    echo "Usage: $0 <version> $1 <builder_version> $2 <swi_contrib_version>"
     exit 1
 fi
 
 VERSION=$1
-CONTRIB_VERSION=$2
-BUILDER_VERSION=$3
+BUILDER_VERSION=$2
+CONTRIB_VERSION=$3
 
 # Update CHANGELOG.md
 CHANGELOG_FILE="./CHANGELOG.md"
@@ -42,7 +42,6 @@ for f in $ALL_MANIFEST_YAML; do
     perl -pi -e "s/version: \d+\.\d+\.\d+/version: $VERSION/g" "$f"
     echo "Updated version in distribution yaml \`$f\` with version v$VERSION"
 done
-
 
 if [ -z "$CONTRIB_VERSION" ]; then
   echo "CONTRIB_VERSION not set, skipping."
