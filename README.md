@@ -18,7 +18,7 @@ To run the image utilize following command:
 See [complete docker documentation](./build/docker/README.md).
 
 ### Binary
-First you need to download the builder in the corresponding version.
+First you need to download the builder in the compatible version.
 `go install go.opentelemetry.io/collector/cmd/builder@v0.123.0`
 
 Then you can build binary for any of the distributions. You can choose from `verified`, `playground` and `k8s`.
