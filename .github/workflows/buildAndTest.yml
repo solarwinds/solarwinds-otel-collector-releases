@@ -104,6 +104,9 @@ jobs:
 
   build_windows_playground:
     runs-on: windows-2022
+    # this job takes a long time to run (20 minutes), so run it on main and release branches to have some continuous check that build on windows 
+    # still works. Also run it on workflow_dispatch to allow manual runs.
+    if: github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     needs: generate_tag
     steps:
       - name: Checkout
@@ -164,6 +167,9 @@ jobs:
 
   build_windows_verified:
     runs-on: windows-2022
+    # this job takes a long time to run (20 minutes), so run it on main and release branches to have some continuous check that build on windows
+    # still works. Also run it on workflow_dispatch to allow manual runs.
+    if: github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     needs: generate_tag
     steps:
       - name: Checkout
@@ -247,6 +253,9 @@ jobs:
 
   build_windows_k8s:
     runs-on: windows-2022
+    # this job takes a long time to run (10 minutes), so run it on main and release branches to have some continuous check that build on windows
+    # still works. Also run it on workflow_dispatch to allow manual runs.
+    if: github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     needs: generate_tag
     steps:
       - name: Checkout
