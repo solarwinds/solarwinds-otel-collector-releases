@@ -46,8 +46,17 @@ done
 if [ -z "$CONTRIB_VERSION" ]; then
   echo "CONTRIB_VERSION not set, skipping."
 else
+  # update swi_contrib_version in Makefile
+    MAKEFILE="./Makefile"
+    if [ ! -f "$MAKEFILE" ]; then
+        echo "Makefile not found!"
+        exit 1
+    fi
+    perl -pi -e "s|swi_contrib_version := \d+\.\d+\.\d+|swi_contrib_version := $CONTRIB_VERSION|g" "$MAKEFILE"
+    echo "Updated swi_contrib_version in Makefile to version $CONTRIB_VERSION"
+
+  # update solarwinds contrib references in distribution yaml files
   for f in $ALL_MANIFEST_YAML; do
-      # update solarwinds contrib references
       perl -pi -e "s|^(\s+- gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+$|\1 v$CONTRIB_VERSION|" "$f"
       echo "References to 'github.com/solarwinds/solarwinds-otel-collector-contrib' in $f updated with version v$CONTRIB_VERSION"
   done
