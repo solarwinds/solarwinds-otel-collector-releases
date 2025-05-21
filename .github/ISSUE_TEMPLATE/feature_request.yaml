@@ -3,20 +3,6 @@ description: Suggest an idea for this project
 labels: ["enhancement", "feature", "needs triage"]
 type: Feature
 body:
-  - type: dropdown
-    id: component
-    attributes:
-      label: Component(s)
-      description: Which component(s) does your feature request concern?
-      multiple: true
-      options:
-        - cmd/solarwinds-otel-collector
-        - connector/solarwindsentity
-        - exporter/solarwindsexporter
-        - extension/solarwindsextension
-        - receiver/swohostmetricsreceiver
-        - processor/k8seventgenerationprocessor
-        - processor/swok8sworkloadtype
   - type: textarea
     attributes:
       label: Is your feature request related to a problem? Please describe.
