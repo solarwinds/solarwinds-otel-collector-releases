@@ -54,7 +54,7 @@ To release a new version of SolarWinds OpenTelemetry Collector:
     make prepare-release version=0.123.7 swi_contrib_version=0.123.7 builder_version=0.123.0
     ```
     Replace versions accordingly.
-    `version` (mandatory) - the actual release version. Updates CHANGELOG.md and [version.go](/pkg/version/version.go).
+    `version` (mandatory) - the actual release version. Updates CHANGELOG.md, [version.go](/pkg/version/version.go) and versions in distribution yaml files.
     `swi_contrib_version` (optional) - updates versions of packages from [solarwinds-otel-collector-contrib](https://github.com/solarwinds/solarwinds-otel-collector-contrib/releases) in distribution yaml files.
     `builder_version` (optional) - updates version of [builder](https://github.com/open-telemetry/opentelemetry-collector/tree/main/cmd/builder) used in buildAndTest.yml
 3. Verify the generated changes, prepare a PR and merge it.
