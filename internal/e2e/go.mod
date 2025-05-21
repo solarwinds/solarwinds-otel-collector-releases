@@ -1,6 +1,6 @@
 module github.com/solarwinds/solarwinds-otel-collector-releases/internal/e2e
 
-go 1.24.2
+go 1.24.3
 
 require (
 	github.com/mdelapenya/tlscert v0.2.0
