@@ -66,7 +66,7 @@ else
       echo "buildAndTest.yml not found!"
       exit 1
   fi
-  # update BUILDER_VERSION env var in ./.github/workflows/buildAndTest.yml
+  # update BUILDER_VERSION env var in ./.github/workflows/build.yml
   perl -pi -e "s|BUILDER_VERSION: \"v[0-9]+\.[0-9]+\.[0-9]+\"|BUILDER_VERSION: \"v$BUILDER_VERSION\"|g" "$YAML_FILE"
   echo "Updated BUILDER_VERSION in /.github/workflows/buildAndTest.yaml to version $BUILDER_VERSION"
   # update builder version in README.md

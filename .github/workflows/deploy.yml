@@ -46,15 +46,15 @@ jobs:
             exit 1
           fi
 
-  build_and_test:
-    name: Build and Test images
-    uses: ./.github/workflows/buildAndTest.yml
+  build:
+    name: Build images
+    uses: build.yml
     secrets: inherit
 
   deploy_dockerhub:
     runs-on: ubuntu-latest
     needs:
-      - build_and_test
+      - build
       - release_checks
     name: Deploy to Docker Hub
     environment:
@@ -116,7 +116,7 @@ jobs:
   deploy_dockerhub_windows:
     runs-on: windows-2022
     needs:
-      - build_and_test
+      - build
       - release_checks
     name: Deploy to docker hub Windows
     environment:
