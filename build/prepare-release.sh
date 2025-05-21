@@ -35,11 +35,18 @@ else
     echo "CHANGELOG.md already contains 'v$VERSION', no update made."
 fi
 
+# Update release manifest files
+ALL_MANIFEST_YAML=$(find . -name "manifest.yaml" -type f | sort)
+# Update destribution manifest yaml versions.
+for f in $ALL_MANIFEST_YAML; do
+    perl -pi -e "s/version: \d+\.\d+\.\d+/version: $VERSION/g" "$f"
+    echo "Updated version in distribution yaml \`$f\` with version v$VERSION"
+done
+
+
 if [ -z "$CONTRIB_VERSION" ]; then
   echo "CONTRIB_VERSION not set, skipping."
 else
-  # Update release manifest files
-  ALL_MANIFEST_YAML=$(find . -name "manifest.yaml" -type f | sort)
   for f in $ALL_MANIFEST_YAML; do
       # update solarwinds contrib references
       perl -pi -e "s|^(\s+- gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+$|\1 v$CONTRIB_VERSION|" "$f"
