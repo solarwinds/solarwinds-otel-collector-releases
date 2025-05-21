@@ -69,10 +69,10 @@ else
   # update BUILDER_VERSION env var in ./.github/workflows/buildAndTest.yml
   perl -pi -e "s|BUILDER_VERSION: \"v[0-9]+\.[0-9]+\.[0-9]+\"|BUILDER_VERSION: \"v$BUILDER_VERSION\"|g" "$YAML_FILE"
   echo "Updated BUILDER_VERSION in /.github/workflows/buildAndTest.yaml to version $BUILDER_VERSION"
-  # update builder version in README.md
-  README_FILE="./README.md"
-  sed -i '' "/cmd\/builder@v/s|.*|\`go install go.opentelemetry.io/collector/cmd/builder@v$BUILDER_VERSION\`|" $README_FILE
-  echo "Updated BUILDER_VERSION in README to version $BUILDER_VERSION"
+  # update builder version in Makefile
+  MAKEFILE="./Makefile"
+  perl -pi -e "s|builder_version := \d+\.\d+\.\d+|builder_version := $BUILDER_VERSION|g" "$MAKEFILE"
+  echo "Updated builder_version in Makefile to version $BUILDER_VERSION"
 fi
 
 # update pkg\version\version.go to set the actual release version
