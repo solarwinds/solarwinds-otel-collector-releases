@@ -37,7 +37,7 @@ fi
 
 # Update release manifest files
 ALL_MANIFEST_YAML=$(find . -name "manifest.yaml" -type f | sort)
-# Update destribution manifest yaml versions.
+# Update distribution manifest yaml versions.
 for f in $ALL_MANIFEST_YAML; do
     perl -pi -e "s/version: \d+\.\d+\.\d+/version: $VERSION/g" "$f"
     echo "Updated version in distribution yaml \`$f\` with version v$VERSION"
