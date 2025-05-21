@@ -18,11 +18,14 @@ To run the image utilize following command:
 See [complete docker documentation](./build/docker/README.md).
 
 ### Binary
-Build the binary in `cmd/solarwinds-otel-collector` with `go build -tags playground .`
+Then you can build binary for any of the distributions. You can choose from `verified`, `playground` and `k8s`.
+Values for distribution parameter are the names of subfolders in `./distributions/*`.
 
-After successful build, `solarwinds-otel-collector` should be present in `cmd/solarwinds-otel-collector`.
+`make build distribution=verified`
 
-Run `solarwinds-otel-collector --config=config.yaml`.
+After successful build, `solarwinds-otel-collector-{distribution}` should be present in `_build` folder.
+
+Run `solarwinds-otel-collector-{distribution} --config=config.yaml`.
 
 ## Getting Started
 Configuration for SolarWinds OTel Collector has to contain [SolarWinds Extension](./extension/solarwindsextension/README.md) and [Solarwinds Exporter](./exporter/solarwindsexporter/README.md). 

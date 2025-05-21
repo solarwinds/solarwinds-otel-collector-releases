@@ -1,20 +1,26 @@
-FROM docker.io/library/golang:1.24.2-nanoserver-ltsc2022@sha256:08fd9b7279e7e202bd5fc6230af558f7952532a0f584fefd4cda8e4ccbde3dad AS base
+FROM golang:1.24.2-windowsservercore-ltsc2022@sha256:9065627b0559db0ab4d315a43a9af096813766d813a85a3ce51504d4b194b314 AS base
 
 COPY ./ /src
 WORKDIR /src
 
 FROM base AS builder
-
 ARG CGO_ENABLED=0
 ARG GOEXPERIMENT=boringcrypto
+WORKDIR /src
 
-RUN cd /src/cmd/solarwinds-otel-collector && go build -tags k8s -trimpath -o /src/bin/solarwinds-otel-collector "-ldflags=-s -w"
-RUN cd /src/cmd/connection-check && go build -trimpath -o /src/bin/connection-check "-ldflags=-s -w"
+# Install Chocolatey and make
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
+RUN iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+RUN choco install make -y
+SHELL ["cmd", "/S", "/C"]
+
+RUN make build distribution=k8s
+RUN cd /src/cmd/connection-check && go build -trimpath -o /src/_build/connection-check "-ldflags=-s -w"
 
 FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
 
-COPY --from=builder /src/bin/solarwinds-otel-collector /solarwinds-otel-collector.exe
-COPY --from=builder /src/bin/connection-check /connection-check.exe
+COPY --from=builder /src/_build/solarwinds-otel-collector-k8s /solarwinds-otel-collector.exe
+COPY --from=builder /src/_build/connection-check /connection-check.exe
 
 ENTRYPOINT ["solarwinds-otel-collector.exe"]
 CMD ["--config=/opt/default-config.yaml"]

@@ -1,5 +1,9 @@
 include Makefile.Common
 
+# Define compatible builder_version with the current version of the collector
+builder_version := 0.123.0
+swi_contrib_version := 0.123.7
+
 ALL_SRC := $(shell find . \( -name "*.go" \) \
 							-not -path '*generated*' \
 							-type f | sort)
@@ -25,4 +29,9 @@ check-licenses:
 
 .PHONY: prepare-release
 prepare-release:
-	@build/prepare-release.sh $(version)
+	@build/prepare-release.sh $(version) $(builder_version) $(swi_contrib_version)
+
+.PHONY: build
+build:
+	go install go.opentelemetry.io/collector/cmd/builder@v$(builder_version)
+	CGO_ENABLED=0 GOEXPERIMENT=boringcrypto builder --config=./distributions/$(distribution)/manifest.yaml
