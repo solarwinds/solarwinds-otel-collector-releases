@@ -1,5 +1,5 @@
-github.com/cenkalti/backoff/v4 v4.3.0 h1:MyRJ/UdXutAwSAT+s3wNd7MfTIcy71VQueUuFK343L8=
-github.com/cenkalti/backoff/v4 v4.3.0/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
+github.com/cenkalti/backoff/v5 v5.0.2 h1:rIfFVxEf1QsI7E1ZHfp/B4DF/6QBAUhmgkxc0H7Zss8=
+github.com/cenkalti/backoff/v5 v5.0.2/go.mod h1:rkhZdG3JZukswDf7f0cwqPNk4K0sa+F97BxZthm/crw=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
@@ -23,8 +23,8 @@ go.opentelemetry.io/auto/sdk v1.1.0 h1:cH53jehLUN6UFLY71z+NDOiNJqDdPRaXzTel0sJyS
 go.opentelemetry.io/auto/sdk v1.1.0/go.mod h1:3wSPjt5PWp2RhlCcmmOial7AvC4DQqZb7a7wCow3W8A=
 go.opentelemetry.io/otel v1.36.0 h1:UumtzIklRBY6cI/lllNZlALOF5nNIzJVb16APdvgTXg=
 go.opentelemetry.io/otel v1.36.0/go.mod h1:/TcFMXYjyRNh8khOAO9ybYkqaDBb/70aVwkNML4pP8E=
-go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.11.0 h1:HMUytBT3uGhPKYY/u/G5MR9itrlSO2SMOsSD3Tk3k7A=
-go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.11.0/go.mod h1:hdDXsiNLmdW/9BF2jQpnHHlhFajpWCEYfM6e5m2OAZg=
+go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.12.1 h1:2qoGDuAjMcth60YorIAFf0Phz4R3sHL0InVaTdI7nH8=
+go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.12.1/go.mod h1:A3WNcH/VFLr5amkW6jQCy4K9oKlqaNjQj8J7ZJKcx5g=
 go.opentelemetry.io/otel/log v0.12.1 h1:VIfeVj/w81CSR0ibbr2zYB3Q3p4f54QUPiJ2jqltaOk=
 go.opentelemetry.io/otel/log v0.12.1/go.mod h1:ShIItIxSYxufUMt+1H5a2wbckGli3/iCfuEbVZi/98E=
 go.opentelemetry.io/otel/metric v1.36.0 h1:MoWPKVhQvJ+eeXWHFBOPoBOi20jh6Iq2CcCREuTYufE=
