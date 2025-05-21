@@ -13,10 +13,11 @@ WORKDIR /src
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
 RUN iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 RUN choco install make -y
+SHELL ["cmd", "/S", "/C"]
 
-RUN make build distribution=$env:BUILD_TAG
+RUN make build distribution=%BUILD_TAG%
 # unify binary name as solarwinds-otel-collector
-RUN move C:\src\_build\solarwinds-otel-collector-$env:BUILD_TAG C:\src\_build\solarwinds-otel-collector
+RUN move C:\src\_build\solarwinds-otel-collector-%BUILD_TAG% C:\src\_build\solarwinds-otel-collector
 
 FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
 

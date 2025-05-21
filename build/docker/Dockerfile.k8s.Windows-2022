@@ -12,6 +12,7 @@ WORKDIR /src
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
 RUN iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 RUN choco install make -y
+SHELL ["cmd", "/S", "/C"]
 
 RUN make build distribution=k8s
 RUN cd /src/cmd/connection-check && go build -trimpath -o /src/_build/connection-check "-ldflags=-s -w"
