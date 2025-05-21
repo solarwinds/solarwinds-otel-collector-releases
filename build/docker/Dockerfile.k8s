@@ -6,11 +6,9 @@ COPY ./ /src
 WORKDIR /src
 
 FROM base AS builder
-ARG BUILDER_VERSION="v0.123.0"
 WORKDIR /src
 
-RUN go install go.opentelemetry.io/collector/cmd/builder@${BUILDER_VERSION}
-RUN CGO_ENABLED=0 GOEXPERIMENT=boringcrypto builder --config=/src/distributions/k8s/manifest.yaml
+RUN make build distribution=k8s
 RUN cd /src/cmd/connection-check && CGO_ENABLED=0 GOEXPERIMENT=boringcrypto go build -trimpath -o /src/_build/connection-check "-ldflags=-s -w"
 
 # Copy the journactl binary from this Debian image with

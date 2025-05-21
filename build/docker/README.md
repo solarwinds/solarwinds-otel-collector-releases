@@ -23,7 +23,7 @@ Pull the image from DockerHub. You can use other available tags `k8s`, `verified
 
 Optionally you can build the image yourself, simply run docker build command, i.e.
 
-`docker build . -f build/docker/Dockerfile --build-arg BUILD_TAG=playground --build-arg BUILDER_VERSION="v0.123.0" -t solarwinds-otel-collector:local`
+`docker build . -f build/docker/Dockerfile --build-arg BUILD_TAG=playground -t solarwinds-otel-collector:local`
 
 ## How to Run
 To run the image utilize following command:

@@ -61,16 +61,12 @@ fi
 if [ -z "$BUILDER_VERSION" ]; then
   echo "BUILDER_VERSION not set, skipping."
 else
-  YAML_FILE="./.github/workflows/buildAndTest.yml"
-  if [ ! -f "$YAML_FILE" ]; then
-      echo "buildAndTest.yml not found!"
+  # update builder_version in Makefile
+  MAKEFILE="./Makefile"
+  if [ ! -f "$MAKEFILE" ]; then
+      echo "Makefile not found!"
       exit 1
   fi
-  # update BUILDER_VERSION env var in ./.github/workflows/buildAndTest.yml
-  perl -pi -e "s|BUILDER_VERSION: \"v[0-9]+\.[0-9]+\.[0-9]+\"|BUILDER_VERSION: \"v$BUILDER_VERSION\"|g" "$YAML_FILE"
-  echo "Updated BUILDER_VERSION in /.github/workflows/buildAndTest.yaml to version $BUILDER_VERSION"
-  # update builder version in Makefile
-  MAKEFILE="./Makefile"
   perl -pi -e "s|builder_version := \d+\.\d+\.\d+|builder_version := $BUILDER_VERSION|g" "$MAKEFILE"
   echo "Updated builder_version in Makefile to version $BUILDER_VERSION"
 fi

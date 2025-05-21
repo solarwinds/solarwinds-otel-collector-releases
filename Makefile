@@ -32,4 +32,4 @@ prepare-release:
 .PHONY: build
 build:
 	go install go.opentelemetry.io/collector/cmd/builder@v$(builder_version)
-	builder --config=./distributions/$(distribution)/manifest.yaml
+	CGO_ENABLED=0 GOEXPERIMENT=boringcrypto builder --config=./distributions/$(distribution)/manifest.yaml

@@ -15,7 +15,6 @@ on:
 
 env:
   DOCKERHUB_IMAGE: solarwinds/solarwinds-otel-collector
-  BUILDER_VERSION: "v0.123.0"
 
 jobs:
   checks:
@@ -54,7 +53,6 @@ jobs:
         run: >
           docker build . --file build/docker/Dockerfile
           --build-arg BUILD_TAG=playground
-          --build-arg BUILDER_VERSION=${{ env.BUILDER_VERSION }}
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-playground
           --tag solarwinds-otel-collector:latest-playground
 
@@ -83,7 +81,6 @@ jobs:
         run: >
           docker build . --file build/docker/Dockerfile
           --build-arg BUILD_TAG=verified
-          --build-arg BUILDER_VERSION=${{ env.BUILDER_VERSION }}
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-verified
           --tag solarwinds-otel-collector:latest-verified
           --tag solarwinds-otel-collector:latest
@@ -116,7 +113,6 @@ jobs:
         run: >
           docker build . --file build/docker/Dockerfile.Windows-2022
           --build-arg BUILD_TAG=playground
-          --build-arg BUILDER_VERSION=${{ env.BUILDER_VERSION }}
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-playground
           --tag solarwinds-otel-collector:latest-nanoserver-ltsc2022-playground
 
@@ -179,7 +175,6 @@ jobs:
         run: >
           docker build . --file build/docker/Dockerfile.Windows-2022
           --build-arg BUILD_TAG=verified
-          --build-arg BUILDER_VERSION=${{ env.BUILDER_VERSION }}
           --tag solarwinds-otel-collector:${{ needs.generate_tag.outputs.tag }}-nanoserver-ltsc2022-verified
           --tag solarwinds-otel-collector:latest-nanoserver-ltsc2022-verified
 

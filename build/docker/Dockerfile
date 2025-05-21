@@ -5,11 +5,9 @@ COPY ./ /src
 
 FROM base AS builder
 ARG BUILD_TAG="playground"
-ARG BUILDER_VERSION="v0.123.0"
 WORKDIR /src
 
-RUN go install go.opentelemetry.io/collector/cmd/builder@${BUILDER_VERSION}
-RUN CGO_ENABLED=0 GOEXPERIMENT=boringcrypto builder --config=/src/distributions/${BUILD_TAG}/manifest.yaml
+RUN make build distribution=${BUILD_TAG}
 # unify binary name as solarwinds-otel-collector
 RUN mv /src/_build/solarwinds-otel-collector-${BUILD_TAG} /src/_build/solarwinds-otel-collector
 
