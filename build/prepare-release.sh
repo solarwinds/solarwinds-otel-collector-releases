@@ -14,7 +14,7 @@
 # limitations under the License.
 
 if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 <version> $1 <builder_version> $2 <swi_contrib_version>"
+    echo "Usage: $0 <version> $1 <builder_version> $2 <contrib_version>"
     exit 1
 fi
 
@@ -52,13 +52,17 @@ else
         echo "Makefile not found!"
         exit 1
     fi
-    perl -pi -e "s|swi_contrib_version := \d+\.\d+\.\d+|swi_contrib_version := $CONTRIB_VERSION|g" "$MAKEFILE"
-    echo "Updated swi_contrib_version in Makefile to version $CONTRIB_VERSION"
+    perl -pi -e "s|contrib_version := \d+\.\d+\.\d+|contrib_version := $CONTRIB_VERSION|g" "$MAKEFILE"
+    echo "Updated contrib_version in Makefile to version $CONTRIB_VERSION"
 
   # update solarwinds contrib references in distribution yaml files
   for f in $ALL_MANIFEST_YAML; do
       perl -pi -e "s|^(\s+- gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+$|\1 v$CONTRIB_VERSION|" "$f"
       echo "References to 'github.com/solarwinds/solarwinds-otel-collector-contrib' in $f updated with version v$CONTRIB_VERSION"
+      perl -pi -e "s|^(\s+- gomod: github.com/open-telemetry/opentelemetry-collector-contrib/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+$|\1 v$CONTRIB_VERSION|" "$f"
+      echo "References to 'github.com/open-telemetry/opentelemetry-collector-contrib' in $f updated with version v$CONTRIB_VERSION"
+      perl -pi -e "s|^(\s+- gomod: go.opentelemetry.io/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+$|\1 v$CONTRIB_VERSION|" "$f"
+      echo "References to 'go.opentelemetry.io' in $f updated with version v$CONTRIB_VERSION"
   done
 
   # We need to run go mod tidy after raising versions of solarwinds-otel-collector-contrib components
