@@ -1,0 +1,157 @@
+receivers:
+  apache:
+    endpoint: # Required endpoint
+    collection_interval: # Required collection interval
+    metrics:
+      apache.cpu.load:
+        enabled: true
+      apache.cpu.time:
+        enabled: true
+      apache.current_connections:
+        enabled: true
+      apache.load.1:
+        enabled: true
+      apache.load.5:
+        enabled: true
+      apache.load.15:
+        enabled: true
+      apache.request.time:
+        enabled: true
+      apache.requests:
+        enabled: true
+      apache.scoreboard:
+        enabled: true
+      apache.traffic:
+        enabled: true
+      apache.uptime:
+        enabled: true
+      apache.workers:
+        enabled: true
+  
+  # Optional receiver filelog
+  filelog:
+    include:
+      - # Optional log_path
+    start_at: end
+
+processors:
+  metricstransform:
+    transforms:
+      - include: apache.requests
+        action: insert
+        new_name: apache.requests.rate
+      - include: apache.traffic
+        action: insert
+        new_name: apache.traffic.rate
+      - include: apache.request.time
+        action: insert
+        new_name: apache.request.time.rate.temp
+      - include: apache.workers
+        action: insert
+        operations:
+          - action: delete_label_value
+            label: state
+            label_value: busy
+        new_name: apache.workers.idle
+      - include: ^apache\.
+        match_type: regexp
+        action: update
+        operations:
+          - action: add_label
+            new_label: sw.uams.receiver.name
+            new_value: apache
+  cumulativetodelta:
+    include:
+      metrics:
+        - apache.requests.rate
+        - apache.traffic.rate
+        - apache.request.time.rate.temp
+      match_type: strict
+  deltatorate:
+    metrics:
+      - apache.requests.rate
+      - apache.traffic.rate
+      - apache.request.time.rate.temp
+  metricsgeneration:
+    rules:
+      - name: apache.throughput
+        type: calculate
+        metric1: apache.traffic.rate
+        metric2: apache.requests.rate
+        operation: divide
+      - name: apache.time.perrequest
+        type: calculate
+        metric1: apache.request.time.rate.temp
+        metric2: apache.requests.rate
+        operation: divide
+  transform/desc:
+    metric_statements:
+      - context: metric
+        statements:
+          - set(description, "Number of requests per second") where name == "apache.requests.rate"
+          - set(unit, "{requests} per second") where name == "apache.requests.rate"
+          - set(description, "HTTP server traffic in bytes per second") where name == "apache.traffic.rate"
+          - set(unit, "By per second") where name == "apache.traffic.rate"
+          - set(description, "The number of idle workers") where name == "apache.workers.idle"
+          - set(description, "Average processing time per request") where name == "apache.time.perrequest"
+          - set(unit, "ms per request") where name == "apache.time.perrequest"
+          - set(description, "Average number of bytes served per request") where name == "apache.throughput"
+          - set(unit, "By per request") where name == "apache.throughput"
+  filter:
+    metrics:
+      exclude:
+        match_type: strict
+        metric_names:
+          - apache.request.time.rate.temp
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  batch:
+
+extensions:
+  solarwinds:
+    token: # Required token
+    collector_name: # Required collector_name
+    data_center: # Required data_center
+
+exporters:
+  solarwinds:
+    verbosity: detailed
+
+service:
+  telemetry:
+    metrics:
+      level: none
+  extensions: 
+    - solarwinds
+  pipelines:
+    metrics/apache:
+      receivers:
+        - apache
+      processors:
+        - memory_limiter
+        - metricstransform
+        - cumulativetodelta
+        - deltatorate
+        - metricsgeneration
+        - transform/desc
+        - filter
+        - batch
+      exporters:
+        - solarwinds
+        
+    # Optional pipeline logs/apache
+    logs/apache:
+      receivers:
+        - filelog
+      processors:
+        - memory_limiter
+        - batch
+      exporters:
+        - solarwinds
