@@ -2,6 +2,11 @@
 
 ## vNext
 
+## v0.127.0
+- Consumes OpenTelemetry Collector dependencies v0.127.0.
+- Release process utilizes builder to build the various distributions.
+- Dependencies bumped to latest available versions.
+
 ## v0.123.7
 - Add `routingconnector` to the k8s distribution
 - Add `solarwindsentityconnector` to the k8s distribution

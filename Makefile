@@ -1,8 +1,8 @@
 include Makefile.Common
 
 # Define compatible builder_version with the current version of the collector
-builder_version := 0.123.0
-swi_contrib_version := 0.123.7
+builder_version := 0.127.0
+contrib_version := 0.127.0
 
 ALL_SRC := $(shell find . \( -name "*.go" \) \
 							-not -path '*generated*' \
@@ -29,7 +29,7 @@ check-licenses:
 
 .PHONY: prepare-release
 prepare-release:
-	@build/prepare-release.sh $(version) $(builder_version) $(swi_contrib_version)
+	@build/prepare-release.sh $(version) $(builder_version) $(contrib_version)
 
 .PHONY: build
 build:
