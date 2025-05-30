@@ -1,7 +1,7 @@
 receivers:
   apache:
     endpoint: # Required endpoint
-    collection_interval: # Required collection interval
+    collection_interval: # Required collection_interval
     metrics:
       apache.cpu.load:
         enabled: true
