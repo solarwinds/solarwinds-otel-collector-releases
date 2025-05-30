@@ -183,3 +183,7 @@ connectors:
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/connector/spanmetricsconnector v0.127.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/connector/sumconnector v0.127.0
   - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/connector/solarwindsentityconnector v0.127.0
+
+replaces:
+  # k8sattributesprocessor@v0.127.0 is not compatible with v0.33.1
+  - k8s.io/client-go v0.33.1 => k8s.io/client-go v0.32.3
