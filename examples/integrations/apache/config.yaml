@@ -35,7 +35,35 @@ receivers:
     start_at: end
 
 processors:
-  metricstransform:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  # Adding receiver name information.
+  resource/receiver_name/apache:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "apache"
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  metricstransform/apache:
     transforms:
       - include: apache.requests
         action: insert
@@ -53,26 +81,19 @@ processors:
             label: state
             label_value: busy
         new_name: apache.workers.idle
-      - include: ^apache\.
-        match_type: regexp
-        action: update
-        operations:
-          - action: add_label
-            new_label: sw.uams.receiver.name
-            new_value: apache
-  cumulativetodelta:
+  cumulativetodelta/apache:
     include:
       metrics:
         - apache.requests.rate
         - apache.traffic.rate
         - apache.request.time.rate.temp
       match_type: strict
-  deltatorate:
+  deltatorate/apache:
     metrics:
       - apache.requests.rate
       - apache.traffic.rate
       - apache.request.time.rate.temp
-  metricsgeneration:
+  metricsgeneration/apache:
     rules:
       - name: apache.throughput
         type: calculate
@@ -84,7 +105,7 @@ processors:
         metric1: apache.request.time.rate.temp
         metric2: apache.requests.rate
         operation: divide
-  transform/desc:
+  transform/desc/apache:
     metric_statements:
       - context: metric
         statements:
@@ -97,22 +118,14 @@ processors:
           - set(unit, "ms per request") where name == "apache.time.perrequest"
           - set(description, "Average number of bytes served per request") where name == "apache.throughput"
           - set(unit, "By per request") where name == "apache.throughput"
-  filter:
+  filter/apache:
     metrics:
       exclude:
         match_type: strict
         metric_names:
           - apache.request.time.rate.temp
-  memory_limiter:
-    check_interval: 1s
-    limit_percentage: 50
-    spike_limit_percentage: 30
-    detectors: ["system"]
-    timeout: 2s
-    override: false
-    system:
-      hostname_sources: ["os"]
   batch:
+    send_batch_max_size: 20000
 
 extensions:
   solarwinds:
@@ -122,7 +135,6 @@ extensions:
 
 exporters:
   solarwinds:
-    verbosity: detailed
 
 service:
   telemetry:
@@ -136,12 +148,18 @@ service:
         - apache
       processors:
         - memory_limiter
-        - metricstransform
-        - cumulativetodelta
-        - deltatorate
-        - metricsgeneration
-        - transform/desc
-        - filter
+        - resource/receiver_name/apache
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - metricstransform/apache
+        - cumulativetodelta/apache
+        - deltatorate/apache
+        - metricsgeneration/apache
+        - transform/desc/apache
+        - filter/apache
+        # - potential solarwinds processor
         - batch
       exporters:
         - solarwinds
@@ -152,6 +170,12 @@ service:
         - filelog
       processors:
         - memory_limiter
+        - resource/receiver_name/apache
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        # - potential solarwinds processor 
         - batch
       exporters:
         - solarwinds
