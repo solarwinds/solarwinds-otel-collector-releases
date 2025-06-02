@@ -159,7 +159,6 @@ service:
         - metricsgeneration/apache
         - transform/desc/apache
         - filter/apache
-        # - potential solarwinds processor
         - batch
       exporters:
         - solarwinds
@@ -175,7 +174,6 @@ service:
         - resourcedetection/azure
         - resourcedetection/gcp
         - resourcedetection/system
-        # - potential solarwinds processor 
         - batch
       exporters:
         - solarwinds
