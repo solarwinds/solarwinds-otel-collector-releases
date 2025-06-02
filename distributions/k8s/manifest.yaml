@@ -2,53 +2,57 @@ dist:
   module: github.com/solarwinds/solarwinds-otel-collector/k8s
   name: solarwinds-otel-collector-k8s
   description: SolarWinds OpenTelemetry Collector for Kubernetes
-  version: 0.123.7
+  version: 0.127.0
   output_path: ./_build
 
 extensions:
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/observer/k8sobserver v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage v0.123.0
-  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/extension/solarwindsextension v0.123.7
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/observer/k8sobserver v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage v0.127.0
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/extension/solarwindsextension v0.127.0
 
 exporters:
-  - gomod: go.opentelemetry.io/collector/exporter/debugexporter v0.123.0
-  - gomod: go.opentelemetry.io/collector/exporter/nopexporter v0.123.0
-  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/fileexporter v0.123.0
-  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/exporter/solarwindsexporter v0.123.7
+  - gomod: go.opentelemetry.io/collector/exporter/debugexporter v0.127.0
+  - gomod: go.opentelemetry.io/collector/exporter/nopexporter v0.127.0
+  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/fileexporter v0.127.0
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/exporter/solarwindsexporter v0.127.0
 
 processors:
-  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.123.0
-  - gomod: go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/cumulativetodeltaprocessor v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/deltatocumulativeprocessor v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/deltatorateprocessor v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/groupbyattrsprocessor v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/groupbytraceprocessor v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/k8sattributesprocessor v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricsgenerationprocessor v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.123.0
-  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/processor/k8seventgenerationprocessor v0.123.7
-  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/processor/swok8sworkloadtypeprocessor v0.123.7
+  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.127.0
+  - gomod: go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/cumulativetodeltaprocessor v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/deltatocumulativeprocessor v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/deltatorateprocessor v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/groupbyattrsprocessor v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/groupbytraceprocessor v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/k8sattributesprocessor v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricsgenerationprocessor v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.127.0
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/processor/k8seventgenerationprocessor v0.127.0
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/processor/swok8sworkloadtypeprocessor v0.127.0
 
 receivers:
-  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8seventsreceiver v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8sobjectsreceiver v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/receivercreator v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/simpleprometheusreceiver v0.123.0
-  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swok8sobjectsreceiver v0.123.7
+  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8seventsreceiver v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8sobjectsreceiver v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/receivercreator v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/simpleprometheusreceiver v0.127.0
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swok8sobjectsreceiver v0.127.0
 
 connectors:
-  - gomod: go.opentelemetry.io/collector/connector/forwardconnector v0.123.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/connector/routingconnector v0.123.0
-  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/connector/solarwindsentityconnector v0.123.7
+  - gomod: go.opentelemetry.io/collector/connector/forwardconnector v0.127.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/connector/routingconnector v0.127.0
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/connector/solarwindsentityconnector v0.127.0
+
+replaces:
+  # k8sattributesprocessor@v0.127.0 is not compatible with v0.33.1
+  - k8s.io/client-go v0.33.1 => k8s.io/client-go v0.32.3
