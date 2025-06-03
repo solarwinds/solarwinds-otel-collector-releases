@@ -1,0 +1,217 @@
+receivers:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'kafka'
+          scrape_interval: # Required parameter
+          static_configs:
+            - targets:
+                - # Required parameter
+
+  # Optional receiver
+  filelog:
+    include:
+      - # Optional parameter
+    start_at: end
+    poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/integration/kafka:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "kafka"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  metricstransform/kafka:
+    transforms:
+      - include: kafka_log_logflushstats_logflushrateandtimems
+        match_type: strict
+        experimental_match_labels: { "quantile": "0.50" }
+        action: insert
+        new_name: kafka_log_logflushstats_logflushrateandtimems.p50
+      - include: kafka_log_logflushstats_logflushrateandtimems
+        match_type: strict
+        experimental_match_labels: { "quantile": "0.95" }
+        action: insert
+        new_name: kafka_log_logflushstats_logflushrateandtimems.p95
+      - include: kafka_log_logflushstats_logflushrateandtimems
+        match_type: strict
+        experimental_match_labels: { "quantile": "0.999" }
+        action: insert
+        new_name: kafka_log_logflushstats_logflushrateandtimems.p999
+      - include: kafka_network_requestmetrics_localtimems
+        match_type: strict
+        experimental_match_labels: { "quantile": "0.50" }
+        action: insert
+        new_name: kafka_network_requestmetrics_localtimems.p50
+      - include: kafka_network_requestmetrics_localtimems
+        match_type: strict
+        experimental_match_labels: { "quantile": "0.95" }
+        action: insert
+        new_name: kafka_network_requestmetrics_localtimems.p95
+      - include: kafka_network_requestmetrics_localtimems
+        match_type: strict
+        experimental_match_labels: { "quantile": "0.999" }
+        action: insert
+        new_name: kafka_network_requestmetrics_localtimems.p999
+      - include: kafka_network_requestmetrics_totaltimems
+        match_type: strict
+        experimental_match_labels: { "quantile": "0.50" }
+        action: insert
+        new_name: kafka_network_requestmetrics_totaltimems.p50
+      - include: kafka_network_requestmetrics_totaltimems
+        match_type: strict
+        experimental_match_labels: { "quantile": "0.95" }
+        action: insert
+        new_name: kafka_network_requestmetrics_totaltimems.p95
+      - include: kafka_network_requestmetrics_totaltimems
+        match_type: strict
+        experimental_match_labels: { "quantile": "0.999" }
+        action: insert
+        new_name: kafka_network_requestmetrics_totaltimems.p999
+    filter/kafka:
+      metrics:
+        include:
+          match_type: strict
+          metric_names:
+            - kafka_server_brokertopicmetrics_bytesin_1minuterate
+            - kafka_server_brokertopicmetrics_messagesin_1minuterate
+            - kafka_server_replicamanager_leadercount
+            - kafka_server_replicamanager_underreplicatedpartitions
+            - kafka_server_replicamanager_partitioncount
+            - kafka_server_replicamanager_isrshrinks_1minuterate
+            - kafka_server_replicafetchermanager_maxlag
+            - kafka_controller_kafkacontroller_activecontrollercount
+            - kafka_network_socketserver_networkprocessoravgidlepercent
+            - kafka_network_requestmetrics_totaltimems
+            - kafka_network_requestmetrics_totaltimems.p50   # custom
+            - kafka_network_requestmetrics_totaltimems.p95   # custom
+            - kafka_network_requestmetrics_totaltimems.p999  # custom
+            - kafka_network_requestmetrics_localtimems
+            - kafka_network_requestmetrics_localtimems.p50   # custom
+            - kafka_network_requestmetrics_localtimems.p95   # custom
+            - kafka_network_requestmetrics_localtimems.p999  # custom
+            - kafka_log_logflushstats_logflushrateandtimems
+            - kafka_log_logflushstats_logflushrateandtimems.p50   # custom
+            - kafka_log_logflushstats_logflushrateandtimems.p95   # custom
+            - kafka_log_logflushstats_logflushrateandtimems.p999  # custom
+    transform/desc/kafka:
+      metric_statements:
+        - context: metric
+          statements:
+            - set(description, "Average number of incoming bytes per minute.") where name == "kafka_server_brokertopicmetrics_bytesin_1minuterate"
+            - set(unit, "{By} per minute") where name == "kafka_server_brokertopicmetrics_bytesin_1minuterate"
+            - set(description, "Average number of incoming messages per minute.") where name == "kafka_server_brokertopicmetrics_messagesin_1minuterate"
+            - set(unit, "{messages} per minute") where name == "kafka_server_brokertopicmetrics_messagesin_1minuterate"
+            - set(description, "Number of leaders.") where name == "kafka_server_replicamanager_leadercount"
+            - set(unit, "{leaders}") where name == "kafka_server_replicamanager_leadercount"
+            - set(description, "Number of under-replicated partitions.") where name == "kafka_server_replicamanager_underreplicatedpartitions"
+            - set(unit, "{partitions}") where name == "kafka_server_replicamanager_underreplicatedpartitions"
+            - set(description, "Number of partitions.") where name == "kafka_server_replicamanager_partitioncount"
+            - set(unit, "{partitions}") where name == "kafka_server_replicamanager_partitioncount"
+            - set(description, "If a broker goes down, ISR for some of the partitions will shrink. When that broker is up again, ISR will be expanded once the replicas are fully caught up. One minute rate.") where name == "kafka_server_replicamanager_isrshrinks_1minuterate"
+            - set(unit, "{isrshrinks} per minute") where name == "kafka_server_replicamanager_isrshrinks_1minuterate"
+            - set(description, "Number of messages the consumer lags behind the producer by.") where name == "kafka_server_replicafetchermanager_maxlag"
+            - set(unit, "{messages}") where name == "kafka_server_replicafetchermanager_maxlag"
+            - set(description, "Number of active controllers in the cluster.") where name == "kafka_controller_kafkacontroller_activecontrollercount"
+            - set(unit, "{controllers}") where name == "kafka_controller_kafkacontroller_activecontrollercount"
+            - set(description, "Average fraction of time the network processor threads are idle.") where name == "kafka_network_socketserver_networkprocessoravgidlepercent"
+            - set(unit, "1") where name == "kafka_network_socketserver_networkprocessoravgidlepercent"
+            - set(description, "Total time in ms to serve the specified request.") where name == "kafka_network_requestmetrics_totaltimems"
+            - set(unit, "{ms}") where name == "kafka_network_requestmetrics_totaltimems"
+            - set(description, "Total time in ms to serve the specified request. Median.") where name == "kafka_network_requestmetrics_totaltimems.p50"
+            - set(unit, "{ms}") where name == "kafka_network_requestmetrics_totaltimems.p50"
+            - set(description, "Total time in ms to serve the specified request. 95th percentile.") where name == "kafka_network_requestmetrics_totaltimems.p95"
+            - set(unit, "{ms}") where name == "kafka_network_requestmetrics_totaltimems.p95"
+            - set(description, "Total time in ms to serve the specified request. 999th percentile.") where name == "kafka_network_requestmetrics_totaltimems.p999"
+            - set(unit, "{ms}") where name == "kafka_network_requestmetrics_totaltimems.p999"
+            - set(description, "Time the request is processed at the leader.") where name == "kafka_network_requestmetrics_localtimems"
+            - set(unit, "{ms}") where name == "kafka_network_requestmetrics_localtimems"
+            - set(description, "Time the request is processed at the leader. Median.") where name == "kafka_network_requestmetrics_localtimems.p50"
+            - set(unit, "{ms}") where name == "kafka_network_requestmetrics_localtimems.p50"
+            - set(description, "Time the request is processed at the leader. 95th percentile.") where name == "kafka_network_requestmetrics_localtimems.p95"
+            - set(unit, "{ms}") where name == "kafka_network_requestmetrics_localtimems.p95"
+            - set(description, "Time the request is processed at the leader. 999th percentile.") where name == "kafka_network_requestmetrics_localtimems.p999"
+            - set(unit, "{ms}") where name == "kafka_network_requestmetrics_localtimems.p999"
+            - set(description, "Log flush rate and time.") where name == "kafka_log_logflushstats_logflushrateandtimems"
+            - set(unit, "{ms}") where name == "kafka_log_logflushstats_logflushrateandtimems"
+            - set(description, "Log flush rate and time. Median.") where name == "kafka_log_logflushstats_logflushrateandtimems.p50"
+            - set(unit, "{ms}") where name == "kafka_log_logflushstats_logflushrateandtimems.p50"
+            - set(description, "Log flush rate and time. 95th percentile.") where name == "kafka_log_logflushstats_logflushrateandtimems.p95"
+            - set(unit, "{ms}") where name == "kafka_log_logflushstats_logflushrateandtimems.p95"
+            - set(description, "Log flush rate and time. 999th percentile.") where name == "kafka_log_logflushstats_logflushrateandtimems.p999"
+            - set(unit, "{ms}") where name == "kafka_log_logflushstats_logflushrateandtimems.p999"
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required parameter
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  telemetry:
+    metrics:
+      level: none
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/kafka:
+      receivers:
+        - prometheus
+      processors:
+        - memory_limiter
+        - resource/integration/kafka
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - metricstransform/kafka
+        - filter/kafka
+        - transform/desc/kafka
+        - batch
+      exporters:
+        - solarwinds
+
+    # Optional pipeline
+    logs/kafka:
+      receivers:
+        - filelog
+      processors:
+        - memory_limiter
+        - resource/integration/kafka
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+      exporters:
+        - solarwinds

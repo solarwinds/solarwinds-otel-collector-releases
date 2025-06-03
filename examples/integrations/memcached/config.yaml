@@ -1,0 +1,152 @@
+receivers:
+  memcached:
+    endpoint: # Required parameter
+    transport: tcp
+    collection_interval: # Required parameter
+    #explicitly enable all default metrics
+    metrics:
+      memcached.bytes:
+        enabled: true
+      memcached.commands:
+        enabled: true
+      memcached.connections.current:
+        enabled: true
+      memcached.connections.total:
+        enabled: true
+      memcached.cpu.usage:
+        enabled: true
+      memcached.current_items:
+        enabled: true
+      memcached.evictions:
+        enabled: true
+      memcached.network:
+        enabled: true
+      memcached.operation_hit_ratio:
+        enabled: true
+      memcached.operations:
+        enabled: true
+      memcached.threads:
+        enabled: true
+
+  # Optional receiver
+  filelog:
+    include:
+      - # Optional parameter
+    start_at: end
+    poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/integration/memcached:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "memcached"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  metricstransform/memcached:
+    transforms:
+      - include: memcached.commands
+        action: insert
+        new_name: memcached.commands.rate
+      - include: memcached.operations
+        action: insert
+        new_name: memcached.operations.rate
+      - include: memcached.network
+        action: insert
+        new_name: memcached.network.rate
+  cumulativetodelta/memcached:
+    include:
+      metrics:
+        - memcached.commands.rate
+        - memcached.operations.rate
+        - memcached.network.rate
+      match_type: strict
+  deltatorate/memcached:
+    metrics:
+      - memcached.commands.rate
+      - memcached.operations.rate
+      - memcached.network.rate
+  transform/desc/memcached:
+    metric_statements:
+      - context: metric
+        statements:
+          - set(description, "Number of commands executed per second") where name == "memcached.commands.rate"
+          - set(unit, "{commands} per second") where name == "memcached.commands.rate"
+          - set(description, "Operation count per second") where name == "memcached.operations.rate"
+          - set(unit, "{operations} per second") where name == "memcached.operations.rate"
+          - set(description, "Bytes transferred over the network per second") where name == "memcached.network.rate"
+          - set(unit, "By per second") where name == "memcached.network.rate"
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required parameter
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  telemetry:
+    metrics:
+      level: none
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/memcached:
+      receivers:
+        - memcached
+      processors:
+        - memory_limiter
+        - resource/integration/memcached
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - metricstransform/memcached
+        - cumulativetodelta/memcached
+        - deltatorate/memcached
+        - transform/desc/memcached
+        - batch
+      exporters:
+        - solarwinds
+
+    # Optional pipeline
+    logs/memcached:
+      receivers:
+        - filelog
+      processors:
+        - memory_limiter
+        - resource/integration/memcached
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+      exporters:
+        - solarwinds
