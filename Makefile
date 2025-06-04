@@ -1,7 +1,7 @@
 include Makefile.Common
 
 # Define compatible otel_version with the current version of the collector
-contrib_version := 0.127.0
+otel_version := 0.127.0
 
 ALL_SRC := $(shell find . \( -name "*.go" \) \
 							-not -path '*generated*' \
