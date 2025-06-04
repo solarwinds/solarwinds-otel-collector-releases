@@ -5,16 +5,14 @@ receivers:
         - job_name: 'prometheus'
           scrape_interval: # Required parameter
           static_configs:
-            - targets:
-              # TODO: make the whole param required instead of value
-              - # Required parameter
+            - targets: # Required parameter
 
 processors:
   memory_limiter:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  resource/integration/prometheus:
+  resource/prometheus:
     attributes:
       - key: sw.otelcol.receiver.name
         value: "prometheus"
@@ -53,9 +51,6 @@ exporters:
   solarwinds:
 
 service:
-  telemetry:
-    metrics:
-      level: none
   extensions:
     - solarwinds
   pipelines:
@@ -64,7 +59,7 @@ service:
         - prometheus
       processors:
         - memory_limiter
-        - resource/integration/prometheus
+        - resource/prometheus
         - resourcedetection/ec2
         - resourcedetection/azure
         - resourcedetection/gcp

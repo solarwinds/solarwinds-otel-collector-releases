@@ -5,10 +5,9 @@ receivers:
     account: # Required parameter
     warehouse: # Required parameter
     collection_interval: # Required parameter
-    # TODO: remove to default to
-    schema: # Optional parameter - remove to default to ACCOUNT_USAGE
-    database: # Optional parameter - remove to default to SNOWFLAKE
-    role: # Optional parameter - remove to default to ACCOUNTADMIN
+    # schema: # Optional parameter
+    # database: # Optional parameter
+    # role: # Optional parameter
     metrics:
       snowflake.database.bytes_scanned.avg:
         enabled: true
@@ -42,7 +41,6 @@ receivers:
         enabled: true
       snowflake.total_elapsed_time.avg:
         enabled: true
-      # EXPLICITLY ENABLING ALL OPTIONAL METRICS
       snowflake.billing.cloud_service.total:
         enabled: true
       snowflake.billing.total_credit.total:
@@ -87,7 +85,7 @@ processors:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  resource/integration/snowflake:
+  resource/snowflake:
     attributes:
       - key: sw.otelcol.receiver.name
         value: "snowflake"
@@ -126,9 +124,6 @@ exporters:
   solarwinds:
 
 service:
-  telemetry:
-    metrics:
-      level: none
   extensions:
     - solarwinds
   pipelines:
@@ -137,7 +132,7 @@ service:
         - snowflake
       processors:
         - memory_limiter
-        - resource/integration/snowflake
+        - resource/snowflake
         - resourcedetection/ec2
         - resourcedetection/azure
         - resourcedetection/gcp

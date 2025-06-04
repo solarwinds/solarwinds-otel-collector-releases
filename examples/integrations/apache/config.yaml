@@ -27,22 +27,24 @@ receivers:
         enabled: true
       apache.workers:
         enabled: true
-  
   # Optional receiver
-  filelog:
-    include:
-      - # Optional parameter
-    start_at: end
+  # filelog:
+  #   include: # Required parameter
+  #   start_at: end
+  #   poll_interval: 5s
 
 processors:
   memory_limiter:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  resource/receiver_name/apache:
+  resource/apache:
     attributes:
       - key: sw.otelcol.receiver.name
         value: "apache"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
         action: insert
   resourcedetection/ec2:
     detectors: ["ec2"]
@@ -136,10 +138,7 @@ exporters:
   solarwinds:
 
 service:
-  telemetry:
-    metrics:
-      level: none
-  extensions: 
+  extensions:
     - solarwinds
   pipelines:
     metrics/apache:
@@ -147,7 +146,7 @@ service:
         - apache
       processors:
         - memory_limiter
-        - resource/receiver_name/apache
+        - resource/apache
         - resourcedetection/ec2
         - resourcedetection/azure
         - resourcedetection/gcp
@@ -163,16 +162,16 @@ service:
         - solarwinds
         
     # Optional pipeline
-    logs/apache:
-      receivers:
-        - filelog
-      processors:
-        - memory_limiter
-        - resource/receiver_name/apache
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
-        - batch
-      exporters:
-        - solarwinds
+    # logs/apache:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resource/apache
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #   exporters:
+    #     - solarwinds

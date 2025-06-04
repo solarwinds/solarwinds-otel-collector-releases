@@ -11,20 +11,18 @@ receivers:
         enabled: true
       nginx.requests:
         enabled: true
-
   # Optional receiver
-  filelog:
-    include:
-      - # Optional parameter
-    start_at: end
-    poll_interval: 5s
+  # filelog:
+  #   include: # Required parameter
+  #   start_at: end
+  #   poll_interval: 5s
 
 processors:
   memory_limiter:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  resource/integration/nginx:
+  resource/nginx:
     attributes:
       - key: sw.otelcol.receiver.name
         value: "nginx"
@@ -121,14 +119,6 @@ processors:
           - set(unit, "connections per second") where name == "nginx.connections_dropped.rate"
           - set(description, "Number of requests per second") where name == "nginx.requests.rate"
           - set(unit, "requests per second") where name == "nginx.requests.rate"
-  # TODO: Validate
-  transform/log_enrichment/nginx:
-    log_statements:
-      - context: log
-        statements:
-          # syslog facility and version are required for the host and service name to be propagated in SWO
-          - set(attributes["syslog.facility"], 1)
-          - set(attributes["syslog.version"], 1)
   filter/nginx:
     metrics:
       exclude:
@@ -149,18 +139,15 @@ exporters:
   solarwinds:
 
 service:
-  telemetry:
-    metrics:
-      level: none
   extensions:
     - solarwinds
   pipelines:
     metrics/nginx:
       receivers:
-        - nginx_stats
+        - nginx
       processors:
         - memory_limiter
-        - resource/integration/nginx
+        - resource/nginx
         - resourcedetection/ec2
         - resourcedetection/azure
         - resourcedetection/gcp
@@ -179,17 +166,16 @@ service:
         - solarwinds
 
     # Optional pipeline
-    logs/nginx:
-      receivers:
-        - filelog
-      processors:
-        - memory_limiter
-        - resource/integration/nginx
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
-        - transform/log_enrichment/nginx
-        - batch
-      exporters:
-        - solarwinds
+    # logs/nginx:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resource/nginx
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #   exporters:
+    #     - solarwinds

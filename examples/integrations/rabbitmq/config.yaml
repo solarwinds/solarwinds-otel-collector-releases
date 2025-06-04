@@ -17,7 +17,7 @@ receivers:
         enabled: true
       rabbitmq.message.current:
         enabled: true
-  prometheus:
+  prometheus/rabbitmq:
     config:
       scrape_configs:
         - job_name: 'rabbitmq'
@@ -25,23 +25,21 @@ receivers:
           static_configs:
             - targets:
               - # Required parameter
-
   # Optional receiver
-  filelog:
-    include:
-      - # Optional parameter
-    start_at: end
-    poll_interval: 5s
+  # filelog:
+  #   include: # Required parameter
+  #   start_at: end
+  #   poll_interval: 5s
 
 processors:
   memory_limiter:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  resource/integration/docker:
+  resource/rabbitmq:
     attributes:
       - key: sw.otelcol.receiver.name
-        value: "docker"
+        value: "rabbitmq"
         action: insert
       - key: sw.otelcol.integration.id
         value: # Required parameter
@@ -77,18 +75,16 @@ exporters:
   solarwinds:
 
 service:
-  telemetry:
-    metrics:
-      level: none
   extensions:
     - solarwinds
   pipelines:
-    metrics/docker:
+    metrics/rabbitmq:
       receivers:
-        - docker_stats
+        - rabbitmq
+        - prometheus/rabbitmq
       processors:
         - memory_limiter
-        - resource/integration/docker
+        - resource/rabbitmq
         - resourcedetection/ec2
         - resourcedetection/azure
         - resourcedetection/gcp
@@ -98,16 +94,16 @@ service:
         - solarwinds
 
     # Optional pipeline
-    logs/docker:
-      receivers:
-        - filelog
-      processors:
-        - memory_limiter
-        - resource/integration/docker
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
-        - batch
-      exporters:
-        - solarwinds
+    # logs/rabbitmq:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resource/rabbitmq
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #   exporters:
+    #     - solarwinds

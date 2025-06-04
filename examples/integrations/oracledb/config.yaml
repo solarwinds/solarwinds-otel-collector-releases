@@ -60,20 +60,18 @@ receivers:
         enabled: true
       oracledb.consistent_gets:
         enabled: true
-
   # Optional receiver
-  filelog:
-    include:
-      - # Optional parameter
-    start_at: end
-    poll_interval: 5s
+  # filelog:
+  #   include: # Required parameter
+  #   start_at: end
+  #   poll_interval: 5s
 
 processors:
   memory_limiter:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  resource/integration/oracledb:
+  resource/oracledb:
     attributes:
       - key: sw.otelcol.receiver.name
         value: "oracledb"
@@ -112,10 +110,6 @@ exporters:
   solarwinds:
 
 service:
-  # TODO: leave telemetry to default - it is not sent anyway
-  telemetry:
-    metrics:
-      level: none
   extensions:
     - solarwinds
   pipelines:
@@ -124,7 +118,7 @@ service:
         - oracledb
       processors:
         - memory_limiter
-        - resource/integration/oracledb
+        - resource/oracledb
         - resourcedetection/ec2
         - resourcedetection/azure
         - resourcedetection/gcp
@@ -134,16 +128,16 @@ service:
         - solarwinds
 
     # Optional pipeline
-    logs/oracledb:
-      receivers:
-        - filelog
-      processors:
-        - memory_limiter
-        - resource/integration/oracledb
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
-        - batch
-      exporters:
-        - solarwinds
+    # logs/oracledb:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resource/oracledb
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #   exporters:
+    #     - solarwinds

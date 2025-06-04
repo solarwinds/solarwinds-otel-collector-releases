@@ -64,20 +64,18 @@ receivers:
         enabled: true
       redis.role:
         enabled: true
-
   # Optional receiver
-  filelog:
-    include:
-      - # Optional parameter
-    start_at: end
-    poll_interval: 5s
+  # filelog:
+  #   include: # Required parameter
+  #   start_at: end
+  #   poll_interval: 5s
 
 processors:
   memory_limiter:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  resource/integration/redis:
+  resource/redis:
     attributes:
       - key: sw.otelcol.receiver.name
         value: "redis"
@@ -116,9 +114,6 @@ exporters:
   solarwinds:
 
 service:
-  telemetry:
-    metrics:
-      level: none
   extensions:
     - solarwinds
   pipelines:
@@ -127,7 +122,7 @@ service:
         - redis
       processors:
         - memory_limiter
-        - resource/integration/redis
+        - resource/redis
         - resourcedetection/ec2
         - resourcedetection/azure
         - resourcedetection/gcp
@@ -137,16 +132,16 @@ service:
         - solarwinds
 
     # Optional pipeline
-    logs/redis:
-      receivers:
-        - filelog
-      processors:
-        - memory_limiter
-        - resource/integration/redis
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
-        - batch
-      exporters:
-        - solarwinds
+    # logs/redis:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resource/redis
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #   exporters:
+    #     - solarwinds

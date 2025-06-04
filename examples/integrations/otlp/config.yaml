@@ -1,19 +1,20 @@
 receivers:
   otlp:
     protocols:
-      # TODO: conditionals
       # Either http, grpc or both endpoints must be set
-      http:
-        endpoint: # Required parameter - if grpc parameter is not set
-      grpc:
-        endpoint: # Required parameter - if http parameter is not set
+      # Optional parameter
+      # http:
+      #   endpoint: # Required parameter
+      # Optional parameter
+      # grpc:
+      #   endpoint: # Required parameter
 
 processors:
   memory_limiter:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  resource/integration/otlp:
+  resource/otlp:
     attributes:
       - key: sw.otelcol.receiver.name
         value: "otlp"
@@ -52,9 +53,6 @@ exporters:
   solarwinds:
 
 service:
-  telemetry:
-    metrics:
-      level: none
   extensions:
     - solarwinds
   pipelines:
@@ -63,7 +61,7 @@ service:
         - otlp
       processors:
         - memory_limiter
-        - resource/integration/otlp
+        - resource/otlp
         - resourcedetection/ec2
         - resourcedetection/azure
         - resourcedetection/gcp
