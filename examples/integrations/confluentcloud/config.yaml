@@ -1,0 +1,94 @@
+receivers:
+  prometheus/confluentcloud:
+    config:
+      scrape_configs:
+        - job_name: 'confluent'
+          scrape_interval: # Required parameter
+          scrape_timeout: 1m
+          static_configs:
+            - targets: # Required parameter
+          scheme: https
+          basic_auth:
+            username: # Required secret
+            password: # Required secret
+          metrics_path: /v2/metrics/cloud/export
+          # At least one of these should be supplied, to poll something.
+          params:
+            # Optional parameter
+            "resource.kafka.id":
+              - # Optional value            
+            # Optional parameter
+            "resource.schema_registry.id":
+              - # Optional value
+            # Optional parameter
+            "resource.connector.id":
+              - # Optional value
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/receiver_name/confluentcloud:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "confluentcloud" # !! check proper receiver name !!
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required parameter
+    collector_name: # Required parameter
+    data_center: # Required parameter
+  # Optional extension
+  pprof:
+    endpoint: localhost: # Optional parameter
+
+exporters:
+  solarwinds:
+
+service:
+  telemetry:
+    metrics:
+      level: none
+  extensions: 
+    - solarwinds
+    # Optional extension
+    - pprof
+  pipelines:
+    metrics/confluentcloud:
+      receivers:
+        - prometheus/confluentcloud
+      processors:
+        - memory_limiter
+        - resource/receiver_name/confluentcloud
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+      exporters:
+        - solarwinds
