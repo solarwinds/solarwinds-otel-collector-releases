@@ -1,0 +1,86 @@
+receivers:
+  filelog:
+    include:
+      - # Required parameter
+    start_at: # Required parameter
+    poll_interval: # Required parameter
+    ordering_criteria:
+      top_n: 1
+      sort_by:
+        - sort_type: mtime
+    encoding: # Optional parameter
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/integration/filelog:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "filelog"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  # TODO: validate
+  transform/log_enrichment/filelog:
+    log_statements:
+      - context: resource
+        statements:
+          - set(attributes["sw.otelcol.receiver.name"], "hostmetrics")
+      - context: log
+        statements:
+          - set(attributes["syslog.facility"], 1)
+          - set(attributes["syslog.version"], 1)
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required parameter
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  telemetry:
+    metrics:
+      level: none
+  extensions:
+    - solarwinds
+  pipelines:
+    logs/filelog:
+      receivers:
+        - filelog
+      processors:
+        - memory_limiter
+        - resource/integration/filelog
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - transform/log_enrichment/filelog
+        - batch
+      exporters:
+        - solarwinds

@@ -1,0 +1,151 @@
+receivers:
+  iis:
+    collection_interval: # Required parameter
+    metrics:
+      iis.connection.active:
+        enabled: true
+      iis.connection.anonymous:
+        enabled: true
+      iis.connection.attempt.count:
+        enabled: true
+      iis.network.blocked:
+        enabled: true
+      iis.network.file.count:
+        enabled: true
+      iis.network.io:
+        enabled: true
+      iis.request.count:
+        enabled: true
+      iis.request.queue.age.max:
+        enabled: true
+      iis.request.queue.count:
+        enabled: true
+      iis.request.rejected:
+        enabled: true
+      iis.thread.active:
+        enabled: true
+      iis.uptime:
+        enabled: true
+
+  # Optional receiver
+  filelog:
+    include:
+      - # Optional parameter
+    start_at: end
+    poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/integration/iis:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "iis"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  metricstransform/rates/iis:
+    transforms:
+      - include: iis.connection.anonymous
+        action: insert
+        new_name: iis.connection.anonymous.rate
+      - include: iis.connection.attempt.count
+        action: insert
+        new_name: iis.connection.attempt.count.rate
+      - include: iis.network.io
+        action: insert
+        new_name: iis.network.io.rate
+  cumulativetodelta/rates/iis:
+    include:
+      metrics:
+        - iis.connection.anonymous.rate
+        - iis.connection.attempt.count.rate
+        - iis.network.io.rate
+      match_type: strict
+  deltatorate/rates/iis:
+    metrics:
+      - iis.connection.anonymous.rate
+      - iis.connection.attempt.count.rate
+      - iis.network.io.rate
+  transform/desc/iis:
+    metric_statements:
+      - context: metric
+        statements:
+          - set(description, "Number of connections established anonymously, per second.") where name == "iis.connection.anonymous.rate"
+          - set(unit, "{connections} per second") where name == "iis.connection.anonymous.rate"
+          - set(description, "Total number of attempts to connect to the server, per second.") where name == "iis.connection.attempt.count.rate"
+          - set(unit, "{attempts} per second") where name == "iis.connection.attempt.count.rate"
+          - set(description, "Total amount of bytes sent and received, per second.") where name == "iis.network.io.rate"
+          - set(unit, "By per second") where name == "iis.network.io.rate"
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required parameter
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  telemetry:
+    metrics:
+      level: none
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/iis:
+      receivers:
+        - iis
+      processors:
+        - memory_limiter
+        - resource/integration/iis
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - metricstransform/rates/iis
+        - cumulativetodelta/rates/iis
+        - deltatorate/rates/iis
+        - transform/desc/iis
+        - batch
+      exporters:
+        - solarwinds
+
+    # Optional pipeline
+    logs/iis:
+      receivers:
+        - filelog
+      processors:
+        - memory_limiter
+        - resource/integration/iis
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+      exporters:
+        - solarwinds

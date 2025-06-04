@@ -1,0 +1,113 @@
+receivers:
+  rabbitmq:
+    endpoint: # Required parameter
+    collection_interval: # Required parameter
+    username: # Required secret
+    password: # Required secret
+    metrics:
+      rabbitmq.message.delivered:
+        enabled: true
+      rabbitmq.message.published:
+        enabled: true
+      rabbitmq.message.acknowledged:
+        enabled: true
+      rabbitmq.message.dropped:
+        enabled: true
+      rabbitmq.consumer.count:
+        enabled: true
+      rabbitmq.message.current:
+        enabled: true
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'rabbitmq'
+          scrape_interval: # Required parameter
+          static_configs:
+            - targets:
+              - # Required parameter
+
+  # Optional receiver
+  filelog:
+    include:
+      - # Optional parameter
+    start_at: end
+    poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/integration/docker:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "docker"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required parameter
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  telemetry:
+    metrics:
+      level: none
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/docker:
+      receivers:
+        - docker_stats
+      processors:
+        - memory_limiter
+        - resource/integration/docker
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+      exporters:
+        - solarwinds
+
+    # Optional pipeline
+    logs/docker:
+      receivers:
+        - filelog
+      processors:
+        - memory_limiter
+        - resource/integration/docker
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+      exporters:
+        - solarwinds
