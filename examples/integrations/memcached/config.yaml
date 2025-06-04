@@ -3,7 +3,6 @@ receivers:
     endpoint: # Required parameter
     transport: tcp
     collection_interval: # Required parameter
-    #explicitly enable all default metrics
     metrics:
       memcached.bytes:
         enabled: true
