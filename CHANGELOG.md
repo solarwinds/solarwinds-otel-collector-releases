@@ -2,6 +2,9 @@
 
 ## vNext
 
+## v0.127.1
+- Consumes [solarwinds-otel-collector-contrib](https://github.com/solarwinds/solarwinds-otel-collector-contrib) `v0.127.1` dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01271)
+
 ## v0.127.0
 - Consumes OpenTelemetry Collector dependencies v0.127.0.
 - Release process utilizes builder to build the various distributions.
