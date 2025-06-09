@@ -14,13 +14,12 @@
 # limitations under the License.
 
 if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 <version> $1 <builder_version> $2 <swi_contrib_version>"
+    echo "Usage: $0 <version> $1 <otel_version>"
     exit 1
 fi
 
 VERSION=$1
-BUILDER_VERSION=$2
-CONTRIB_VERSION=$3
+OTEL_VERSION=$2
 
 # Update CHANGELOG.md
 CHANGELOG_FILE="./CHANGELOG.md"
@@ -43,8 +42,8 @@ for f in $ALL_MANIFEST_YAML; do
     echo "Updated version in distribution yaml \`$f\` with version v$VERSION"
 done
 
-if [ -z "$CONTRIB_VERSION" ]; then
-  echo "CONTRIB_VERSION not set, skipping."
+if [ -z "$OTEL_VERSION" ]; then
+  echo "OTEL_VERSION not set, skipping."
 else
   # update swi_contrib_version in Makefile
     MAKEFILE="./Makefile"
@@ -52,32 +51,27 @@ else
         echo "Makefile not found!"
         exit 1
     fi
-    perl -pi -e "s|swi_contrib_version := \d+\.\d+\.\d+|swi_contrib_version := $CONTRIB_VERSION|g" "$MAKEFILE"
-    echo "Updated swi_contrib_version in Makefile to version $CONTRIB_VERSION"
+    perl -pi -e "s|otel_version := \d+\.\d+\.\d+|otel_version := $OTEL_VERSION|g" "$MAKEFILE"
+    echo "Updated otel_version in Makefile to version $OTEL_VERSION"
 
-  # update solarwinds contrib references in distribution yaml files
+  # update otel contrib references in distribution yaml files
   for f in $ALL_MANIFEST_YAML; do
-      perl -pi -e "s|^(\s+- gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+$|\1 v$CONTRIB_VERSION|" "$f"
-      echo "References to 'github.com/solarwinds/solarwinds-otel-collector-contrib' in $f updated with version v$CONTRIB_VERSION"
+      perl -pi -e "s|^(\s+- gomod: github.com/open-telemetry/opentelemetry-collector-contrib/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+$|\1 v$OTEL_VERSION|" "$f"
+      echo "References to 'github.com/open-telemetry/opentelemetry-collector-contrib' in $f updated with version v$OTEL_VERSION"
+      perl -pi -e "s|^(\s+- gomod: go.opentelemetry.io/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+$|\1 v$OTEL_VERSION|" "$f"
+      echo "References to 'go.opentelemetry.io' in $f updated with version v$OTEL_VERSION"
   done
-
-  # We need to run go mod tidy after raising versions of solarwinds-otel-collector-contrib components
-  echo "Running go mod tidy"
-  find . -name "go.mod" -execdir sh -c 'go mod tidy' \;
 fi
 
-if [ -z "$BUILDER_VERSION" ]; then
-  echo "BUILDER_VERSION not set, skipping."
-else
-  # update builder_version in Makefile
-  MAKEFILE="./Makefile"
-  if [ ! -f "$MAKEFILE" ]; then
-      echo "Makefile not found!"
-      exit 1
-  fi
-  perl -pi -e "s|builder_version := \d+\.\d+\.\d+|builder_version := $BUILDER_VERSION|g" "$MAKEFILE"
-  echo "Updated builder_version in Makefile to version $BUILDER_VERSION"
-fi
+# update solarwinds contrib references in distribution yaml files
+for f in $ALL_MANIFEST_YAML; do
+    perl -pi -e "s|^(\s+- gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+$|\1 v$VERSION|" "$f"
+    echo "References to 'github.com/solarwinds/solarwinds-otel-collector-contrib' in $f updated with version v$VERSION"
+done
+
+# We need to run go mod tidy after raising versions of solarwinds-otel-collector-contrib components
+echo "Running go mod tidy"
+find . -name "go.mod" -execdir sh -c 'go mod tidy' \;
 
 # update pkg\version\version.go to set the actual release version
 GO_VERSION_FILE="./pkg/version/version.go"
