@@ -1,0 +1,143 @@
+receivers:
+  oracledb:
+    endpoint: # Required parameter
+    service:  # Required parameter
+    collection_interval: # Required parameter
+    username: # Required secret
+    password: # Required secret
+    metrics:
+      oracledb.cpu_time:
+        enabled: true
+      oracledb.enqueue_deadlocks:
+        enabled: true
+      oracledb.exchange_deadlocks:
+        enabled: true
+      oracledb.executions:
+        enabled: true
+      oracledb.logical_reads:
+        enabled: true
+      oracledb.hard_parses:
+        enabled: true
+      oracledb.parse_calls:
+        enabled: true
+      oracledb.pga_memory:
+        enabled: true
+      oracledb.physical_reads:
+        enabled: true
+      oracledb.user_commits:
+        enabled: true
+      oracledb.user_rollbacks:
+        enabled: true
+      oracledb.sessions.usage:
+        enabled: true
+      oracledb.processes.usage:
+        enabled: true
+      oracledb.processes.limit:
+        enabled: true
+      oracledb.sessions.limit:
+        enabled: true
+      oracledb.enqueue_locks.usage:
+        enabled: true
+      oracledb.enqueue_locks.limit:
+        enabled: true
+      oracledb.dml_locks.usage:
+        enabled: true
+      oracledb.dml_locks.limit:
+        enabled: true
+      oracledb.enqueue_resources.usage:
+        enabled: true
+      oracledb.enqueue_resources.limit:
+        enabled: true
+      oracledb.transactions.usage:
+        enabled: true
+      oracledb.transactions.limit:
+        enabled: true
+      oracledb.tablespace_size.limit:
+        enabled: true
+      oracledb.tablespace_size.usage:
+        enabled: true
+      oracledb.db_block_gets:
+        enabled: true
+      oracledb.consistent_gets:
+        enabled: true
+  # Optional receiver
+  # filelog:
+  #   include: # Required parameter
+  #   start_at: end
+  #   poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/oracledb:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "oracledb"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required secret
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/oracledb:
+      receivers:
+        - oracledb
+      processors:
+        - memory_limiter
+        - resource/oracledb
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+      exporters:
+        - solarwinds
+
+    # Optional pipeline
+    # logs/oracledb:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resource/oracledb
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #   exporters:
+    #     - solarwinds

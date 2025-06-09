@@ -1,0 +1,118 @@
+receivers:
+  docker_stats:
+    endpoint: # Required parameter
+    collection_interval: # Required parameter
+    metrics:
+      container.uptime:
+        enabled: true
+      container.cpu.usage.total:
+        enabled: true
+      container.cpu.usage.kernelmode:
+        enabled: true
+      container.cpu.usage.usermode:
+        enabled: true
+      container.cpu.utilization:
+        enabled: true
+      container.memory.usage.limit:
+        enabled: true
+      container.memory.usage.total:
+        enabled: true
+      container.memory.percent:
+        enabled: true
+      container.memory.total_cache:
+        enabled: true
+      container.memory.file:
+        enabled: true
+      container.blockio.io_service_bytes_recursive:
+        enabled: true
+      container.network.io.usage.rx_bytes:
+        enabled: true
+      container.network.io.usage.tx_bytes:
+        enabled: true
+      container.network.io.usage.rx_dropped:
+        enabled: true
+      container.network.io.usage.tx_dropped:
+        enabled: true
+      container.cpu.throttling_data.periods:
+        enabled: true
+  # Optional receiver
+  # filelog:
+  #  include: # Required parameter
+  #  start_at: end
+  #  poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/docker:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "docker"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required secret
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/docker:
+      receivers:
+        - docker_stats
+      processors:
+        - memory_limiter
+        - resource/docker
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+      exporters:
+        - solarwinds
+
+    # Optional pipeline
+    # logs/docker:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resource/docker
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #   exporters:
+    #     - solarwinds

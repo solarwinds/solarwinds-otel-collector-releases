@@ -1,0 +1,177 @@
+receivers:
+  apache:
+    endpoint: # Required parameter
+    collection_interval: # Required parameter
+    metrics:
+      apache.cpu.load:
+        enabled: true
+      apache.cpu.time:
+        enabled: true
+      apache.current_connections:
+        enabled: true
+      apache.load.1:
+        enabled: true
+      apache.load.5:
+        enabled: true
+      apache.load.15:
+        enabled: true
+      apache.request.time:
+        enabled: true
+      apache.requests:
+        enabled: true
+      apache.scoreboard:
+        enabled: true
+      apache.traffic:
+        enabled: true
+      apache.uptime:
+        enabled: true
+      apache.workers:
+        enabled: true
+  # Optional receiver
+  # filelog:
+  #   include: # Required parameter
+  #   start_at: end
+  #   poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/apache:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "apache"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  metricstransform/apache:
+    transforms:
+      - include: apache.requests
+        action: insert
+        new_name: apache.requests.rate
+      - include: apache.traffic
+        action: insert
+        new_name: apache.traffic.rate
+      - include: apache.request.time
+        action: insert
+        new_name: apache.request.time.rate.temp
+      - include: apache.workers
+        action: insert
+        operations:
+          - action: delete_label_value
+            label: state
+            label_value: busy
+        new_name: apache.workers.idle
+  cumulativetodelta/apache:
+    include:
+      metrics:
+        - apache.requests.rate
+        - apache.traffic.rate
+        - apache.request.time.rate.temp
+      match_type: strict
+  deltatorate/apache:
+    metrics:
+      - apache.requests.rate
+      - apache.traffic.rate
+      - apache.request.time.rate.temp
+  metricsgeneration/apache:
+    rules:
+      - name: apache.throughput
+        type: calculate
+        metric1: apache.traffic.rate
+        metric2: apache.requests.rate
+        operation: divide
+      - name: apache.time.perrequest
+        type: calculate
+        metric1: apache.request.time.rate.temp
+        metric2: apache.requests.rate
+        operation: divide
+  transform/desc/apache:
+    metric_statements:
+      - context: metric
+        statements:
+          - set(description, "Number of requests per second") where name == "apache.requests.rate"
+          - set(unit, "{requests} per second") where name == "apache.requests.rate"
+          - set(description, "HTTP server traffic in bytes per second") where name == "apache.traffic.rate"
+          - set(unit, "By per second") where name == "apache.traffic.rate"
+          - set(description, "The number of idle workers") where name == "apache.workers.idle"
+          - set(description, "Average processing time per request") where name == "apache.time.perrequest"
+          - set(unit, "ms per request") where name == "apache.time.perrequest"
+          - set(description, "Average number of bytes served per request") where name == "apache.throughput"
+          - set(unit, "By per request") where name == "apache.throughput"
+  filter/apache:
+    metrics:
+      exclude:
+        match_type: strict
+        metric_names:
+          - apache.request.time.rate.temp
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required secret
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/apache:
+      receivers:
+        - apache
+      processors:
+        - memory_limiter
+        - resource/apache
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - metricstransform/apache
+        - cumulativetodelta/apache
+        - deltatorate/apache
+        - metricsgeneration/apache
+        - transform/desc/apache
+        - filter/apache
+        - batch
+      exporters:
+        - solarwinds
+        
+    # Optional pipeline
+    # logs/apache:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resource/apache
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #   exporters:
+    #     - solarwinds

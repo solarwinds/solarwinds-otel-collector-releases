@@ -1,0 +1,80 @@
+receivers:
+  prometheus/confluentcloud:
+    config:
+      scrape_configs:
+        - job_name: 'confluentcloud'
+          scrape_interval: # Required parameter
+          scrape_timeout: 1m
+          static_configs:
+            - targets: # Required parameter
+          scheme: https
+          basic_auth:
+            username: # Required secret
+            password: # Required secret
+          metrics_path: /v2/metrics/cloud/export
+          # At least one of the params needs to be supplied to poll data
+          params:
+            # "resource.kafka.id": # Optional parameter
+            # "resource.schema_registry.id": # Optional parameter
+            # "resource.connector.id": # Optional parameter
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/confluentcloud:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "confluentcloud"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required secret
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/confluentcloud:
+      receivers:
+        - prometheus/confluentcloud
+      processors:
+        - memory_limiter
+        - resource/confluentcloud
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+      exporters:
+        - solarwinds

@@ -1,0 +1,168 @@
+receivers:
+  zookeeper:
+    endpoint: # Required parameter
+    collection_interval: # Required parameter
+    metrics:
+      zookeeper.connection.active:
+        enabled: true
+      zookeeper.data_tree.ephemeral_node.count:
+        enabled: true
+      zookeeper.data_tree.size:
+        enabled: true
+      zookeeper.file_descriptor.limit:
+        enabled: true
+      zookeeper.file_descriptor.open:
+        enabled: true
+      zookeeper.follower.count:
+        enabled: true
+      zookeeper.fsync.exceeded_threshold.count:
+        enabled: true
+      zookeeper.latency.avg:
+        enabled: true
+      zookeeper.latency.max:
+        enabled: true
+      zookeeper.latency.min:
+        enabled: true
+      zookeeper.packet.count:
+        enabled: true
+      zookeeper.request.active:
+        enabled: true
+      zookeeper.ruok:
+        enabled: true
+      zookeeper.sync.pending:
+        enabled: true
+      zookeeper.watch.count:
+        enabled: true
+      zookeeper.znode.count:
+        enabled: true
+  # Optional receiver
+  # filelog:
+  #   include: # Required parameter
+  #   start_at: end
+  #   poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/zookeeper:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "zookeeper"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  metricstransform/zookeeper:
+    transforms:
+      - include: zookeeper.file_descriptor.open
+        action: insert
+        new_name: zookeeper.file_descriptor.open.gauge.temp
+      - include: zookeeper.packet.count
+        action: insert
+        new_name: zookeeper.packet.count.rate
+  cumulativetodelta/zookeeper:
+    include:
+      metrics:
+        - zookeeper.packet.count.rate
+      match_type: strict
+  deltatorate/zookeeper:
+    metrics:
+      - zookeeper.packet.count.rate
+  transform/convert_limit/zookeeper:
+    metric_statements:
+      - context: metric
+        statements:
+          - convert_sum_to_gauge() where name == "zookeeper.file_descriptor.open.gauge.temp"
+  metricsgeneration/zookeeper:
+    rules:
+      # available = limit - open. Open had to be transformed to gauge in order for the calculation to work.
+      - name: zookeeper.file_descriptor.available
+        type: calculate
+        metric1: zookeeper.file_descriptor.limit
+        metric2: zookeeper.file_descriptor.open.gauge.temp
+        operation: subtract
+  transform/desc/zookeeper:
+    metric_statements:
+      - context: metric
+        statements:
+          - set(description, "Number of file descriptors that a ZooKeeper still has available.") where name == "zookeeper.file_descriptor.available"
+          - set(unit, "{file_descriptors}") where name == "zookeeper.file_descriptor.available"
+          - set(description, "Number of zooKeeper packets received and sent by a server.") where name == "zookeeper.packet.count.rate"
+          - set(unit, "{packets} per second") where name == "zookeeper.packet.count.rate"
+  filter/zookeeper:
+    metrics:
+      exclude:
+        match_type: strict
+        metric_names:
+          - zookeeper.file_descriptor.open.gauge.temp
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required secret
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/zookeeper:
+      receivers:
+        - zookeeper
+      processors:
+        - memory_limiter
+        - resource/zookeeper
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - metricstransform/zookeeper
+        - cumulativetodelta/zookeeper
+        - deltatorate/zookeeper
+        - transform/convert_limit/zookeeper
+        - metricsgeneration/zookeeper
+        - transform/desc/zookeeper
+        - filter/zookeeper
+        - batch
+      exporters:
+        - solarwinds
+
+    # Optional pipeline
+    # logs/zookeeper:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resource/zookeeper
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #   exporters:
+    #     - solarwinds
