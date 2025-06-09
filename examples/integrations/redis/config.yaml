@@ -2,7 +2,7 @@ receivers:
   redis:
     endpoint: # Required parameter
     collection_interval: # Required parameter
-    password: # Optional secret - remove if not used
+    # password: # Optional secret
     metrics:
       redis.clients.blocked:
         enabled: true

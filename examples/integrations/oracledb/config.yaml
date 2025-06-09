@@ -3,8 +3,8 @@ receivers:
     endpoint: # Required parameter
     service:  # Required parameter
     collection_interval: # Required parameter
-    password: # Required secret
     username: # Required secret
+    password: # Required secret
     metrics:
       oracledb.cpu_time:
         enabled: true
@@ -102,7 +102,7 @@ processors:
 
 extensions:
   solarwinds:
-    token: # Required parameter
+    token: # Required secret
     collector_name: # Required parameter
     data_center: # Required parameter
 

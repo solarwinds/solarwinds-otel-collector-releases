@@ -101,7 +101,7 @@ processors:
 
 extensions:
   solarwinds:
-    token: # Required parameter
+    token: # Required secret
     collector_name: # Required parameter
     data_center: # Required parameter
 

@@ -105,17 +105,17 @@ processors:
           - kafka_controller_kafkacontroller_activecontrollercount
           - kafka_network_socketserver_networkprocessoravgidlepercent
           - kafka_network_requestmetrics_totaltimems
-          - kafka_network_requestmetrics_totaltimems.p50   # custom
-          - kafka_network_requestmetrics_totaltimems.p95   # custom
-          - kafka_network_requestmetrics_totaltimems.p999  # custom
+          - kafka_network_requestmetrics_totaltimems.p50
+          - kafka_network_requestmetrics_totaltimems.p95
+          - kafka_network_requestmetrics_totaltimems.p999
           - kafka_network_requestmetrics_localtimems
-          - kafka_network_requestmetrics_localtimems.p50   # custom
-          - kafka_network_requestmetrics_localtimems.p95   # custom
-          - kafka_network_requestmetrics_localtimems.p999  # custom
+          - kafka_network_requestmetrics_localtimems.p50
+          - kafka_network_requestmetrics_localtimems.p95
+          - kafka_network_requestmetrics_localtimems.p999
           - kafka_log_logflushstats_logflushrateandtimems
-          - kafka_log_logflushstats_logflushrateandtimems.p50   # custom
-          - kafka_log_logflushstats_logflushrateandtimems.p95   # custom
-          - kafka_log_logflushstats_logflushrateandtimems.p999  # custom
+          - kafka_log_logflushstats_logflushrateandtimems.p50
+          - kafka_log_logflushstats_logflushrateandtimems.p95
+          - kafka_log_logflushstats_logflushrateandtimems.p999
   transform/desc/kafka:
     metric_statements:
       - context: metric
@@ -167,7 +167,7 @@ processors:
 
 extensions:
   solarwinds:
-    token: # Required parameter
+    token: # Required secret
     collector_name: # Required parameter
     data_center: # Required parameter
 
