@@ -1,0 +1,69 @@
+receivers:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'prometheus'
+          scrape_interval: # Required parameter
+          static_configs:
+            - targets: # Required parameter
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/prometheus:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "prometheus"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required secret
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/prometheus:
+      receivers:
+        - prometheus
+      processors:
+        - memory_limiter
+        - resource/prometheus
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+      exporters:
+        - solarwinds

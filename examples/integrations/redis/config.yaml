@@ -1,0 +1,147 @@
+receivers:
+  redis:
+    endpoint: # Required parameter
+    collection_interval: # Required parameter
+    # password: # Optional secret
+    metrics:
+      redis.clients.blocked:
+        enabled: true
+      redis.clients.connected:
+        enabled: true
+      redis.clients.max_input_buffer:
+        enabled: true
+      redis.clients.max_output_buffer:
+        enabled: true
+      redis.commands:
+        enabled: true
+      redis.commands.processed:
+        enabled: true
+      redis.connections.received:
+        enabled: true
+      redis.connections.rejected:
+        enabled: true
+      redis.cpu.time:
+        enabled: true
+      redis.db.avg_ttl:
+        enabled: true
+      redis.db.expires:
+        enabled: true
+      redis.db.keys:
+        enabled: true
+      redis.keys.evicted:
+        enabled: true
+      redis.keys.expired:
+        enabled: true
+      redis.keyspace.hits:
+        enabled: true
+      redis.keyspace.misses:
+        enabled: true
+      redis.latest_fork:
+        enabled: true
+      redis.memory.fragmentation_ratio:
+        enabled: true
+      redis.memory.lua:
+        enabled: true
+      redis.memory.peak:
+        enabled: true
+      redis.memory.rss:
+        enabled: true
+      redis.memory.used:
+        enabled: true
+      redis.net.input:
+        enabled: true
+      redis.net.output:
+        enabled: true
+      redis.rdb.changes_since_last_save:
+        enabled: true
+      redis.replication.backlog_first_byte_offset:
+        enabled: true
+      redis.replication.offset:
+        enabled: true
+      redis.slaves.connected:
+        enabled: true
+      redis.uptime:
+        enabled: true
+      redis.role:
+        enabled: true
+  # Optional receiver
+  # filelog:
+  #   include: # Required parameter
+  #   start_at: end
+  #   poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/redis:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "redis"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required parameter
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/redis:
+      receivers:
+        - redis
+      processors:
+        - memory_limiter
+        - resource/redis
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+      exporters:
+        - solarwinds
+
+    # Optional pipeline
+    # logs/redis:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resource/redis
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #   exporters:
+    #     - solarwinds

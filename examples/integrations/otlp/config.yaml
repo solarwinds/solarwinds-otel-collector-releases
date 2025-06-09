@@ -1,0 +1,71 @@
+receivers:
+  otlp:
+    protocols:
+      # Either http, grpc or both endpoints must be set
+      # Optional parameter
+      # http:
+      #   endpoint: # Required parameter
+      # Optional parameter
+      # grpc:
+      #   endpoint: # Required parameter
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/otlp:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "otlp"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required secret
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/otlp:
+      receivers:
+        - otlp
+      processors:
+        - memory_limiter
+        - resource/otlp
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+      exporters:
+        - solarwinds

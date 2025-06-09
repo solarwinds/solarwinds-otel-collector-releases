@@ -1,0 +1,181 @@
+receivers:
+  nginx:
+    endpoint: # Required parameter
+    collection_interval: # Required parameter
+    metrics:
+      nginx.connections_accepted:
+        enabled: true
+      nginx.connections_current:
+        enabled: true
+      nginx.connections_handled:
+        enabled: true
+      nginx.requests:
+        enabled: true
+  # Optional receiver
+  # filelog:
+  #   include: # Required parameter
+  #   start_at: end
+  #   poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resource/nginx:
+    attributes:
+      - key: sw.otelcol.receiver.name
+        value: "nginx"
+        action: insert
+      - key: sw.otelcol.integration.id
+        value: # Required parameter
+        action: insert
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  metricstransform/nginx:
+    transforms:
+      - include: nginx.connections_accepted
+        action: insert
+        new_name: nginx.connections_accepted.rate
+      - include: nginx.connections_handled
+        action: insert
+        new_name: nginx.connections_handled.rate
+      - include: nginx.requests
+        action: insert
+        new_name: nginx.requests.rate
+      - include: nginx.connections_current
+        action: insert
+        new_name: nginx.connections
+      - include: nginx.connections_accepted
+        action: insert
+        new_name: nginx.connections_accepted.gauge.temp
+      - include: nginx.connections_handled
+        action: insert
+        new_name: nginx.connections_handled.gauge.temp
+  transform/nginx:
+    metric_statements:
+      - context: metric
+        statements:
+          - convert_sum_to_gauge() where name == "nginx.connections_accepted.gauge.temp"
+          - convert_sum_to_gauge() where name == "nginx.connections_handled.gauge.temp"
+  metricsgeneration/nginx:
+    rules:
+      - name: nginx.connections_dropped
+        type: calculate
+        metric1: nginx.connections_accepted.gauge.temp
+        metric2: nginx.connections_handled.gauge.temp
+        operation: subtract
+  metricstransform/copy_dropped_rate/nginx:
+    transforms:
+      - include: nginx.connections_dropped
+        action: insert
+        new_name: nginx.connections_dropped.rate
+  transform/convert_dropped_rate/nginx:
+    metric_statements:
+      - context: metric
+        statements:
+          - convert_gauge_to_sum("cumulative", true) where name == "nginx.connections_dropped.rate"
+  cumulativetodelta/nginx:
+    include:
+      metrics:
+        - nginx.connections_accepted.rate
+        - nginx.connections_handled.rate
+        - nginx.connections_dropped.rate
+        - nginx.requests.rate
+      match_type: strict
+  deltatorate/nginx:
+    metrics:
+      - nginx.connections_accepted.rate
+      - nginx.connections_handled.rate
+      - nginx.connections_dropped.rate
+      - nginx.requests.rate
+  transform/desc/nginx:
+    metric_statements:
+      - context: metric
+        statements:
+          - set(description, "The total number of dropped client connections") where name == "nginx.connections_dropped"
+          - set(unit, "connections") where name == "nginx.connections_dropped"
+          - set(description, "Number of accepted client connections per second") where name == "nginx.connections_accepted.rate"
+          - set(unit, "connections per second") where name == "nginx.connections_accepted.rate"
+          - set(description, "Number of handled client connections per second") where name == "nginx.connections_handled.rate"
+          - set(unit, "connections per second") where name == "nginx.connections_handled.rate"
+          - set(description, "Number of dropped client connections per second") where name == "nginx.connections_dropped.rate"
+          - set(unit, "connections per second") where name == "nginx.connections_dropped.rate"
+          - set(description, "Number of requests per second") where name == "nginx.requests.rate"
+          - set(unit, "requests per second") where name == "nginx.requests.rate"
+  filter/nginx:
+    metrics:
+      exclude:
+        match_type: strict
+        metric_names:
+          - nginx.connections_accepted.gauge.temp
+          - nginx.connections_handled.gauge.temp
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    token: # Required secret
+    collector_name: # Required parameter
+    data_center: # Required parameter
+
+exporters:
+  solarwinds:
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/nginx:
+      receivers:
+        - nginx
+      processors:
+        - memory_limiter
+        - resource/nginx
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - metricstransform/nginx
+        - transform/nginx
+        - metricsgeneration/nginx
+        - metricstransform/copy_dropped_rate/nginx
+        - transform/convert_dropped_rate/nginx
+        - cumulativetodelta/nginx
+        - deltatorate/nginx
+        - transform/desc/nginx
+        - filter/nginx
+        - batch
+      exporters:
+        - solarwinds
+
+    # Optional pipeline
+    # logs/nginx:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resource/nginx
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #   exporters:
+    #     - solarwinds
