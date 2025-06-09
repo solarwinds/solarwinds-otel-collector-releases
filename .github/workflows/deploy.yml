@@ -99,6 +99,7 @@ jobs:
           tags: |
             ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-verified
             ${{ env.DOCKERHUB_IMAGE }}:latest-verified
+            ${{ env.DOCKERHUB_IMAGE }}:latest
 
       - name: Build and Push - k8s
         uses: docker/build-push-action@v6
@@ -282,7 +283,7 @@ jobs:
 
       - name: Get Manifest for Verified Image
         run: |
-          docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-playground > manifest-verified.json
+          docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-verified > manifest-verified.json
 
       - name: Create Multi-arch Manifest for Verified Image
         run: |
