@@ -2,6 +2,10 @@
 
 ## vNext
 
+## v0.127.2
+- Consumes [solarwinds-otel-collector-contrib](https://github.com/solarwinds/solarwinds-otel-collector-contrib) `v0.127.2` dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01272)
+- Added examples of [integration templates](./examples/integrations) compatible with SolarWinds Observability SaaS.
+
 ## v0.127.1
 - Consumes [solarwinds-otel-collector-contrib](https://github.com/solarwinds/solarwinds-otel-collector-contrib) `v0.127.1` dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01271)
 

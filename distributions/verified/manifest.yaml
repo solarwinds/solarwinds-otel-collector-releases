@@ -2,7 +2,7 @@ dist:
   module: github.com/solarwinds/solarwinds-otel-collector/verified
   name: solarwinds-otel-collector-verified
   description: SolarWinds OpenTelemetry Collector - Verified
-  version: 0.127.1
+  version: 0.127.2
   output_path: ./_build
 
 extensions:
@@ -11,14 +11,14 @@ extensions:
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/observer/k8sobserver v0.127.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/solarwindsapmsettingsextension v0.127.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage v0.127.0
-  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/extension/solarwindsextension v0.127.1
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/extension/solarwindsextension v0.127.2
 
 exporters:
   - gomod: go.opentelemetry.io/collector/exporter/debugexporter v0.127.0
   - gomod: go.opentelemetry.io/collector/exporter/nopexporter v0.127.0
   - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.127.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/fileexporter v0.127.0
-  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/exporter/solarwindsexporter v0.127.1
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/exporter/solarwindsexporter v0.127.2
 
 processors:
   - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.127.0
@@ -36,8 +36,8 @@ processors:
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.127.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.127.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.127.0
-  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/processor/k8seventgenerationprocessor v0.127.1
-  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/processor/swok8sworkloadtypeprocessor v0.127.1
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/processor/k8seventgenerationprocessor v0.127.2
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/processor/swok8sworkloadtypeprocessor v0.127.2
 
 receivers:
   - gomod: go.opentelemetry.io/collector/receiver/nopreceiver v0.127.0
@@ -64,13 +64,13 @@ receivers:
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/snowflakereceiver v0.127.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/statsdreceiver v0.127.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zookeeperreceiver v0.127.0
-  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swohostmetricsreceiver v0.127.1
-  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swok8sobjectsreceiver v0.127.1
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swohostmetricsreceiver v0.127.2
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swok8sobjectsreceiver v0.127.2
 
 connectors:
   - gomod: go.opentelemetry.io/collector/connector/forwardconnector v0.127.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/connector/routingconnector v0.127.0
-  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/connector/solarwindsentityconnector v0.127.1
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/connector/solarwindsentityconnector v0.127.2
 
 replaces:
   # k8sattributesprocessor@v0.127.0 is not compatible with v0.33.1
