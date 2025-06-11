@@ -4,7 +4,7 @@
 
 ## v0.127.2
 - `solarwindsentityconnector` Added optional prefixes support for entity relationships between entities of different types.
-- Added examples of [integration templates](./examples/integrations) compatible with SolarWinds Observability SaaS  templates
+- Added examples of [integration templates](./examples/integrations) compatible with SolarWinds Observability SaaS.
 
 ## v0.127.1
 - Consumes [solarwinds-otel-collector-contrib](https://github.com/solarwinds/solarwinds-otel-collector-contrib) `v0.127.1` dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01271)
