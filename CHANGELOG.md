@@ -2,6 +2,9 @@
 
 ## vNext
 
+## v0.127.2
+- `solarwindsentityconnector` Added optional prefixes support for entity relationships between entities of different types.
+
 ## v0.127.1
 - Consumes [solarwinds-otel-collector-contrib](https://github.com/solarwinds/solarwinds-otel-collector-contrib) `v0.127.1` dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01271)
 
