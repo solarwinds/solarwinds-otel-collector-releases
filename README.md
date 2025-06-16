@@ -96,17 +96,17 @@ The `verified` distribution contains only the components listed below. With the 
 |[swohostmetricsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swohostmetricsreceiver)|||||
 |[swok8sobjectsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sobjectsreceiver)|||||
 
-Full set is available in the [manifest](./distributions/verified/manifest.yaml).
+Full set of components is available in the [manifest](./distributions/verified/manifest.yaml).
 
 ### Playground
 The `playground` distribution contains all components from `verified` distribution plus most of the components from `opentelemetry-collector-contrib` and `opentelemetry-collector` repositories. When using the playground distribution, we will not provide support with configuration. Also we cannot guaratee that all components from the mentioned repositories are working as expected.
 
-Full set is available in the [manifest](./distributions/playground/manifest.yaml).
+Full set of components is available in the [manifest](./distributions/playground/manifest.yaml).
 
-### Kubernetes
-The `kubernetes` distributions contains only the components required for the Kubernetes monitoring in Solarwinds Obervability platform.
+### K8s
+The `k8s` distributions contains only the components required for the Kubernetes monitoring in Solarwinds Obervability platform.
 
-Full set is available in the [manifest](./distributions/k8s/manifest.yaml).
+Full set of components is available in the [manifest](./distributions/k8s/manifest.yaml).
 
 ## Contributing
 See [CONTRIBUTING.md](./CONTRIBUTING.md).
