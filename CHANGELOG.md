@@ -2,6 +2,10 @@
 
 ## vNext
 
+## v0.127.3
+- Consumes [solarwinds-otel-collector-contrib](https://github.com/solarwinds/solarwinds-otel-collector-contrib) `v0.127.3` dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01273)
+- Fixed CVE-2025-22874: Calling Verify with a VerifyOptions.KeyUsages that contains ExtKeyUsageAny unintentionally disabledpolicy validation. This only affected certificate chains which contain policy graphs, which are rather uncommon.
+
 ## v0.127.2
 - Consumes [solarwinds-otel-collector-contrib](https://github.com/solarwinds/solarwinds-otel-collector-contrib) `v0.127.2` dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01272)
 - Added examples of [integration templates](./examples/integrations) compatible with SolarWinds Observability SaaS.
