@@ -1,4 +1,4 @@
-FROM golang:1.24.3-windowsservercore-ltsc2022@sha256:92bdb22d443681a589074db98336b435124cc51ee7a2b12ab7dcc61b956d9560 AS base
+FROM golang:1.24.4-windowsservercore-ltsc2022@sha256:5878fadfc7ce48fcc0f38640ef136cfaf26ece43d60d19bf576b17d3f35140e0 AS base
 
 COPY ./ /src
 WORKDIR /src
