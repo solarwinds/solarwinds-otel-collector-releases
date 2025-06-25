@@ -40,10 +40,9 @@ processors:
     spike_limit_percentage: 30
   solarwinds/apache:
     extension: solarwinds
-    max_size_mib: 6
     resource:
-      sw.otel.receiver.name: "apache"
-      sw.otel.integration.id: # Required parameter
+      sw.otelcol.receiver.name: "apache"
+      sw.otelcol.integration.id: # Required parameter
   resourcedetection/ec2:
     detectors: ["ec2"]
     timeout: 2s
