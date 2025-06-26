@@ -1,7 +1,8 @@
 # Changelog
 
 ## vNext
-- Add [pprofextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/pprofextension) to the `k8s` distribution
+- Add [pprofextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/pprofextension) to the `k8s` distribution.
+- Add [logdedupprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/logdedupprocessor) to the `k8s` distribution.
 
 ## v0.127.3
 - Consumes [solarwinds-otel-collector-contrib](https://github.com/solarwinds/solarwinds-otel-collector-contrib) `v0.127.3` dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01273)
