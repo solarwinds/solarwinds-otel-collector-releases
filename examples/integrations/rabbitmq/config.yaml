@@ -35,10 +35,10 @@ processors:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  solarwinds/apache:
+  solarwinds/rabbitmq:
     extension: solarwinds
     resource:
-      sw.otelcol.receiver.name: "apache"
+      sw.otelcol.receiver.name: "rabbitmq"
       sw.otelcol.integration.id: # Required parameter
   resourcedetection/ec2:
     detectors: ["ec2"]
