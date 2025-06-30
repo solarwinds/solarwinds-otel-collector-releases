@@ -30,7 +30,7 @@ rules:
 
 #### 3. Set the EXTRA_ARGS environment variable to configure the JMX Exporter
 
-The example below uses kafka endpoint `localhost:1234`, which might need to be adjusted accordingly. The paths can also differ.
+The example below uses Kafka endpoint `localhost:1234`, which might need to be adjusted accordingly. The paths may also differ.
 
 
 ```sh
