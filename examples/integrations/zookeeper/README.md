@@ -4,7 +4,7 @@ This directory contains an example configuration for integrating ZooKeeper. This
 
 - `config.yaml`: Example configuration file for ZooKeeper integration.
 
-## Prerequisities
+## Prerequisites
 
 Follow the steps below to configure ZooKeeper for monitoring.
 

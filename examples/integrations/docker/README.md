@@ -4,7 +4,7 @@ This directory contains an example configuration for integrating Docker. This co
 
 - `config.yaml`: Example configuration file for Docker integration.
 
-## Prerequisities
+## Prerequisites
 
 Follow the steps below to configure Docker for monitoring.
 

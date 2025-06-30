@@ -4,7 +4,7 @@ This directory contains an example configuration for integrating Kafka. This con
 
 - `config.yaml`: Example configuration file for Kafka integration.
 
-## Prerequisities
+## Prerequisites
 
 Follow the steps below to configure Kafka for monitoring.
 

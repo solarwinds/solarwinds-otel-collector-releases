@@ -4,7 +4,7 @@ This directory contains an example configuration for integrating RabbitMQ. This 
 
 - `config.yaml`: Example configuration file for RabbitMQ integration.
 
-## Prerequisities
+## Prerequisites
 
 Follow the steps below to configure RabbitMQ for monitoring.
 

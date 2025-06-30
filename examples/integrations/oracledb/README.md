@@ -5,7 +5,7 @@ This configuration is compatible with SolarWinds Observability Saas.
 
 - `config.yaml`: Example configuration file for OracleDB integration.
 
-## Prerequisities
+## Prerequisites
 
 Follow the steps below to configure OracleDB for monitoring.
 

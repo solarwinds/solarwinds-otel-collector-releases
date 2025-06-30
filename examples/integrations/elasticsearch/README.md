@@ -4,7 +4,7 @@ This directory contains an example configuration for integrating Elasticsearch. 
 
 - `config.yaml`: Example configuration file for Elasticsearch integration.
 
-## Prerequisities
+## Prerequisites
 
 Follow the steps below to configure Elasticsearch for monitoring.
 

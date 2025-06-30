@@ -4,7 +4,7 @@ This directory contains an example configuration for integrating NGINX. This con
 
 - `config.yaml`: Example configuration file for NGINX integration.
 
-## Prerequisities
+## Prerequisites
 
 Follow the steps below to configure Nginx for monitoring.
 

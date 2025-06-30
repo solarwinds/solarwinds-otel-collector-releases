@@ -4,7 +4,7 @@ This directory contains an example configuration for integrating Apache. This co
 
 - `config.yaml`: Example configuration file for Apache integration.
 
-## Prerequisities
+## Prerequisites
 
 Follow the steps below to configure Apache for monitoring.
 
