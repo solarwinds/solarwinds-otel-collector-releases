@@ -1,6 +1,6 @@
 # Apache Integration Example
 
-This directory contains an example configuration for integrating Apache. This configuration is compatible with SolarWinds Observability Saas.
+This directory contains an example configuration for integrating Apache. This configuration is compatible with SolarWinds Observability SaaS.
 
 - `config.yaml`: Example configuration file for Apache integration.
 

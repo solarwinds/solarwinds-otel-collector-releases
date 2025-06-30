@@ -1,7 +1,7 @@
 # OracleDB Integration Example
 
 This directory contains an example configuration for integrating OracleDB. 
-This configuration is compatible with SolarWinds Observability Saas.
+This configuration is compatible with SolarWinds Observability SaaS.
 
 - `config.yaml`: Example configuration file for OracleDB integration.
 

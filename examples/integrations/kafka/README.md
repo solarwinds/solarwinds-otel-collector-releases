@@ -1,6 +1,6 @@
 # Kafka Integration Example
 
-This directory contains an example configuration for integrating Kafka. This configuration is compatible with SolarWinds Observability Saas.
+This directory contains an example configuration for integrating Kafka. This configuration is compatible with SolarWinds Observability SaaS.
 
 - `config.yaml`: Example configuration file for Kafka integration.
 
