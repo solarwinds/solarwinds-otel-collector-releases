@@ -38,6 +38,7 @@ processors:
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.127.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.127.0
   - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/processor/k8seventgenerationprocessor v0.127.3
+  - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/processor/solarwindsprocessor v0.127.3
   - gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/processor/swok8sworkloadtypeprocessor v0.127.3
 
 receivers:
