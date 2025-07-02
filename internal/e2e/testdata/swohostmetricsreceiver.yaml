@@ -3,7 +3,12 @@ service:
   pipelines:
     metrics:
       receivers: [swohostmetrics]
-      exporters: [solarwinds]
+      processors: [solarwinds]
+      exporters: [otlp]
+
+processors:
+  solarwinds:
+    extension: solarwinds
 
 receivers:
   # Following setup contains only some of implemented functionality.
@@ -25,9 +30,12 @@ receivers:
 
 extensions:
   solarwinds:
-    token: <no-matter-in-test>
     collector_name: "testing_collector_name"
-    endpoint_url_override: receiver:17016
-
+    grpc: &grpc_settings
+      endpoint: receiver:17016
+      tls:
+        insecure: false
+      headers: { "Authorization": "Bearer no-matter-in-test" }
 exporters:
-  solarwinds:
+  otlp:
+    <<: *grpc_settings
