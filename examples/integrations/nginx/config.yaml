@@ -22,14 +22,11 @@ processors:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  resource/nginx:
-    attributes:
-      - key: sw.otelcol.receiver.name
-        value: "nginx"
-        action: insert
-      - key: sw.otelcol.integration.id
-        value: # Required parameter
-        action: insert
+  solarwinds/nginx:
+    extension: solarwinds
+    resource:
+      sw.otelcol.receiver.name: "nginx"
+      sw.otelcol.integration.id: # Required parameter
   resourcedetection/ec2:
     detectors: ["ec2"]
     timeout: 2s
@@ -131,12 +128,16 @@ processors:
 
 extensions:
   solarwinds:
-    token: # Required secret
     collector_name: # Required parameter
-    data_center: # Required parameter
+    grpc: &grpc_settings
+      endpoint: # Required parameter
+      tls:
+        insecure: false
+      headers: {"Authorization": "Bearer ${SOLARWINDS_TOKEN}"}
 
 exporters:
-  solarwinds:
+  otlp:
+    <<: *grpc_settings
 
 service:
   extensions:
@@ -147,7 +148,6 @@ service:
         - nginx
       processors:
         - memory_limiter
-        - resource/nginx
         - resourcedetection/ec2
         - resourcedetection/azure
         - resourcedetection/gcp
@@ -162,8 +162,9 @@ service:
         - transform/desc/nginx
         - filter/nginx
         - batch
+        - solarwinds/nginx
       exporters:
-        - solarwinds
+        - otlp
 
     # Optional pipeline
     # logs/nginx:
@@ -171,11 +172,11 @@ service:
     #     - filelog
     #   processors:
     #     - memory_limiter
-    #     - resource/nginx
     #     - resourcedetection/ec2
     #     - resourcedetection/azure
     #     - resourcedetection/gcp
     #     - resourcedetection/system
     #     - batch
+    #     - solarwinds/nginx
     #   exporters:
-    #     - solarwinds
+    #     - otlp

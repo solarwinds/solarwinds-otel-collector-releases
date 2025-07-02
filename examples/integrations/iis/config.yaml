@@ -37,14 +37,11 @@ processors:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  resource/iis:
-    attributes:
-      - key: sw.otelcol.receiver.name
-        value: "iis"
-        action: insert
-      - key: sw.otelcol.integration.id
-        value: # Required parameter
-        action: insert
+  solarwinds/iis:
+    extension: solarwinds
+    resource:
+      sw.otelcol.receiver.name: "iis"
+      sw.otelcol.integration.id: # Required parameter
   resourcedetection/ec2:
     detectors: ["ec2"]
     timeout: 2s
@@ -101,12 +98,16 @@ processors:
 
 extensions:
   solarwinds:
-    token: # Required secret
     collector_name: # Required parameter
-    data_center: # Required parameter
+    grpc: &grpc_settings
+      endpoint: # Required parameter
+      tls:
+        insecure: false
+      headers: {"Authorization": "Bearer ${SOLARWINDS_TOKEN}"}
 
 exporters:
-  solarwinds:
+  otlp:
+    <<: *grpc_settings
 
 service:
   extensions:
@@ -117,7 +118,6 @@ service:
         - iis
       processors:
         - memory_limiter
-        - resource/iis
         - resourcedetection/ec2
         - resourcedetection/azure
         - resourcedetection/gcp
@@ -127,8 +127,9 @@ service:
         - deltatorate/rates/iis
         - transform/desc/iis
         - batch
+        - solarwinds/iis
       exporters:
-        - solarwinds
+        - otlp
 
     # Optional pipeline
     # logs/iis:
@@ -136,11 +137,11 @@ service:
     #     - filelog
     #   processors:
     #     - memory_limiter
-    #     - resource/iis
     #     - resourcedetection/ec2
     #     - resourcedetection/azure
     #     - resourcedetection/gcp
     #     - resourcedetection/system
     #     - batch
+    #     - solarwinds/iis
     #   exporters:
-    #     - solarwinds
+    #     - otlp
