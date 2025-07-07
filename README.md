@@ -65,7 +65,7 @@ docker run  -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel
 
 ### Fully supported integrations
 
-If you'd like, you can find example configurations [here](/examples/integrations/). When these integrations are configured, you will get the same experience as with integrations configured in the managed way using Add Data wizards in the SolarWinds Observability.
+If you'd like, you can find example configurations [here](/examples/integrations/). When these integrations are configured, you will get the same experience as with integrations configured in the managed way using Add Data wizards in SolarWinds Observability.
 
 ## Distributions
 ### Verified
