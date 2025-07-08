@@ -3,13 +3,16 @@ service:
   pipelines:
     metrics:
       receivers: [otlp]
-      exporters: [solarwinds]
+      processors: [solarwinds]
+      exporters: [otlp]
     traces:
       receivers: [otlp]
-      exporters: [solarwinds]
+      processors: [solarwinds]
+      exporters: [otlp]
     logs:
       receivers: [otlp]
-      exporters: [solarwinds]
+      processors: [solarwinds]
+      exporters: [otlp]
 
 receivers:
   otlp:
@@ -17,12 +20,20 @@ receivers:
       grpc:
         endpoint: :17016
 
+processors:
+  solarwinds:
+    extension: solarwinds
+
 extensions:
   solarwinds:
-    token: <no-matter-in-test>
     collector_name: "testing_collector_name"
-    endpoint_url_override: receiver:17016
+    grpc: &grpc_settings
+      endpoint: receiver:17016
+      tls:
+        insecure: false
+      headers: { "Authorization": "Bearer no-matter-in-test" }
     without_entity: true
 
 exporters:
-  solarwinds:
+  otlp:
+    <<: *grpc_settings

@@ -63,6 +63,10 @@ docker pull solarwinds/solarwinds-otel-collector:playground
 docker run  -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel-collector:playground
 ```
 
+### Fully supported integrations
+
+If you'd like, you can find example configurations [here](/examples/integrations/). When these integrations are configured, you will get the same experience as with integrations configured in the managed way using Add Data wizards in SolarWinds Observability.
+
 ## Distributions
 ### Verified
 The `verified` distribution contains only the components listed below. With the `verified` distribution, you will receive support with configuration, and the components have been tested by Solarwinds.
@@ -86,8 +90,8 @@ The `verified` distribution contains only the components listed below. With the 
 |filelogreceiver|groupbytraceprocessor||
 |haproxyreceiver|k8sattributesprocessor||
 |hostmetricsreceiver|[k8seventgenerationprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/k8seventgenerationprocessor)||
-|journaldreceiver|[swok8sworkloadtypeprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadtypeprocessor)||
-|k8seventsreceiver|||||
+|journaldreceiver|[solarwindsprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/solarwindsprocessor)||
+|k8seventsreceiver|[swok8sworkloadtypeprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadtypeprocessor)||||
 |k8sobjectsreceiver|||||
 |kafkareceiver|||||
 |receivercreator|||||
