@@ -2,6 +2,13 @@
 
 ## vNext
 
+## v0.127.5
+- Added `logdedupprocessor` to K8s distribution.
+- Added README files to [integration examples](./examples/integrations).
+- Updated [README file](README.md) with information about supported integrations.
+- Updated E2E tests to use new OTLP exporter and SolarWinds processor.
+- Consumes [solarwinds-otel-collector-contrib](https://github.com/solarwinds/solarwinds-otel-collector-contrib) `v0.127.5` dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01275)
+
 ## v0.127.4
 - Add [pprofextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/pprofextension) to the `k8s` distribution.
 - Add [logdedupprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/logdedupprocessor) to the `k8s` distribution.
