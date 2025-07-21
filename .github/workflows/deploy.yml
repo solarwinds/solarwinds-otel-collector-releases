@@ -5,6 +5,7 @@ on:
     paths:
       - 'pkg/version/version.go'
     branches:
+      - chore/replace-build-pipeline
       - main
       - 'release/**'
 
@@ -39,10 +40,10 @@ jobs:
         with:
           username: ${{ vars.DOCKER_SOLARWINDS_ORG_LOGIN }}
           password: ${{ secrets.ENOPS5919_OPENTELEMETRYCOLLECTOR_DOCKER_HUB_CI_OAT }}
-      - name: Verify that Docker images do not already exist
+      - name: Verify that Docker images exist
         run: |
-          if ! docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }} 2>&1 | grep -q "no such manifest"; then
-            echo "Docker image ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }} already exists on DockerHub."
+          if docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }} 2>&1 | grep -q "no such manifest"; then
+            echo "Docker image ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }} does not exist on DockerHub."
             exit 1
           fi
 
@@ -51,277 +52,99 @@ jobs:
     uses: ./.github/workflows/buildAndTest.yml
     secrets: inherit
 
-  deploy_dockerhub:
-    runs-on: ubuntu-latest
-    needs:
-      - build_and_test
-      - release_checks
-    name: Deploy to Docker Hub
-    environment:
-      name: production
-      url: https://hub.docker.com/repository/docker/solarwinds/solarwinds-otel-collector
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  # upload_sarif_files:
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - release_checks
+  #   name: Upload SARIF Files
+  #   strategy:
+  #     matrix:
+  #       tag:
+  #         - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-playground
+  #         - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-playground
+  #         - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-verified
+  #         - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-verified
+  #         - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s
+  #         - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s
+  #   steps:
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: sarif-${{ matrix.tag }}.output.json
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKER_SOLARWINDS_ORG_LOGIN }}
-          password: ${{ secrets.ENOPS5919_OPENTELEMETRYCOLLECTOR_DOCKER_HUB_CI_OAT }}
+  #     - name: Upload SARIF output for image
+  #       uses: github/codeql-action/upload-sarif@v3
+  #       with:
+  #         sarif_file: sarif-${{ matrix.tag }}.output.json
 
-      - name: Build and Push - Playground
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: build/docker/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          provenance: false
-          sbom: false
-          push: true
-          tags: |
-            ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-playground
-            ${{ env.DOCKERHUB_IMAGE }}:latest-playground
-      
-      - name: Build and Push - Verified
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: build/docker/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          provenance: false
-          sbom: false
-          push: true
-          tags: |
-            ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-verified
-            ${{ env.DOCKERHUB_IMAGE }}:latest-verified
-            ${{ env.DOCKERHUB_IMAGE }}:latest
+  # create_and_push_docker_manifest:
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - deploy_dockerhub
+  #     - deploy_dockerhub_windows
+  #     - release_checks
+  #   name: Create Multi-platform Docker Manifest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Build and Push - k8s
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: build/docker/Dockerfile.k8s
-          platforms: linux/amd64,linux/arm64
-          provenance: false
-          sbom: false
-          push: true
-          tags: |
-            ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-k8s
-            ${{ env.DOCKERHUB_IMAGE }}:latest-k8s
+  #     - name: Login to Docker Hub
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: ${{ vars.DOCKER_SOLARWINDS_ORG_LOGIN }}
+  #         password: ${{ secrets.ENOPS5919_OPENTELEMETRYCOLLECTOR_DOCKER_HUB_CI_OAT }}
 
-  deploy_dockerhub_windows:
-    runs-on: windows-2022
-    needs:
-      - build_and_test
-      - release_checks
-    name: Deploy to docker hub Windows
-    environment:
-      name: production
-      url: https://hub.docker.com/repository/docker/solarwinds/solarwinds-otel-collector
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #     - name: Get Manifest for Playground Image
+  #       run: |
+  #         docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-playground > manifest-playground.json
 
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: windows-image-*
-          merge-multiple: true
+  #     - name: Create Multi-arch Manifest for Playground Image
+  #       run: |
+  #         docker manifest create ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-playground \
+  #           --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-playground \
+  #           --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-playground \
+  #           --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-playground.json) \
+  #           --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-playground.json)
 
-      - name: Generate docker image tag
-        id: generate-tag
-        run: echo "tag=v${{ github.run_number }}-$(git rev-parse --short HEAD)" >> $env:GITHUB_OUTPUT
+  #     - name: Get Manifest for Verified Image
+  #       run: |
+  #         docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-verified > manifest-verified.json
 
-      - name: Load image
-        run: |
-          docker load --input solarwinds-otel-collector-windows-ltsc2022-playground.tar
-          docker load --input solarwinds-otel-collector-windows-ltsc2019-playground.tar
-          docker load --input solarwinds-otel-collector-windows-ltsc2022-verified.tar
-          docker load --input solarwinds-otel-collector-windows-ltsc2019-verified.tar
-          docker load --input solarwinds-otel-collector-windows-k8s-ltsc2022.tar
-          docker load --input solarwinds-otel-collector-windows-k8s-ltsc2019.tar
+  #     - name: Create Multi-arch Manifest for Verified Image
+  #       run: |
+  #         docker manifest create ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-verified \
+  #           --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-verified \
+  #           --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-verified \
+  #           --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-verified.json) \
+  #           --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-verified.json)
 
-      - name: Tag images
-        run: |
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-playground ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2022-playground
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-playground ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-playground
+  #     - name: Get Manifest for K8s Image
+  #       run: |
+  #         docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-k8s > manifest-k8s.json
           
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-playground ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2019-playground
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-playground ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-playground
-          
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-verified ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2022-verified
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-verified ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-verified
-          
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-verified ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2019-verified
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-verified ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-verified
-          
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2022-k8s
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2022-k8s ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s
-          
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2019-k8s
-          docker tag solarwinds-otel-collector:${{ steps.generate-tag.outputs.tag }}-nanoserver-ltsc2019-k8s ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s
+  #     - name: Create Multi-arch Manifest for K8s Image
+  #       run: |
+  #         docker manifest create ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-k8s  \
+  #           --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s \
+  #           --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s \
+  #           --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-k8s.json) \
+  #           --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-k8s.json)
 
-      - name: Login to Docker to use Docker Scout
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.ENOPS5919_DOCKER_SCOUT_CI_USER }}
-          password: ${{ secrets.ENOPS5919_DOCKER_SCOUT_CI_PAT }}
+  #     - name: Push multi-arch playground manifest
+  #       run: |
+  #         docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-playground
 
-      - name: Analyze cves Windows 2022 - verified
-        uses: ./.github/actions/analyzeCves
-        with:
-          tag: ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-verified
+  #     - name: Push multi-arch verified manifest
+  #       run: |
+  #         docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-verified
 
-      - name: Analyze cves Windows 2022 - playground
-        uses: ./.github/actions/analyzeCves
-        with:
-          tag: ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-playground
-
-      - name: Analyze cves Windows 2019 - verified
-        uses: ./.github/actions/analyzeCves
-        with:
-          tag: ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-verified
-
-      - name: Analyze cves Windows 2019 - playground
-        uses: ./.github/actions/analyzeCves
-        with:
-          tag: ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-playground
-
-      - name: Analyze cves Windows 2022 k8s
-        uses: ./.github/actions/analyzeCves
-        with:
-          tag: ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s
-
-      - name: Analyze cves Windows 2019 k8s
-        uses: ./.github/actions/analyzeCves
-        with:
-          tag: ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s
-
-      - name: Login to Docker to use Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKER_SOLARWINDS_ORG_LOGIN }}
-          password: ${{ secrets.ENOPS5919_OPENTELEMETRYCOLLECTOR_DOCKER_HUB_CI_OAT }}
-
-      - name: Push as specific
-        run: |
-          docker push ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2022-playground
-          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-playground
-          
-          docker push ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2019-playground
-          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-playground
-          
-          docker push ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2022-verified
-          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-verified
-          
-          docker push ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2019-verified
-          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-verified
-          
-          docker push ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2022-k8s
-          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s
-          
-          docker push ${{ env.DOCKERHUB_IMAGE }}:latest-nanoserver-ltsc2019-k8s
-          docker push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s
-
-  upload_sarif_files:
-    runs-on: ubuntu-latest
-    needs:
-      - deploy_dockerhub_windows
-      - release_checks
-    name: Upload SARIF Files
-    strategy:
-      matrix:
-        tag:
-          - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-playground
-          - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-playground
-          - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-verified
-          - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-verified
-          - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s
-          - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: sarif-${{ matrix.tag }}.output.json
-
-      - name: Upload SARIF output for image
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: sarif-${{ matrix.tag }}.output.json
-
-  create_and_push_docker_manifest:
-    runs-on: ubuntu-latest
-    needs:
-      - deploy_dockerhub
-      - deploy_dockerhub_windows
-      - release_checks
-    name: Create Multi-platform Docker Manifest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKER_SOLARWINDS_ORG_LOGIN }}
-          password: ${{ secrets.ENOPS5919_OPENTELEMETRYCOLLECTOR_DOCKER_HUB_CI_OAT }}
-
-      - name: Get Manifest for Playground Image
-        run: |
-          docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-playground > manifest-playground.json
-
-      - name: Create Multi-arch Manifest for Playground Image
-        run: |
-          docker manifest create ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-playground \
-            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-playground \
-            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-playground \
-            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-playground.json) \
-            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-playground.json)
-
-      - name: Get Manifest for Verified Image
-        run: |
-          docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-verified > manifest-verified.json
-
-      - name: Create Multi-arch Manifest for Verified Image
-        run: |
-          docker manifest create ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-verified \
-            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-verified \
-            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-verified \
-            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-verified.json) \
-            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-verified.json)
-
-      - name: Get Manifest for K8s Image
-        run: |
-          docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-k8s > manifest-k8s.json
-          
-      - name: Create Multi-arch Manifest for K8s Image
-        run: |
-          docker manifest create ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-k8s  \
-            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s \
-            --amend ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s \
-            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "amd64") | .digest' manifest-k8s.json) \
-            --amend ${{ env.DOCKERHUB_IMAGE }}@$(jq -r '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64") | .digest' manifest-k8s.json)
-
-      - name: Push multi-arch playground manifest
-        run: |
-          docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-playground
-
-      - name: Push multi-arch verified manifest
-        run: |
-          docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-verified
-
-      - name: Push multi-arch k8s manifest
-        run: |
-          docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-k8s
+  #     - name: Push multi-arch k8s manifest
+  #       run: |
+  #         docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-k8s
 
   create_release:
     runs-on: ubuntu-latest
     name: Create GitHub Release
     needs:
-      - create_and_push_docker_manifest
       - release_checks
     steps:
       - name: Checkout Code
@@ -343,7 +166,7 @@ jobs:
           gh release create v${{ needs.release_checks.outputs.image_tag }} \
             --title v${{ needs.release_checks.outputs.image_tag }} \
             --generate-notes \
-            --notes-start-tag ${{ env.PREVIOUS_TAG }}
+            --notes-start-tag "New notes"
       - name: Tag Go packages on GitHub
         run: |
           folders=("./exporter" "./extension" "./pkg" "./receiver")
