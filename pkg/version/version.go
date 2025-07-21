@@ -15,3 +15,4 @@
 package version
 
 const Version = "0.127.5"
+const VersionMajor = 0
