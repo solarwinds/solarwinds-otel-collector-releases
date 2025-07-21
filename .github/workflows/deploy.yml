@@ -141,42 +141,42 @@ jobs:
   #       run: |
   #         docker manifest push ${{ env.DOCKERHUB_IMAGE }}:${{ needs.release_checks.outputs.image_tag }}-k8s
 
-  create_release:
-    runs-on: ubuntu-latest
-    name: Create GitHub Release
-    needs:
-      - release_checks
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  # create_release:
+  #   runs-on: ubuntu-latest
+  #   name: Create GitHub Release
+  #   needs:
+  #     - release_checks
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Find Previous Tag
-        run: |
-          PREVIOUS_TAG=$(git tag --sort=version:refname | grep -P "^v\d+\.\d+\.\d+$" | tail -n 1)
-          echo "Previous tag: $PREVIOUS_TAG"
-          echo "PREVIOUS_TAG=$PREVIOUS_TAG" >> $GITHUB_ENV
+  #     - name: Find Previous Tag
+  #       run: |
+  #         PREVIOUS_TAG=$(git tag --sort=version:refname | grep -P "^v\d+\.\d+\.\d+$" | tail -n 1)
+  #         echo "Previous tag: $PREVIOUS_TAG"
+  #         echo "PREVIOUS_TAG=$PREVIOUS_TAG" >> $GITHUB_ENV
 
-      - name: Create GitHub Release
-        env:
-          # for gh cli
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create v${{ needs.release_checks.outputs.image_tag }} \
-            --title v${{ needs.release_checks.outputs.image_tag }} \
-            --generate-notes \
-            --notes-start-tag "New notes"
-      - name: Tag Go packages on GitHub
-        run: |
-          folders=("./exporter" "./extension" "./pkg" "./receiver")
+  #     - name: Create GitHub Release
+  #       env:
+  #         # for gh cli
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         gh release create v${{ needs.release_checks.outputs.image_tag }} \
+  #           --title v${{ needs.release_checks.outputs.image_tag }} \
+  #           --generate-notes \
+  #           --notes-start-tag "New notes"
+  #     - name: Tag Go packages on GitHub
+  #       run: |
+  #         folders=("./exporter" "./extension" "./pkg" "./receiver")
 
-          for folder in "${folders[@]}"; do
-              for package_folder in $folder/*/; do
-                  if [ -f "$package_folder/go.mod" ]; then
-                      git tag ${package_folder#./}v${{ needs.release_checks.outputs.image_tag }}
-                      git push origin ${package_folder#./}v${{ needs.release_checks.outputs.image_tag }}
-                      echo "Pushed tag ${package_folder#./}v${{ needs.release_checks.outputs.image_tag }}"
-                  fi
-              done
-          done
+  #         for folder in "${folders[@]}"; do
+  #             for package_folder in $folder/*/; do
+  #                 if [ -f "$package_folder/go.mod" ]; then
+  #                     git tag ${package_folder#./}v${{ needs.release_checks.outputs.image_tag }}
+  #                     git push origin ${package_folder#./}v${{ needs.release_checks.outputs.image_tag }}
+  #                     echo "Pushed tag ${package_folder#./}v${{ needs.release_checks.outputs.image_tag }}"
+  #                 fi
+  #             done
+  #         done
