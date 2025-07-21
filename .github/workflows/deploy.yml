@@ -31,7 +31,7 @@ jobs:
           # for gh cli
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if ! gh release view "v${{ steps.get-tag.outputs.tag }}" 2>&1 | grep -q "^release not found$"; then
+          if gh release view "v${{ steps.get-tag.outputs.tag }}" 2>&1 | grep -q "^release not found$"; then
             echo "Release v${{ steps.get-tag.outputs.tag }} already exists on GitHub."
             exit 1
           fi
