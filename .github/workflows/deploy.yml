@@ -42,8 +42,8 @@ jobs:
           password: ${{ secrets.ENOPS5919_OPENTELEMETRYCOLLECTOR_DOCKER_HUB_CI_OAT }}
       - name: Verify that Docker images exist
         run: |
-          if docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }} 2>&1 | grep -q "no such manifest"; then
-            echo "Docker image ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }} does not exist on DockerHub."
+          if docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-verified 2>&1 | grep -q "no such manifest"; then
+            echo "Docker image ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-verified does not exist on DockerHub."
             exit 1
           fi
 
