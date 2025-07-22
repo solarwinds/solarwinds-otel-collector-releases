@@ -34,45 +34,6 @@ else
     echo "CHANGELOG.md already contains 'v$VERSION', no update made."
 fi
 
-# Update release manifest files
-ALL_MANIFEST_YAML=$(find . -name "manifest.yaml" -type f | sort)
-# Update distribution manifest yaml versions.
-for f in $ALL_MANIFEST_YAML; do
-    perl -pi -e "s/version: \d+\.\d+\.\d+/version: $VERSION/g" "$f"
-    echo "Updated version in distribution yaml \`$f\` with version v$VERSION"
-done
-
-if [ -z "$OTEL_VERSION" ]; then
-  echo "OTEL_VERSION not set, skipping."
-else
-  # update swi_contrib_version in Makefile
-    MAKEFILE="./Makefile"
-    if [ ! -f "$MAKEFILE" ]; then
-        echo "Makefile not found!"
-        exit 1
-    fi
-    perl -pi -e "s|otel_version := \d+\.\d+\.\d+|otel_version := $OTEL_VERSION|g" "$MAKEFILE"
-    echo "Updated otel_version in Makefile to version $OTEL_VERSION"
-
-  # update otel contrib references in distribution yaml files
-  for f in $ALL_MANIFEST_YAML; do
-      perl -pi -e "s|^(\s+- gomod: github.com/open-telemetry/opentelemetry-collector-contrib/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+$|\1 v$OTEL_VERSION|" "$f"
-      echo "References to 'github.com/open-telemetry/opentelemetry-collector-contrib' in $f updated with version v$OTEL_VERSION"
-      perl -pi -e "s|^(\s+- gomod: go.opentelemetry.io/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+$|\1 v$OTEL_VERSION|" "$f"
-      echo "References to 'go.opentelemetry.io' in $f updated with version v$OTEL_VERSION"
-  done
-fi
-
-# update solarwinds contrib references in distribution yaml files
-for f in $ALL_MANIFEST_YAML; do
-    perl -pi -e "s|^(\s+- gomod: github.com/solarwinds/solarwinds-otel-collector-contrib/[^ ]*) v[0-9]+\.[0-9]+\.[0-9]+$|\1 v$VERSION|" "$f"
-    echo "References to 'github.com/solarwinds/solarwinds-otel-collector-contrib' in $f updated with version v$VERSION"
-done
-
-# We need to run go mod tidy after raising versions of solarwinds-otel-collector-contrib components
-echo "Running go mod tidy"
-find . -name "go.mod" -execdir sh -c 'go mod tidy' \;
-
 # update pkg\version\version.go to set the actual release version
 GO_VERSION_FILE="./pkg/version/version.go"
 if [ ! -f "$GO_VERSION_FILE" ]; then

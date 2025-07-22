@@ -1,9 +1,0 @@
-ARG WINBASE
-
-FROM ${WINBASE}
-
-COPY /solarwinds-otel-collector.exe /solarwinds-otel-collector.exe
-COPY /connection-check.exe /connection-check.exe
-
-ENTRYPOINT ["solarwinds-otel-collector.exe"]
-CMD ["--config=/opt/default-config.yaml"]
