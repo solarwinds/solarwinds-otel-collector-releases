@@ -98,10 +98,16 @@ jobs:
           # for gh cli
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          gh release notes v${{ needs.release_checks.outputs.image_tag }} --notes-start-tag $PREVIOUS_TAG > release_notes.md
+          echo "" >> release_notes.md
+          echo "### Docker Images" >> release_notes.md
+          echo "- Playground: https://hub.docker.com/r/$DOCKERHUB_IMAGE/tags?name=-playground" >> release_notes.md
+          echo "- Verified: https://hub.docker.com/r/$DOCKERHUB_IMAGE/tags?name=-verified" >> release_notes.md
+          echo "- K8s: https://hub.docker.com/r/$DOCKERHUB_IMAGE/tags?name=-k8s" >> release_notes.md
+
           gh release create v${{ needs.release_checks.outputs.image_tag }} \
-            --title v${{ needs.release_checks.outputs.image_tag }} \
-            --generate-notes \
-            --notes-start-tag ${{ env.PREVIOUS_TAG }}
+            --title "v${{ needs.release_checks.outputs.image_tag }}" \
+            --notes-file release_notes.md
       - name: Tag Go packages on GitHub
         run: |
           folders=("./exporter" "./extension" "./pkg" "./receiver")
