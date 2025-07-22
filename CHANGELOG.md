@@ -1,6 +1,8 @@
 # Changelog
 
 ## vNext
+- Updated GHA deploy workflow to verify existing Docker images instead of building new ones.
+- Removed Docker image building and pushing steps from GHA deploy workflow.
 
 ## v0.127.5
 - Added `logdedupprocessor` to K8s distribution.
