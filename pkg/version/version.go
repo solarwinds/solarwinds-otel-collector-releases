@@ -14,5 +14,5 @@
 
 package version
 
-const Version = "0.0.1"
+const Version = "0.0.3"
 const VersionMajor = 0
