@@ -111,9 +111,9 @@ jobs:
           gh release view v${{ needs.release_checks.outputs.image_tag }} --json body -q .body > notes.md
           echo "" >> notes.md
           echo "### Docker Images" >> notes.md
-          echo "- Playground: https://hub.docker.com/r/tags?name=playground" >> notes.md
-          echo "- Verified: https://hub.docker.com/r/tags?name=verified" >> notes.md
-          echo "- K8s: https://hub.docker.com/r/tags?name=k8s" >> notes.md
+          echo "- [Playground](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${{ needs.release_checks.outputs.image_tag }}-playground)" >> notes.md
+          echo "- [Verified](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${{ needs.release_checks.outputs.image_tag }}-verified)" >> notes.md
+          echo "- [K8s](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${{ needs.release_checks.outputs.image_tag }}-k8s)" >> notes.md
 
           gh release edit v${{ needs.release_checks.outputs.image_tag }} --notes-file notes.md
       - name: Tag Go packages on GitHub
