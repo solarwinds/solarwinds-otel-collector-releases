@@ -2,6 +2,8 @@
 
 ## vNext
 
+## v0.0.1
+
 ## v0.127.5
 - Added `logdedupprocessor` to K8s distribution.
 - Added README files to [integration examples](./examples/integrations).
