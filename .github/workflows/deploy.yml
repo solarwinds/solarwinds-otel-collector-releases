@@ -104,6 +104,9 @@ jobs:
             --notes-start-tag ${{ env.PREVIOUS_TAG }}
       
       - name: Append Docker image links to release notes
+        env:
+          # for gh cli
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release view v${{ needs.release_checks.outputs.image_tag }} --json body -q .body > notes.md
           echo "" >> notes.md
