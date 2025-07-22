@@ -10,7 +10,7 @@ on:
       - 'release/**'
 
   workflow_dispatch:
-
+    
 env:
   DOCKERHUB_IMAGE: solarwinds/solarwinds-otel-collector
 
@@ -40,41 +40,39 @@ jobs:
         with:
           username: ${{ vars.DOCKER_SOLARWINDS_ORG_LOGIN }}
           password: ${{ secrets.ENOPS5919_OPENTELEMETRYCOLLECTOR_DOCKER_HUB_CI_OAT }}
-      # - name: Verify that Docker images exist
-      #   run: |
-      #     if docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-verified 2>&1 | grep -q "no such manifest"; then
-      #       echo "Docker image ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-verified does not exist on DockerHub."
-      #       exit 1
-      #     fi
-
+      - name: Verify that Docker images exist
+        run: |
+          if docker manifest inspect ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-verified 2>&1 | grep -q "no such manifest"; then
+            echo "Docker image ${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-verified does not exist on DockerHub."
+            exit 1
+          fi
   build_and_test:
     name: Build and Test images
     uses: ./.github/workflows/buildAndTest.yml
     secrets: inherit
+  upload_sarif_files:
+    runs-on: ubuntu-latest
+    needs:
+      - release_checks
+    name: Upload SARIF Files
+    strategy:
+      matrix:
+        tag:
+          - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-playground
+          - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-playground
+          - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-verified
+          - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-verified
+          - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s
+          - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: sarif-${{ matrix.tag }}.output.json
 
-  # upload_sarif_files:
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - release_checks
-  #   name: Upload SARIF Files
-  #   strategy:
-  #     matrix:
-  #       tag:
-  #         - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-playground
-  #         - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-playground
-  #         - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-verified
-  #         - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-verified
-  #         - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2022-k8s
-  #         - ${{ needs.release_checks.outputs.image_tag }}-nanoserver-ltsc2019-k8s
-  #   steps:
-  #     - uses: actions/download-artifact@v4
-  #       with:
-  #         name: sarif-${{ matrix.tag }}.output.json
-
-  #     - name: Upload SARIF output for image
-  #       uses: github/codeql-action/upload-sarif@v3
-  #       with:
-  #         sarif_file: sarif-${{ matrix.tag }}.output.json
+      - name: Upload SARIF output for image
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: sarif-${{ matrix.tag }}.output.json
 
   create_release:
     runs-on: ubuntu-latest
