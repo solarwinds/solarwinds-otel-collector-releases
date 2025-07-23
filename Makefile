@@ -28,4 +28,4 @@ check-licenses:
 
 .PHONY: prepare-release
 prepare-release:
-	@build/prepare-release.sh $(version) $(otel_version)
+	@build/prepare-release.sh $(version)

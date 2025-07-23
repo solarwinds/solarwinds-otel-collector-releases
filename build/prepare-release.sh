@@ -13,13 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 <version> $1 <otel_version>"
+if [ "$#" -lt 0 ]; then
+    echo "Usage: $0 <version>"
     exit 1
 fi
 
 VERSION=$1
-OTEL_VERSION=$2
 
 # Update CHANGELOG.md
 CHANGELOG_FILE="./CHANGELOG.md"
