@@ -14,5 +14,4 @@
 
 package version
 
-const Version = "0.127.5"
-const BuildDate = "2025-02-14T12:00:00Z"
+const Version = "0.127.6"
