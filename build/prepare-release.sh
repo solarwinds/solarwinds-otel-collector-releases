@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [ "$#" -lt 0 ]; then
+if [ "$#" -lt 1 ]; then
     echo "Usage: $0 <version>"
     exit 1
 fi
