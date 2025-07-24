@@ -12,21 +12,6 @@ updates:
     commit-message:
       prefix: "chore: "
 
-  - package-ecosystem: docker
-    directory: /build/docker
-    schedule:
-      interval: weekly
-      day: saturday
-    labels:
-      - dependencies
-      - docker
-    groups:
-      docker:
-        patterns:
-          - "*"
-    commit-message:
-      prefix: "chore: "
-
   - package-ecosystem: gomod
     directories:
       - "/internal/*/"
