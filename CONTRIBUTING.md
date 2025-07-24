@@ -19,4 +19,3 @@ The build pipeline is triggered with each PR opened to main or release branch an
 The release pipeline is triggered with changes to [version file](./pkg/version.go) and consists of:
 - verifying the existence of _SolarWinds OpenTelemetry Collector_ Docker images in DockerHub repository
 - creating the GitHub release with DockerHub links
-– creating the GitHub release with DockerHub links
