@@ -6,6 +6,7 @@ on:
       - 'pkg/version/version.go'
     branches:
       - main
+      - build/test
       - 'release/**'
 
   workflow_dispatch:
