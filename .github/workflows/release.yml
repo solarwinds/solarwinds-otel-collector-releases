@@ -1,4 +1,4 @@
-name: Deploy Images
+name: Release
 
 on:
   push:
