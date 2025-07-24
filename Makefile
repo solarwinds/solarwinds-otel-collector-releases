@@ -28,9 +28,4 @@ check-licenses:
 
 .PHONY: prepare-release
 prepare-release:
-	@build/prepare-release.sh $(version) $(otel_version)
-
-.PHONY: build
-build:
-	go install go.opentelemetry.io/collector/cmd/builder@v$(otel_version)
-	CGO_ENABLED=0 GOEXPERIMENT=boringcrypto builder --config=./distributions/$(distribution)/manifest.yaml
+	@build/prepare-release.sh $(version)

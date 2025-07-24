@@ -42,19 +42,3 @@ _Example:_
 ### Code
 
 Naming within code should in general follow principles laid out by [Effective Go](https://go.dev/doc/effective_go) with having [OpenTelemetry naming conventions](https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/coding-guidelines.md#naming-convention) in mind.
-
-## Releasing a new version
-
-To release a new version of SolarWinds OpenTelemetry Collector:
-
-1. Make sure that the `## vNext` section in [CHANGELOG.md](../CHANGELOG.md) contains all changes.
-2. Run
-
-    ```shell
-    make prepare-release version=0.123.7 otel_version=0.123.0
-    ```
-    Replace versions accordingly.
-    `version` (mandatory) - the actual release version. Updates CHANGELOG.md, [version.go](/pkg/version/version.go) and versions in distribution yaml files.
-    `otel_version` (optional) - updates version of [builder](https://github.com/open-telemetry/opentelemetry-collector/tree/main/cmd/builder) used in Makefile and versions of packages from [solarwinds-otel-collector-contrib](https://github.com/solarwinds/solarwinds-otel-collector-contrib/releases), [opentelemetry-collector-contrib](https://github.com/open-telemetry/opentelemetry-collector-contrib/releases) and [go.opentelemetry.io](https://go.opentelemetry.io) in distribution yaml files.
-3. Verify the generated changes, prepare a PR and merge it.
-4. This will trigger a build pipeline that will release a new version of the collector.
