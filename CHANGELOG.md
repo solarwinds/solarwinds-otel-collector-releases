@@ -2,6 +2,13 @@
 
 ## vNext
 
+## v0.127.7
+Reintroduce components missing in `v0.127.6`:
+- [pprofextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/pprofextension) (k8s distribution)
+- [logdedupprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/logdedupprocessor) (k8s distribution)
+- [zpagesextension](https://github.com/open-telemetry/opentelemetry-collector/tree/main/extension/zpagesextension) (verified distribution)
+- [solarwindsprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/solarwindsprocessor) (all distributions)
+
 ## v0.127.6
 - Updated GHA deploy workflow to verify existing Docker images instead of building new ones.
 - Removed Docker image building and pushing steps from GHA deploy workflow.
