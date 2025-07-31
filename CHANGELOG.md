@@ -2,6 +2,13 @@
 
 ## vNext
 
+## v0.127.8
+- Updates golang to 1.24.5
+- Consumes public solarwinds-otel-collector-contrib v0.127.8 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01278)
+- Consumes private solarwinds-otel-collector-contrib v0.127.8 changes:
+    - Updates golang to 1.24.5
+    - `uuidprocessor` Bios UUID made overridable by configuration. Procesor is now compatible with builder and can be released as part of our distributions.
+
 ## v0.127.7
 Reintroduce components missing in `v0.127.6`:
 - [pprofextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/pprofextension) (k8s distribution)
