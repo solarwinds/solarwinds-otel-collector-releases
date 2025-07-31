@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: true
       - name: Check licenses
         run: make ci-check-licenses
       - name: Check that the release version is synced across the repo
