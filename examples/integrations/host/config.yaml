@@ -1,0 +1,471 @@
+receivers:
+  swohostmetrics:
+    collection_interval: 30s
+    scrapers:
+      hostinfo:
+        metrics:
+          swo.hostinfo.uptime:
+            enabled: true
+          swo.hostinfo.user.lastLogged:
+            enabled: true
+          swo.hostinfo.firewall:
+            enabled: true
+          os.cpu.time_microseconds:
+            enabled: true
+          os.cpu.procs:
+            enabled: true
+          os.cpu.current_procs:
+            enabled: true
+          os.cpu.intr:
+            enabled: true
+          os.cpu.ctxt:
+            enabled: true
+          os.cpu.numcores:
+            enabled: true
+      asset:
+        delayed_collection_interval: 90s
+        metrics:
+          swo.asset.installedsoftware:
+            enabled: true
+          swo.asset.installedupdates:
+            enabled: true
+      hardwareinventory:
+        delayed_collection_interval: 90s
+        metrics:
+          swo.hardwareinventory.cpu:
+            enabled: true
+  hostmetrics/system:
+    collection_interval: 30s
+    scrapers:
+      cpu:
+        metrics:
+          system.cpu.time:
+            enabled: true
+          system.cpu.utilization:
+            enabled: true
+      load:
+        metrics:
+          system.cpu.load_average.1m:
+            enabled: true
+          system.cpu.load_average.5m:
+            enabled: true
+          system.cpu.load_average.15m:
+            enabled: true
+      memory:
+        metrics:
+          system.memory.usage:
+            enabled: true
+          system.memory.utilization:
+            enabled: true
+          system.linux.memory.available:
+            enabled: true
+          system.memory.limit:
+            enabled: true
+      disk:
+        metrics:
+          system.disk.io:
+            enabled: true
+          system.disk.io_time:
+            enabled: true
+          system.disk.merged:
+            enabled: true
+          system.disk.operation_time:
+            enabled: true
+          system.disk.operations:
+            enabled: true
+          system.disk.pending_operations:
+            enabled: true
+          system.disk.weighted_io_time:
+            enabled: true
+      filesystem:
+        metrics:
+          system.filesystem.inodes.usage:
+            enabled: true
+          system.filesystem.usage:
+            enabled: true
+          system.filesystem.utilization:
+            enabled: true
+      network:
+        metrics:
+          system.network.connections:
+            enabled: true
+          system.network.dropped:
+            enabled: true
+          system.network.errors:
+            enabled: true
+          system.network.io:
+            enabled: true
+          system.network.packets:
+            enabled: true
+      paging:
+        metrics:
+          system.paging.faults:
+            enabled: true
+          system.paging.operations:
+            enabled: true
+          system.paging.usage:
+            enabled: true
+      processes:
+        metrics:
+          system.processes.created:
+            enabled: true
+          system.processes.count:
+            enabled: true
+      system:
+        metrics:
+          system.uptime:
+            enabled: false
+  hostmetrics/processes:
+    collection_interval: 30s
+    scrapers:
+      process:
+        mute_process_user_error: true
+        mute_process_name_error: true
+        mute_process_exe_error: true
+        mute_process_io_error: true
+        metrics:
+          process.cpu.time:
+            enabled: true
+          process.cpu.utilization:
+            enabled: true
+          process.disk.io:
+            enabled: true
+          process.memory.usage:
+            enabled: true
+          process.memory.virtual:
+            enabled: true
+
+# Optional receiver for ingesting logs
+#   filelog:
+#     include: # Required parameter
+#     start_at: end
+#     poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection: null
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  uuid:
+#    bios_uuid: # Optionally provide the BIOS ID manually
+  batch:
+    send_batch_max_size: 20000
+  solarwinds/host:
+    resource:
+      sw.otelcol.receiver.name: "hostmetrics"
+      sw.otelcol.integration.id: # Required parameter
+  utf8consistency:
+  metricstransform/host:
+    transforms:
+      - include: process.cpu.utilization
+        action: insert
+        new_name: process.cpu.utilization.aggregated
+        operations:
+          - action: aggregate_label_values
+            label: state
+            aggregated_values: [system, user, wait]
+            new_value: aggregated
+            aggregation_type: sum
+      - include: system.cpu.utilization
+        action: insert
+        new_name: system.cpu.utilization.aggregated
+        operations:
+          - action: aggregate_labels
+            label_set: [state]
+            aggregation_type: mean
+      - include: system.cpu.utilization.aggregated
+        action: update
+        operations:
+          - action: aggregate_label_values
+            label: state
+            aggregated_values:
+              [user, system, interrupt, nice, softirq, steal, wait]
+            new_value: aggregated
+            aggregation_type: sum
+      - include: system.cpu.utilization.aggregated
+        action: update
+        operations:
+          - action: experimental_scale_value
+            experimental_scale: 100
+      - include: system.memory.utilization
+        action: insert
+        new_name: system.memory.utilization.aggregated
+        operations:
+          - action: aggregate_label_values
+            label: state
+            aggregated_values: [cached, buffered, used]
+            new_value: aggregated
+            aggregation_type: sum
+      - include: system.memory.utilization.aggregated
+        action: update
+        operations:
+          - action: experimental_scale_value
+            experimental_scale: 100
+      - include: system.memory.usage
+        action: insert
+        new_name: system.memory.total
+        operations:
+          - action: delete_label_value
+            label: state
+            label_value: slab_reclaimable
+          - action: delete_label_value
+            label: state
+            label_value: slab_unreclaimable
+          - action: aggregate_label_values
+            label: state
+            aggregated_values: [free, cached, buffered, used]
+            new_value: aggregated
+            aggregation_type: sum
+      - include: system.network.io
+        action: insert
+        new_name: system.network.io.aggregated
+        operations:
+          - action: aggregate_labels
+            label_set: []
+            aggregation_type: sum
+      - include: system.network.io
+        action: insert
+        match_type: strict
+        new_name: system.network.io.receive.aggregated.rate
+        experimental_match_labels: {"direction": "receive"}
+        operations:
+          - action: aggregate_labels
+            label_set: []
+            aggregation_type: sum
+      - include: system.network.io
+        action: insert
+        match_type: strict
+        new_name: system.network.io.transmit.aggregated.rate
+        experimental_match_labels: {"direction": "transmit"}
+        operations:
+          - action: aggregate_labels
+            label_set: []
+            aggregation_type: sum
+      - include: system.network.io
+        action: insert
+        new_name: system.network.io.rate
+      - include: system.disk.operations
+        action: insert
+        match_type: strict
+        new_name: system.disk.operations.read.rate
+        experimental_match_labels: {"direction": "read"}
+        operations:
+          - action: aggregate_labels
+            label_set: [device]
+            aggregation_type: sum
+      - include: system.disk.operations
+        action: insert
+        match_type: strict
+        new_name: system.disk.operations.write.rate
+        experimental_match_labels: {"direction": "write"}
+        operations:
+          - action: aggregate_labels
+            label_set: [device]
+            aggregation_type: sum
+      - include: system.disk.operations
+        action: insert
+        new_name: system.disk.operations.aggregated
+        operations:
+          - action: aggregate_labels
+            label_set: []
+            aggregation_type: sum
+      - include: system.disk.operations
+        action: insert
+        match_type: strict
+        new_name: system.disk.operations.read.aggregated.rate
+        experimental_match_labels: {"direction": "read"}
+        operations:
+          - action: aggregate_labels
+            label_set: []
+            aggregation_type: sum
+      - include: system.disk.operations
+        action: insert
+        match_type: strict
+        new_name: system.disk.operations.write.aggregated.rate
+        experimental_match_labels: {"direction": "write"}
+        operations:
+          - action: aggregate_labels
+            label_set: []
+            aggregation_type: sum
+      - include: system.filesystem.usage
+        action: insert
+        new_name: system.filesystem.total
+        operations:
+          - action: aggregate_labels
+            label_set: [device]
+            aggregation_type: sum
+      - include: system.cpu.utilization.aggregated
+        action: update
+        operations:
+          - action: delete_label_value
+            label: state
+            label_value: idle
+      - include: system.memory.utilization.aggregated
+        action: update
+        operations:
+          - action: delete_label_value
+            label: state
+            label_value: free
+          - action: delete_label_value
+            label: state
+            label_value: slab_reclaimable
+          - action: delete_label_value
+            label: state
+            label_value: slab_unreclaimable
+      - include: process.cpu.time
+        action: insert
+        new_name: process.cpu.time.rate
+  hostinfo/host:
+    interface:
+      metrics:
+        - include: system.network.io
+          binding_attribute: device
+  hostvolumes:
+  cumulativetodelta/host:
+    include:
+      metrics:
+        - system.disk.operations.aggregated
+        - system.network.io.aggregated
+        - process.cpu.time.rate
+        - system.network.io.rate
+        - system.disk.operations.read.rate
+        - system.disk.operations.write.rate
+        - system.network.io.receive.aggregated.rate
+        - system.network.io.transmit.aggregated.rate
+        - system.disk.operations.read.aggregated.rate
+        - system.disk.operations.write.aggregated.rate
+      match_type: strict
+  deltatorate/host:
+    metrics:
+      - system.disk.operations.aggregated
+      - system.network.io.aggregated
+      - process.cpu.time.rate
+      - system.network.io.rate
+      - system.disk.operations.read.rate
+      - system.disk.operations.write.rate
+      - system.network.io.receive.aggregated.rate
+      - system.network.io.transmit.aggregated.rate
+      - system.disk.operations.read.aggregated.rate
+      - system.disk.operations.write.aggregated.rate
+  transform/desc/host:
+    metric_statements:
+      - context: metric
+        statements:
+          - set(description, "Sum of read and write disk operations, per second.") where name == "system.disk.operations.aggregated"
+          - set(unit, "{operations} per second") where name == "system.disk.operations.aggregated"
+          - set(description, "Sum of transmitted and received bytes, per second.") where name == "system.network.io.aggregated"
+          - set(unit, "By per second") where name == "system.network.io.aggregated"
+          - set(description, "CPU seconds broken down by different states, per second.") where name == "process.cpu.time.rate"
+          - set(unit, "{CPU seconds} per second") where name == "process.cpu.time.rate"
+          - set(description, "Number of bytes received and sent per second.") where name == "system.network.io.rate"
+          - set(unit, "By per second") where name == "system.network.io.rate"
+          - set(description, "Number of bytes received per second.") where name == "system.network.io.receive.aggregated.rate"
+          - set(unit, "By per second") where name == "system.network.io.receive.aggregated.rate"
+          - set(description, "Number of bytes sent per second.") where name == "system.network.io.transmit.aggregated.rate"
+          - set(unit, "By per second") where name == "system.network.io.transmit.aggregated.rate"
+          - set(description, "Disk read operations, per device, per second.") where name == "system.disk.operations.read.rate"
+          - set(unit, "{operations} per second") where name == "system.disk.operations.read.rate"
+          - set(description, "Disk write operations, per device, per second.") where name == "system.disk.operations.write.rate"
+          - set(unit, "{operations} per second") where name == "system.disk.operations.write.rate"
+          - set(description, "Read disk operations per second.") where name == "system.disk.operations.read.aggregated.rate"
+          - set(unit, "{operations} per second") where name == "system.disk.operations.read.aggregated.rate"
+          - set(description, "Write disk operations per second.") where name == "system.disk.operations.write.aggregated.rate"
+          - set(unit, "{operations} per second") where name == "system.disk.operations.write.aggregated.rate"
+          - set(description, "Percentage of total CPU time used by the process since last scrape, expressed as a value between 0 and 1.") where name == "process.cpu.utilization.aggregated"
+          - set(description, "Percentage of memory bytes in use, expressed as a value between 0 and 100.") where name == "system.memory.utilization.aggregated"
+          - set(unit, "100") where name == "system.memory.utilization.aggregated"
+          - set(description, "Total memory size in bytes, calculated as a sum of 'free', 'cached', 'buffered' and 'used' memory states.") where name == "system.memory.total"
+          - set(description, "Percentage of CPU time utilization, expressed as a value between 0 and 100.") where name == "system.cpu.utilization.aggregated"
+          - set(unit, "100") where name == "system.cpu.utilization.aggregated"
+          - set(description, "Total filesystem size, in bytes.") where name == "system.filesystem.total"
+
+  # Adding EC2 tags
+  resourcedetection/tagging-feature:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+    ec2:
+      tags:
+        - ^.*$
+  transform/tagging-feature/host:
+    metric_statements:
+      - set(resource.attributes["sw.entity.type"], "host")
+      - delete_key(resource.attributes, "ec2.tag.Name")
+      - replace_all_patterns(resource.attributes, "key", "^ec2.tag.(.*)$", "tags.$1")
+
+extensions:
+  solarwinds:
+    collector_name: # Required parameter
+    grpc: &grpc_settings
+      endpoint: # Required parameter
+      tls:
+        insecure: false
+      headers: {"Authorization": "Bearer ${SOLARWINDS_TOKEN}"}
+
+exporters:
+  otlp:
+    <<: *grpc_settings
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/host:
+      receivers:
+        - swohostmetrics
+        - hostmetrics/system
+        - hostmetrics/processes
+      processors:
+        - memory_limiter
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - uuid
+        - resourcedetection/tagging-feature
+        - transform/tagging-feature/host
+        - hostinfo/host
+        - hostvolumes
+        - metricstransform/host
+        - cumulativetodelta/host
+        - deltatorate/host
+        - transform/desc/host
+        - utf8consistency
+        - batch
+        - solarwinds/host
+      exporters:
+        - otlp
+
+#     Optional pipeline for ingesting logs
+#     logs/host:
+#       receivers:
+#         - filelog
+#       processors:
+#         - memory_limiter
+#         - resourcedetection/ec2
+#         - resourcedetection/azure
+#         - resourcedetection/gcp
+#         - resourcedetection/system
+#         - batch
+#         - solarwinds/host
+#       exporters:
+#         - otlp
