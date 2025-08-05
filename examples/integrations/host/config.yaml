@@ -1,6 +1,6 @@
 receivers:
   swohostmetrics:
-    collection_interval: 30s
+    collection_interval: # Required parameter
     scrapers:
       hostinfo:
         metrics:
@@ -35,7 +35,7 @@ receivers:
           swo.hardwareinventory.cpu:
             enabled: true
   hostmetrics/system:
-    collection_interval: 30s
+    collection_interval: # Required parameter
     scrapers:
       cpu:
         metrics:
@@ -116,7 +116,7 @@ receivers:
           system.uptime:
             enabled: false
   hostmetrics/processes:
-    collection_interval: 30s
+    collection_interval: # Required parameter
     scrapers:
       process:
         mute_process_user_error: true
