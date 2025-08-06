@@ -1,5 +1,5 @@
 receivers:
-  swohostmetrics:
+  swohostmetrics/hostinfo:
     collection_interval: # Required parameter
     scrapers:
       hostinfo:
@@ -22,15 +22,16 @@ receivers:
             enabled: true
           os.cpu.numcores:
             enabled: true
+  swohostmetrics/hw-asset:
+    collection_interval: # Required parameter
+    scrapers:
       asset:
-        delayed_collection_interval: 90s
         metrics:
           swo.asset.installedsoftware:
             enabled: true
           swo.asset.installedupdates:
             enabled: true
       hardwareinventory:
-        delayed_collection_interval: 90s
         metrics:
           swo.hardwareinventory.cpu:
             enabled: true
@@ -432,7 +433,8 @@ service:
   pipelines:
     metrics/host:
       receivers:
-        - swohostmetrics
+        - swohostmetrics/hostinfo
+        - swohostmetrics/hw-asset
         - hostmetrics/system
         - hostmetrics/processes
       processors:
