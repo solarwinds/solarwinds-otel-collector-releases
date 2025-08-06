@@ -2,6 +2,8 @@
 
 ## vNext
 
+- Added Host monitoring example config
+
 ## v0.127.8
 - Updates golang to 1.24.5
 - Consumes public solarwinds-otel-collector-contrib v0.127.8 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01278)
