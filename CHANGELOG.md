@@ -3,13 +3,8 @@
 ## vNext
 
 ## v0.131.0
-- Updated all OpenTelemetry packages to latest versions
-- OpenTelemetry Collector: v0.127.0 → v0.131.0
-- OpenTelemetry API: v1.33.0 → v1.37.0
-- Updated TLS configuration in extensions and exporters (`TLSSetting` → `TLS`)
-- Wrapped Keepalive configurations with `configoptional.Some()`
-- Replaced deprecated `exporterhelper.QueueConfig` with `exporterhelper.QueueBatchConfig`
-- Components affected: `solarwindsextension`, `solarwindsexporter`
+- Updated OpenTelemetry modules to [v1.37.0/v0.131.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.131.0)
+- Consumes public solarwinds-otel-collector-contrib v0.131.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01310)
 
 ## v0.127.9
 
