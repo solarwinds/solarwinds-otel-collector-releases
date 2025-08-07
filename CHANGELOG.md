@@ -3,15 +3,19 @@
 ## vNext
 
 ## v0.131.0
-- **Major version bump**: Updated all OpenTelemetry packages to latest versions:
-  - OpenTelemetry Collector: v0.127.0 → v0.131.0
-  - OpenTelemetry API: v1.33.0 → v1.37.0
-- **Breaking changes resolved**:
-  - Updated TLS configuration in extensions and exporters (TLSSetting → TLS)
-  - Wrapped Keepalive configurations with `configoptional.Some()`
-  - Replaced deprecated `exporterhelper.QueueConfig` with `exporterhelper.QueueBatchConfig`
-- **Components affected**: solarwindsextension, solarwindsprocessor, solarwindsexporter
-- All tests passing across all modules and distributions
+- Updated all OpenTelemetry packages to latest versions
+- OpenTelemetry Collector: v0.127.0 → v0.131.0
+- OpenTelemetry API: v1.33.0 → v1.37.0
+- Updated TLS configuration in extensions and exporters (`TLSSetting` → `TLS`)
+- Wrapped Keepalive configurations with `configoptional.Some()`
+- Replaced deprecated `exporterhelper.QueueConfig` with `exporterhelper.QueueBatchConfig`
+- Components affected: `solarwindsextension`, `solarwindsexporter`
+
+## v0.127.9
+
+- Added Host monitoring example config
+- Fix CodeQL pipeline
+- Consumes public solarwinds-otel-collector-contrib v0.127.9 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01279)
 
 ## v0.127.8
 - Updates golang to 1.24.5
