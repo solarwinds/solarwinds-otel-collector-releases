@@ -2,7 +2,11 @@
 
 ## vNext
 
+## v0.131.1
+- Fix of previous release, which had incorrectly tagged docker images in Dockerhub. No additional changes.
+
 ## v0.131.0
+- :warning: This version has incorrectly tagged images in Dockerhub, use `v0.131.1` instead.
 - Updated OpenTelemetry modules to [v1.37.0/v0.131.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.131.0)
 - Consumes public solarwinds-otel-collector-contrib v0.131.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01310)
 
