@@ -24,3 +24,15 @@ jobs:
         run: |
           make prepare-release version=$(grep -oP '(?<=const Version = ")[^"]+' "./pkg/version/version.go")
           git diff --exit-code
+  govulncheck-modules: 
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Go vulnerabilities check
+        run: |
+          make ci-vulncheck-modules 2>&1
