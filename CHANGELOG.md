@@ -1,8 +1,12 @@
 # Changelog
 
 ## vNext
+
+## v0.131.2
 - Updates golang to 1.24.6
 - Adds new `swo.system.processes.count` to the Host monitoring example config
+- Uses explicit _mcr.microsoft.com/windows/nanoserver:ltsc{windows version}**-amd64**_ image variant for Windows Dockerfiles
+- Consumes public solarwinds-otel-collector-contrib v0.131.2 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01312)
 
 ## v0.131.1
 - Fix of previous release, which had incorrectly tagged docker images in Dockerhub. No additional changes.
