@@ -22,6 +22,10 @@ receivers:
             enabled: true
           os.cpu.numcores:
             enabled: true
+      processes:
+        metrics:
+          swo.system.processes.count:
+            enabled: true
   swohostmetrics/hw-asset:
     collection_interval: # Required parameter
     scrapers:
