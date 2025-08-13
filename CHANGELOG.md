@@ -2,6 +2,7 @@
 
 ## vNext
 - Updates golang to 1.24.6
+- Adds new `swo.system.processes.count` to the Host monitoring example config
 
 ## v0.131.1
 - Fix of previous release, which had incorrectly tagged docker images in Dockerhub. No additional changes.
