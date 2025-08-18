@@ -1,13 +1,27 @@
 # SolarWinds OpenTelemetry Collector
 
-SolarWinds OpenTelemetry Collector is a distribution of OpenTelemetry Collector with components
-bundled from [opentelemetry-collector](https://github.com/open-telemetry/opentelemetry-collector/tree/main)
-and [opentelemetry-collector-contrib](https://github.com/open-telemetry/opentelemetry-collector-contrib). It also contains specific SolarWinds components for easier usage and enhanced telemetry collection.
+SolarWinds OpenTelemetry Collector (swotelcol) is a distribution of OpenTelemetry Collector with components
+bundled from [opentelemetry-collector], [opentelemetry-collector-contrib] and [solarwinds-otel-collector-contrib].
+It contains SolarWinds-specific components for better integration with SolarWinds Observability (SWO) and enhances telemetry collection.
+
+[opentelemetry-collector]: https://github.com/open-telemetry/opentelemetry-collector
+[opentelemetry-collector-contrib]: https://github.com/open-telemetry/opentelemetry-collector-contrib
+[solarwinds-otel-collector-contrib]: https://github.com/solarwinds/solarwinds-otel-collector-contrib
 
 ## Getting Started
 
-You will need to generate your ingestion token in SolarWinds Observability. See [API Tokens](https://documentation.solarwinds.com/en/success_center/observability/content/settings/api-tokens.htm).
-Put it in the SOLARWINDS_INGESTION_TOKEN environment variable.
+You will need to generate your ingestion token in SWO. See [API Tokens](https://documentation.solarwinds.com/en/success_center/observability/content/settings/api-tokens.htm).
+Put it in the SOLARWINDS_TOKEN environment variable.
+
+```sh
+# Unix shell
+export SOLARWINDS_TOKEN=<your-ingestion-token>
+```
+
+```ps
+# PowerShell
+$env:SOLARWINDS_TOKEN="<your-ingestion-token>"
+```
 
 Then you can either use the provided example configurations or create your own custom configuration from scratch.
 
@@ -15,22 +29,24 @@ Then you can either use the provided example configurations or create your own c
 
 In the [examples folder](/examples/integrations/), there are a number of configurations for various fully supported integrations.
 
-When these integrations are configured, you will get the same experience as with integrations set up by the Add Data wizards in SolarWinds Observability.
+When these integrations are configured, you will get the same experience as with integrations set up by the Add Data wizards in SWO.
+
 Just follow the inline comments within the example configurations for guidance.
 
 ### Custom configuration
 
 You can also create your own custom configuration.
 
-To get data correctly ingested by the SolarWinds Observability the configuration has to contain these components:
+To get data correctly ingested by the SWO the configuration has to contain these components:
 
-- [SolarWinds Extension](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/extension/solarwindsextension) - Provides basic collector identification and health check for SolarWinds Observability.
-- [SolarWinds Processor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/solarwindsprocessor) - Enriches telemetry data with necessary attributes to be properly associated by SolarWinds Observability.
-- [OTLP Exporter](https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/otlpexporter) - Exports telemetry data to SolarWinds Observability.
+- [SolarWinds Extension](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/extension/solarwindsextension) - Provides basic collector identification and health check for SWO.
+- [SolarWinds Processor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/solarwindsprocessor) - Enriches telemetry data with attributes to be properly associated by SWO.
+- [OTLP Exporter](https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/otlpexporter) - Exports telemetry data to SWO.
 
-2. Create a `config.yaml` file that contains configuration for the SolarWinds OTel Collector.
-   1. Insert the ingestion token and choose a correct data center (na-01, na-02, eu-01, ap-01).
-   2. Specify the collector name.
+Create a `config.yaml` file that contains configuration for the swotelcol.
+
+1.  Set ingestion endpoint. To get correct endpoint, search for OTLP in [Data centers and endpoint URIs](https://documentation.solarwinds.com/en/success_center/observability/content/system_requirements/endpoints.htm) docs.
+2.  Specify the collector name.
 
 ```yaml
 service:
@@ -53,30 +69,32 @@ extensions:
       endpoint: # Required parameter
       tls:
         insecure: false
-      headers: { "Authorization": "Bearer ${SOLARWINDS_TOKEN}" }
+      headers: { "Authorization": "Bearer ${env:SOLARWINDS_TOKEN}" }
 
 exporters:
   otlp:
     <<: *grpc_settings
 ```
 
-3. Pull the SolarWinds OTel Collector from DockerHub.
+### Running the Collector
 
-```
-docker pull solarwinds/solarwinds-otel-collector:playground
+1. Pull the swotelcol image from DockerHub (Verified [distribution](#distributions) in this case).
+
+```sh
+docker pull solarwinds/solarwinds-otel-collector:verified
 ```
 
-4. Start the container with your `config.yaml`.
+2. Start the container with your `config.yaml`.
 
-```
-docker run -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel-collector:playground
+```sh
+docker run -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel-collector:verified
 ```
 
 ## Distributions
 
 ### Verified
 
-The `verified` distribution contains only the components listed below. With the `verified` distribution, you will receive support with configuration, and the components have been tested by Solarwinds.
+The `verified` distribution contains only a selection of components tested by SolarWinds (listed below). With this distribution, you will receive configuration support.
 
 | Receivers                                                                                                                           | Processors                                                                                                                                     | Exporters                                           | Extensions                                                                                                                                             | Connectors                                                                                                                                 |
 | :---------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
@@ -107,18 +125,14 @@ The `verified` distribution contains only the components listed below. With the 
 | [swohostmetricsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swohostmetricsreceiver) |                                                                                                                                                |                                                     |                                                                                                                                                        |                                                                                                                                            |
 | [swok8sobjectsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sobjectsreceiver)   |                                                                                                                                                |                                                     |                                                                                                                                                        |                                                                                                                                            |
 
-### Playground
-
-The `playground` distribution contains all components from `verified` distribution plus most of the components from `opentelemetry-collector-contrib` and `opentelemetry-collector` repositories. When using the playground distribution, we will not provide support with configuration. Also we cannot guaratee that all components from the mentioned repositories are working as expected.
-
 ### K8s
 
-The `k8s` distribution contains only the components required for the Kubernetes monitoring in Solarwinds Obervability platform.
+The `k8s` distribution contains only the components required for Kubernetes monitoring in the SWO platform. With this distribution, you will receive configuration support.
+
+### Playground
+
+The `playground` distribution contains all components from the `verified` distribution plus most components from the `opentelemetry-collector-contrib` and `opentelemetry-collector` repositories. When using the `playground` distribution, we do not provide configuration support and cannot guarantee that all upstream components from these repositories will work as expected.
 
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-```
-
-```
