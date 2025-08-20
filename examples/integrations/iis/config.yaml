@@ -2,6 +2,10 @@ receivers:
   iis:
     collection_interval: # Required parameter
     metrics:
+      iis.application_pool.state:
+        enabled: true
+      iis.application_pool.uptime:
+        enabled: true
       iis.connection.active:
         enabled: true
       iis.connection.anonymous:
