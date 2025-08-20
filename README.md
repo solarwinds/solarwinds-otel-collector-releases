@@ -15,10 +15,10 @@ Put it in the SOLARWINDS_TOKEN environment variable.
 
 ```sh
 # Unix shell
-export SOLARWINDS_TOKEN=<your-ingestion-token>
+export SOLARWINDS_TOKEN="<your-ingestion-token>"
 ```
 
-```ps
+```ps1
 # PowerShell
 $env:SOLARWINDS_TOKEN="<your-ingestion-token>"
 ```
@@ -64,9 +64,9 @@ receivers:
 
 extensions:
   solarwinds:
-    collector_name: # Required parameter
+    collector_name: "<collector-name>" # Required parameter
     grpc: &grpc_settings
-      endpoint: # Required parameter
+      endpoint: "<endpoint>" # Required parameter
       tls:
         insecure: false
       headers: { "Authorization": "Bearer ${env:SOLARWINDS_TOKEN}" }
@@ -97,7 +97,7 @@ docker run -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel-
 The `verified` distribution contains only a selection of components tested by SolarWinds (listed below). With this distribution, you will receive configuration support.
 
 | Receivers                                                                                                                           | Processors                                                                                                                                     | Exporters     | Extensions                                                                                                                                             | Connectors                                                                                                                                 |
-|:------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------|:--------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------|
+| :---------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- | :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
 | apachereceiver                                                                                                                      | memorylimiterprocessor                                                                                                                         | debugexporter | [solarwindsextension](./extension/solarwindsextension)                                                                                                 | forwardconnector                                                                                                                           |
 | prometheusreceiver                                                                                                                  | resourceprocessor                                                                                                                              | nopexporter   | memorylimiterextension                                                                                                                                 | routingconnector                                                                                                                           |
 | dockerstatsreceiver                                                                                                                 | resourcedetectionprocessor                                                                                                                     | otlpexporter  | healthcheckextension                                                                                                                                   | [solarwindsentityconnector](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/connector/solarwindsentityconnector) |
