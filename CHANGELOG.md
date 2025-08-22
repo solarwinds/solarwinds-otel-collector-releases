@@ -1,7 +1,13 @@
 # Changelog
 
 ## vNext
+
+## v0.131.3
 - Updates golang to 1.25.0
+- Consumes public solarwinds-otel-collector-contrib v0.131.3 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01313)
+- Consumes private solarwinds-otel-collector-contrib v0.131.3 changes:
+  - Updates golang to 1.25.0
+  - Fixes metadata generation for `hostinfoprocessor`, `hostvolumeprocessor`, `utf8consistencyprocessor`, `uuidprocessor`
 
 ## v0.131.2
 - Updates golang to 1.24.6
