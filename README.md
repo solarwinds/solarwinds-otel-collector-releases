@@ -1,60 +1,109 @@
 # SolarWinds OpenTelemetry Collector
-SolarWinds OpenTelemetry Collector is a distribution of OpenTelemetry Collector with components
-bundled from [opentelemetry-collector](https://github.com/open-telemetry/opentelemetry-collector/tree/main)
-and [opentelemetry-collector-contrib](https://github.com/open-telemetry/opentelemetry-collector-contrib). It also contains specific SolarWinds components for easier usage and enhanced telemetry collection.
+
+SolarWinds OpenTelemetry Collector (swotelcol) is a distribution of OpenTelemetry Collector with components
+bundled from [opentelemetry-collector], [opentelemetry-collector-contrib] and [solarwinds-otel-collector-contrib].
+It contains SolarWinds-specific components for better integration with SolarWinds Observability (SWO) and enhances telemetry collection.
+
+[opentelemetry-collector]: https://github.com/open-telemetry/opentelemetry-collector
+[opentelemetry-collector-contrib]: https://github.com/open-telemetry/opentelemetry-collector-contrib
+[solarwinds-otel-collector-contrib]: https://github.com/solarwinds/solarwinds-otel-collector-contrib
 
 ## Getting Started
-Configuration for SolarWinds OTel Collector has to contain [SolarWinds Extension](./extension/solarwindsextension/README.md) and [Solarwinds Exporter](./exporter/solarwindsexporter/README.md). 
 
-### Example configuration
-1. Generate your ingestion token in SWO. See [API Tokens](https://documentation.solarwinds.com/en/success_center/observability/content/settings/api-tokens.htm).
-2. Create a `config.yaml` file that contains configuration for the SolarWinds OTel Collector. Insert the ingestion token and choose a correct data center (na-01, na-02, eu-01, ap-01). Specify the collector name.
+You will need to generate your ingestion token in SWO. See [API Tokens](https://documentation.solarwinds.com/en/success_center/observability/content/settings/api-tokens.htm).
+Put it in the SOLARWINDS_TOKEN environment variable.
+
+```sh
+# Unix shell
+export SOLARWINDS_TOKEN="<your-ingestion-token>"
+```
+
+```ps1
+# PowerShell
+$env:SOLARWINDS_TOKEN="<your-ingestion-token>"
+```
+
+Then you can either use the provided example configurations or create your own custom configuration from scratch.
+
+### Fully supported integrations
+
+In the [examples folder](/examples/integrations/), there are a number of configurations for various fully supported integrations.
+
+When these integrations are configured, you will get the same experience as with integrations set up by the Add Data wizards in SWO.
+
+Just follow the inline comments within the example configurations for guidance.
+
+### Custom configuration
+
+You can also create your own custom configuration.
+
+To get data correctly ingested by the SWO the configuration has to contain these components:
+
+- [SolarWinds Extension](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/extension/solarwindsextension) - Provides basic collector identification and health check for SWO.
+- [SolarWinds Processor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/solarwindsprocessor) - Enriches telemetry data with attributes to be properly associated by SWO.
+- [OTLP Exporter](https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/otlpexporter) - Exports telemetry data to SWO.
+
+Create a `config.yaml` file that contains configuration for the swotelcol.
+
+1.  Set ingestion endpoint. To get correct endpoint, search for OTLP in [Data centers and endpoint URIs](https://documentation.solarwinds.com/en/success_center/observability/content/system_requirements/endpoints.htm) docs.
+2.  Specify the collector name.
+
 ```yaml
 service:
   extensions: [solarwinds]
   pipelines:
     metrics:
       receivers: [redis]
-      exporters: [solarwinds]
+      exporters: [otlp]
+
 receivers:
   redis:
     endpoint: "<redis-url>:6379"
     collection_interval: 10s
     password: ${env:REDIS_PASSWORD}
+
 extensions:
   solarwinds:
-    token: "<ingestion-token>"
-    data_center: "na-01"
-    collector_name: "<collector-name>"
+    collector_name: "<collector-name>" # Required parameter
+    grpc: &grpc_settings
+      endpoint: "<endpoint>" # Required parameter
+      tls:
+        insecure: false
+      headers: { "Authorization": "Bearer ${env:SOLARWINDS_TOKEN}" }
 
 exporters:
-  solarwinds:
-```
-3. Pull the SolarWinds OTel Collector from DockerHub.
-```
-docker pull solarwinds/solarwinds-otel-collector:playground
-```
-4. Start the container with your `config.yaml`. 
-```
-docker run  -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel-collector:playground
+  otlp:
+    <<: *grpc_settings
 ```
 
-### Fully supported integrations
+### Running the Collector
 
-If you'd like, you can find example configurations [here](/examples/integrations/). When these integrations are configured, you will get the same experience as with integrations configured in the managed way using Add Data wizards in SolarWinds Observability.
+1. Pull the swotelcol image from DockerHub (Verified [distribution](#distributions) in this case).
+
+```sh
+docker pull solarwinds/solarwinds-otel-collector:verified
+```
+
+2. Start the container with your `config.yaml`.
+
+```sh
+docker run -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel-collector:verified
+```
 
 ## Distributions
+
 ### Verified
 The `verified` distribution contains only the components listed below. With the `verified` distribution, you will receive support with configuration, and the components have been tested by Solarwinds.
 
+
 | Receivers     |	Processors        | Exporters  | Extensions | Connectors|
 | :---          |	:---           	  | :---       |	:---      |:---|
-| apachereceiver        |	memorylimiterprocessor    |	[solarwindsexporter](./exporter/solarwindsexporter) | [solarwindsextension](./extension/solarwindsextension) |forwardconnector|
-| prometheusreceiver    | resourceprocessor          |	debugexporter	|memorylimiterextension|routingconnector|
-| dockerstatsreceiver  | resourcedetectionprocessor |	nopexporter	|healthcheckextension|[solarwindsentityconnector](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/connector/solarwindsentityconnector)|
-| elasticsearchreceiver | metricstransformprocessor  |	otlpexporter	|k8sobserver||
-| iisreceiver           | cumulativetodeltaprocessor |	fileexporter	|[solarwindsapmsettingsextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/solarwindsapmsettingsextension)||
-| memcachedreceiver     | deltatorate       |		|filestorage||
+| apachereceiver        |	memorylimiterprocessor    | debugexporter | filestorage |forwardconnector|
+| prometheusreceiver    | resourceprocessor          |	nopexporter	|memorylimiterextension|routingconnector|
+| dockerstatsreceiver  | resourcedetectionprocessor |	otlpexporter  |healthcheckextension|[solarwindsentityconnector](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/connector/solarwindsentityconnector)|
+| elasticsearchreceiver | metricstransformprocessor  |	fileexporter	|k8sobserver||
+| iisreceiver           | cumulativetodeltaprocessor |		|[solarwindsapmsettingsextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/solarwindsapmsettingsextension)||
+| memcachedreceiver     | deltatorate       |		|[solarwindsextension](./extension/solarwindsextension) ||
 | nginxreceiver         | metricsgenerationprocessor |		|
 | oracledbreceiver      | transformprocessor         |		|
 | otlpreceiver          | filterprocessor            |		|
@@ -83,4 +132,5 @@ The `playground` distribution contains all components from `verified` distributi
 The `k8s` distribution contains only the components required for the Kubernetes monitoring in Solarwinds Obervability platform.
 
 ## Contributing
+
 See [CONTRIBUTING.md](./CONTRIBUTING.md).

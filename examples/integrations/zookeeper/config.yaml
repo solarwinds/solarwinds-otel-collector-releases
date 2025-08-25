@@ -122,7 +122,7 @@ extensions:
       endpoint: # Required parameter
       tls:
         insecure: false
-      headers: {"Authorization": "Bearer ${SOLARWINDS_TOKEN}"}
+      headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
 
 exporters:
   otlp:
