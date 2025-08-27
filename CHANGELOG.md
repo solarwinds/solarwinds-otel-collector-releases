@@ -2,6 +2,11 @@
 
 ## vNext
 
+## v0.131.4
+- Consumes public solarwinds-otel-collector-contrib v0.131.4 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01314)
+- Consumes private solarwinds-otel-collector-contrib v0.131.4 changes:
+  - `solarwindsexporter` has been removed as announced (Breaking change)
+
 ## v0.131.3
 - Updates golang to 1.25.0
 - Consumes public solarwinds-otel-collector-contrib v0.131.3 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01313)
