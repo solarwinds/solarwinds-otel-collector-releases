@@ -117,7 +117,7 @@ The `verified` distribution contains only the components listed below. With the 
 |hostmetricsreceiver|[k8seventgenerationprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/k8seventgenerationprocessor)||
 |journaldreceiver|[solarwindsprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/solarwindsprocessor)||
 |k8seventsreceiver|[swok8sworkloadtypeprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadtypeprocessor)||||
-|k8sobjectsreceiver|||||
+|k8sobjectsreceiver|[swok8sworkloadstatusprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadstatusprocessor)||||
 |kafkareceiver|||||
 |receivercreator|||||
 |simpleprometheusreceiver|||||
