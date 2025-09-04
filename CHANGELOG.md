@@ -3,6 +3,14 @@
 ## vNext
 
 ## v0.131.6
+- Consumes public solarwinds-otel-collector-contrib v0.131.6 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01316)
+- Consumes private solarwinds-otel-collector-contrib v0.131.6 changes:
+  -  No changes.
+- Adds [swok8sworkloadstatusprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadstatusprocessor) to the `k8s`, `verified` and `playground` distributions.
+- Updates golang in _build/go.mod to 1.25.1
+
+## v0.131.5
+- No changes, previous release failed to finish properly.
 
 ## v0.131.4
 - Consumes public solarwinds-otel-collector-contrib v0.131.4 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01314)
