@@ -163,7 +163,9 @@ processors:
     limit_percentage: 50
     spike_limit_percentage: 30
   solarwinds/elasticsearch:
-    extension: solarwinds
+    collector_attributes_decoration:
+      enabled: true
+      extension: solarwinds
     resource:
       sw.otelcol.receiver.name: "elasticsearch"
       sw.otelcol.integration.id: # Required parameter

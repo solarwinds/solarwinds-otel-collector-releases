@@ -38,7 +38,9 @@ processors:
     limit_percentage: 50
     spike_limit_percentage: 30
   solarwinds/memcached:
-    extension: solarwinds
+    collector_attributes_decoration:
+      enabled: true
+      extension: solarwinds
     resource:
       sw.otelcol.receiver.name: "memcached"
       sw.otelcol.integration.id: # Required parameter
