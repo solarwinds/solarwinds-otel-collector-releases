@@ -86,7 +86,9 @@ processors:
     limit_percentage: 50
     spike_limit_percentage: 30
   solarwinds/snowflake:
-    extension: solarwinds
+    collector_attributes_decoration:
+      enabled: true
+      extension: solarwinds
     resource:
       sw.otelcol.receiver.name: "snowflake"
       sw.otelcol.integration.id: # Required parameter
