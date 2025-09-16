@@ -175,7 +175,9 @@ processors:
   batch:
     send_batch_max_size: 20000
   solarwinds/host:
-    extension: solarwinds
+    collector_attributes_decoration:
+      enabled: true
+      extension: solarwinds
     resource:
       sw.otelcol.receiver.name: "hostmetrics"
       sw.otelcol.integration.id: # Required parameter
