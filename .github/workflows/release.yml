@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 env:
-  GO_VERSION: '1.25.0'
+  GO_VERSION: '1.25.1'
   DOCKERHUB_IMAGE: solarwinds/solarwinds-otel-collector
 
 jobs:
