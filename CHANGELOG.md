@@ -1,6 +1,8 @@
 # Changelog
 
 ## vNext
+- Updates OpenTelemetry packages to v0.136.0/v1.42.0
+- Removed deprecated components: routingprocessor (use routingconnector), awscloudwatchmetricsreceiver, opencensusreceiver, sapmreceiver
 - Updates golang to 1.25.1
 
 ## v0.131.8
