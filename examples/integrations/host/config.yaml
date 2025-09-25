@@ -178,6 +178,8 @@ processors:
     collector_attributes_decoration:
       enabled: true
       extension: solarwinds
+    host_attributes_decoration:
+      enabled: true
     resource:
       sw.otelcol.receiver.name: "hostmetrics"
       sw.otelcol.integration.id: # Required parameter
