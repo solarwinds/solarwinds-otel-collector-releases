@@ -125,6 +125,7 @@ The `verified` distribution contains only the components listed below. With the 
 |[swohostmetricsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swohostmetricsreceiver)|||||
 |[swok8sobjectsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sobjectsreceiver)|||||
 |[mqttreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/mqttreceiver)|||||
+|[swok8sdiscoveryreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sdiscovery)|||||
 
 ### Playground
 The `playground` distribution contains all components from `verified` distribution plus most of the components from `opentelemetry-collector-contrib` and `opentelemetry-collector` repositories. When using the playground distribution, we will not provide support with configuration. Also we cannot guaratee that all components from the mentioned repositories are working as expected.
