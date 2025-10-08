@@ -2,13 +2,18 @@
 
 ## vNext
 
+## v0.136.1
+- Consumes public solarwinds-otel-collector-contrib v0.136.1 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01361)
+- Consumes private solarwinds-otel-collector-contrib v0.136.1 changes:
+  - No changes.
+
 ## v0.136.0
 - Updates OpenTelemetry packages to v0.136.0/v1.42.0
 - Added swok8sdiscovery receiver to all distributions
 - Removed components from playground distribution: routingprocessor (use routingconnector), awscloudwatchmetricsreceiver, opencensusreceiver, sapmreceiver
 - Updates golang to 1.25.1
 - Consumes public solarwinds-otel-collector-contrib v0.136.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01360)
-- Consumes private solarwinds-otel-collector-contrib v0.131.8 changes:
+- Consumes private solarwinds-otel-collector-contrib v0.136.0 changes:
   - Updates OpenTelemetry packages to v0.136.0/v1.42.0
 
 ## v0.131.9
