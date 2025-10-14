@@ -35,6 +35,8 @@ jobs:
   release_checks:
     name: Release Checks
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       image_tag: ${{ steps.get-tag.outputs.tag }}
     steps:
@@ -68,6 +70,8 @@ jobs:
           done
   create_release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     name: Create GitHub Release
     needs:
       - release_checks
