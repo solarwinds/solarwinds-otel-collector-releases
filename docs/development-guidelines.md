@@ -6,7 +6,7 @@
 
 Name of the branches created within this repository should follow the following format:
 
-`{type}/#{issue-number}-{description-of-changes}`
+`{type}/#{issue-number}-{description-of-changes}`fsdfsdf
 
 _Example:_ `chore/#12-update-dependency-version`
 
