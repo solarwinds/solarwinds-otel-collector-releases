@@ -102,12 +102,10 @@ The `playground` distribution contains all components from `verified` distributi
 
 Full set of components is available in the [playground-components](./docs/playground-components.md).
 
-
 ### K8s
 The `k8s` distribution contains only the components required for the Kubernetes monitoring in Solarwinds Obervability platform.
 
 Full set of components is available in the [k8s-components](./docs/k8s-components.md)
-
 
 ## Contributing
 
