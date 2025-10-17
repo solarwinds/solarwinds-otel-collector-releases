@@ -95,43 +95,17 @@ docker run -v ./config.yaml:/opt/default-config.yaml solarwinds/solarwinds-otel-
 ### Verified
 The `verified` distribution contains only the components listed below. With the `verified` distribution, you will receive support with configuration, and the components have been tested by Solarwinds.
 
-
-| Receivers     |	Processors        | Exporters  | Extensions | Connectors|
-| :---          |	:---           	  | :---       |	:---      |:---|
-| apachereceiver        |	memorylimiterprocessor    | debugexporter | filestorage |forwardconnector|
-| prometheusreceiver    | resourceprocessor          |	nopexporter	|memorylimiterextension|routingconnector|
-| dockerstatsreceiver  | resourcedetectionprocessor |	otlpexporter  |healthcheckextension|[solarwindsentityconnector](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/connector/solarwindsentityconnector)|
-| elasticsearchreceiver | metricstransformprocessor  |	fileexporter	|k8sobserver||
-| iisreceiver           | cumulativetodeltaprocessor |		|[solarwindsapmsettingsextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/solarwindsapmsettingsextension)||
-| memcachedreceiver     | deltatorate       |		|[solarwindsextension](./extension/solarwindsextension) ||
-| nginxreceiver         | metricsgenerationprocessor |		|
-| oracledbreceiver      | transformprocessor         |		|
-| otlpreceiver          | filterprocessor            |		|
-| rabbitmqreceiver      | batchprocessor             |		|
-| redisreceiver         |	attributesprocessor ||
-| snowflakereceiver     |	deltatocumulativeprocessor ||
-| zookeeperreceiver     |	deltatorateprocessor ||
-|nopreceiver|groupbyattrsprocessor||
-|filelogreceiver|groupbytraceprocessor||
-|haproxyreceiver|k8sattributesprocessor||
-|hostmetricsreceiver|[k8seventgenerationprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/k8seventgenerationprocessor)||
-|journaldreceiver|[solarwindsprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/solarwindsprocessor)||
-|k8seventsreceiver|[swok8sworkloadtypeprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadtypeprocessor)||||
-|k8sobjectsreceiver|[swok8sworkloadstatusprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadstatusprocessor)||||
-|kafkareceiver|||||
-|receivercreator|||||
-|simpleprometheusreceiver|||||
-|statsdreceiver|||||
-|[swohostmetricsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swohostmetricsreceiver)|||||
-|[swok8sobjectsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sobjectsreceiver)|||||
-|[mqttreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/mqttreceiver)|||||
-|[swok8sdiscoveryreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sdiscovery)|||||
+Full set of components is available in the [verified-components](./docs/verified-components.md).
 
 ### Playground
 The `playground` distribution contains all components from `verified` distribution plus most of the components from `opentelemetry-collector-contrib` and `opentelemetry-collector` repositories. When using the playground distribution, we will not provide support with configuration. Also we cannot guaratee that all components from the mentioned repositories are working as expected.
 
+Full set of components is available in the [playground-components](./docs/playground-components.md).
+
 ### K8s
 The `k8s` distribution contains only the components required for the Kubernetes monitoring in Solarwinds Obervability platform.
+
+Full set of components is available in the [k8s-components](./docs/k8s-components.md)
 
 ## Contributing
 
