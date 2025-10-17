@@ -127,18 +127,18 @@ The `verified` distribution contains only the components listed below. With the 
 |[mqttreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/mqttreceiver)|||||
 |[swok8sdiscoveryreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sdiscovery)|||||
 
-Full set of components is available in the [manifest](./distributions/verified/manifest.yaml).
+Full set of components is available in the [verified-components](./docs/verified-components.md).
 
 ### Playground
 The `playground` distribution contains all components from `verified` distribution plus most of the components from `opentelemetry-collector-contrib` and `opentelemetry-collector` repositories. When using the playground distribution, we will not provide support with configuration. Also we cannot guaratee that all components from the mentioned repositories are working as expected.
 
-Full set of components is available in the [manifest](./distributions/playground/manifest.yaml).
+Full set of components is available in the [playground-components](./docs/playground-components.md).
 
 
 ### K8s
 The `k8s` distribution contains only the components required for the Kubernetes monitoring in Solarwinds Obervability platform.
 
-Full set of components is available in the [manifest](./distributions/k8s/manifest.yaml).
+Full set of components is available in the [k8s-components](./docs/k8s-components.md)
 
 
 ## Contributing
