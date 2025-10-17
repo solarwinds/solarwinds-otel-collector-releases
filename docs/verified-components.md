@@ -2,70 +2,70 @@
 
 All components. Generated based on manifest file
 
-| Category | Component | Private |
-| --- | --- | --- |
-| Extension | memorylimiterextension | No |
-| Extension | zpagesextension | No |
-| Extension | healthcheckextension | No |
-| Extension | k8sobserver | No |
-| Extension | solarwindsapmsettingsextension | No |
-| Extension | filestorage | No |
-| Extension | solarwindsextension | No |
-| Exporter | debugexporter | No |
-| Exporter | nopexporter | No |
-| Exporter | otlpexporter | No |
-| Exporter | fileexporter | No |
-| Processor | batchprocessor | No |
-| Processor | memorylimiterprocessor | No |
-| Processor | attributesprocessor | No |
-| Processor | cumulativetodeltaprocessor | No |
-| Processor | deltatocumulativeprocessor | No |
-| Processor | deltatorateprocessor | No |
-| Processor | filterprocessor | No |
-| Processor | groupbyattrsprocessor | No |
-| Processor | groupbytraceprocessor | No |
-| Processor | k8sattributesprocessor | No |
-| Processor | metricsgenerationprocessor | No |
-| Processor | metricstransformprocessor | No |
-| Processor | resourcedetectionprocessor | No |
-| Processor | resourceprocessor | No |
-| Processor | transformprocessor | No |
-| Processor | k8seventgenerationprocessor | No |
-| Processor | solarwindsprocessor | No |
-| Processor | swok8sworkloadtypeprocessor | No |
-| Processor | swok8sworkloadstatusprocessor | No |
-| Processor | hostinfoprocessor | Yes |
-| Processor | hostvolumesprocessor | Yes |
-| Processor | utf8consistencyprocessor | Yes |
-| Processor | uuidprocessor | Yes |
-| Receiver | nopreceiver | No |
-| Receiver | otlpreceiver | No |
-| Receiver | apachereceiver | No |
-| Receiver | dockerstatsreceiver | No |
-| Receiver | elasticsearchreceiver | No |
-| Receiver | filelogreceiver | No |
-| Receiver | haproxyreceiver | No |
-| Receiver | hostmetricsreceiver | No |
-| Receiver | iisreceiver | No |
-| Receiver | journaldreceiver | No |
-| Receiver | k8seventsreceiver | No |
-| Receiver | k8sobjectsreceiver | No |
-| Receiver | kafkareceiver | No |
-| Receiver | memcachedreceiver | No |
-| Receiver | nginxreceiver | No |
-| Receiver | oracledbreceiver | No |
-| Receiver | prometheusreceiver | No |
-| Receiver | rabbitmqreceiver | No |
-| Receiver | receivercreator | No |
-| Receiver | redisreceiver | No |
-| Receiver | simpleprometheusreceiver | No |
-| Receiver | snowflakereceiver | No |
-| Receiver | statsdreceiver | No |
-| Receiver | zookeeperreceiver | No |
-| Receiver | swohostmetricsreceiver | No |
-| Receiver | swok8sdiscovery | No |
-| Receiver | swok8sobjectsreceiver | No |
-| Receiver | mqttreceiver | No |
-| Connector | forwardconnector | No |
-| Connector | routingconnector | No |
-| Connector | solarwindsentityconnector | No |
+| Category | Component | Private | Module |
+| --- | --- | --- | --- |
+| Extension | memorylimiterextension | No | go.opentelemetry.io/collector/extension/memorylimiterextension |
+| Extension | zpagesextension | No | go.opentelemetry.io/collector/extension/zpagesextension |
+| Extension | healthcheckextension | No | github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension |
+| Extension | k8sobserver | No | github.com/open-telemetry/opentelemetry-collector-contrib/extension/observer/k8sobserver |
+| Extension | solarwindsapmsettingsextension | No | github.com/open-telemetry/opentelemetry-collector-contrib/extension/solarwindsapmsettingsextension |
+| Extension | filestorage | No | github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage |
+| Extension | solarwindsextension | No | github.com/solarwinds/solarwinds-otel-collector-contrib/extension/solarwindsextension |
+| Exporter | debugexporter | No | go.opentelemetry.io/collector/exporter/debugexporter |
+| Exporter | nopexporter | No | go.opentelemetry.io/collector/exporter/nopexporter |
+| Exporter | otlpexporter | No | go.opentelemetry.io/collector/exporter/otlpexporter |
+| Exporter | fileexporter | No | github.com/open-telemetry/opentelemetry-collector-contrib/exporter/fileexporter |
+| Processor | batchprocessor | No | go.opentelemetry.io/collector/processor/batchprocessor |
+| Processor | memorylimiterprocessor | No | go.opentelemetry.io/collector/processor/memorylimiterprocessor |
+| Processor | attributesprocessor | No | github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor |
+| Processor | cumulativetodeltaprocessor | No | github.com/open-telemetry/opentelemetry-collector-contrib/processor/cumulativetodeltaprocessor |
+| Processor | deltatocumulativeprocessor | No | github.com/open-telemetry/opentelemetry-collector-contrib/processor/deltatocumulativeprocessor |
+| Processor | deltatorateprocessor | No | github.com/open-telemetry/opentelemetry-collector-contrib/processor/deltatorateprocessor |
+| Processor | filterprocessor | No | github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor |
+| Processor | groupbyattrsprocessor | No | github.com/open-telemetry/opentelemetry-collector-contrib/processor/groupbyattrsprocessor |
+| Processor | groupbytraceprocessor | No | github.com/open-telemetry/opentelemetry-collector-contrib/processor/groupbytraceprocessor |
+| Processor | k8sattributesprocessor | No | github.com/open-telemetry/opentelemetry-collector-contrib/processor/k8sattributesprocessor |
+| Processor | metricsgenerationprocessor | No | github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricsgenerationprocessor |
+| Processor | metricstransformprocessor | No | github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor |
+| Processor | resourcedetectionprocessor | No | github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor |
+| Processor | resourceprocessor | No | github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor |
+| Processor | transformprocessor | No | github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor |
+| Processor | k8seventgenerationprocessor | No | github.com/solarwinds/solarwinds-otel-collector-contrib/processor/k8seventgenerationprocessor |
+| Processor | solarwindsprocessor | No | github.com/solarwinds/solarwinds-otel-collector-contrib/processor/solarwindsprocessor |
+| Processor | swok8sworkloadtypeprocessor | No | github.com/solarwinds/solarwinds-otel-collector-contrib/processor/swok8sworkloadtypeprocessor |
+| Processor | swok8sworkloadstatusprocessor | No | github.com/solarwinds/solarwinds-otel-collector-contrib/processor/swok8sworkloadstatusprocessor |
+| Processor | hostinfoprocessor | Yes | github.com/solarwinds-cloud/solarwinds-otel-collector-contrib/processor/hostinfoprocessor |
+| Processor | hostvolumesprocessor | Yes | github.com/solarwinds-cloud/solarwinds-otel-collector-contrib/processor/hostvolumesprocessor |
+| Processor | utf8consistencyprocessor | Yes | github.com/solarwinds-cloud/solarwinds-otel-collector-contrib/processor/utf8consistencyprocessor |
+| Processor | uuidprocessor | Yes | github.com/solarwinds-cloud/solarwinds-otel-collector-contrib/processor/uuidprocessor |
+| Receiver | nopreceiver | No | go.opentelemetry.io/collector/receiver/nopreceiver |
+| Receiver | otlpreceiver | No | go.opentelemetry.io/collector/receiver/otlpreceiver |
+| Receiver | apachereceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/apachereceiver |
+| Receiver | dockerstatsreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/dockerstatsreceiver |
+| Receiver | elasticsearchreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/elasticsearchreceiver |
+| Receiver | filelogreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver |
+| Receiver | haproxyreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/haproxyreceiver |
+| Receiver | hostmetricsreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver |
+| Receiver | iisreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/iisreceiver |
+| Receiver | journaldreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver |
+| Receiver | k8seventsreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8seventsreceiver |
+| Receiver | k8sobjectsreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/k8sobjectsreceiver |
+| Receiver | kafkareceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/kafkareceiver |
+| Receiver | memcachedreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/memcachedreceiver |
+| Receiver | nginxreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/nginxreceiver |
+| Receiver | oracledbreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/oracledbreceiver |
+| Receiver | prometheusreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver |
+| Receiver | rabbitmqreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/rabbitmqreceiver |
+| Receiver | receivercreator | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/receivercreator |
+| Receiver | redisreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/redisreceiver |
+| Receiver | simpleprometheusreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/simpleprometheusreceiver |
+| Receiver | snowflakereceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/snowflakereceiver |
+| Receiver | statsdreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/statsdreceiver |
+| Receiver | zookeeperreceiver | No | github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zookeeperreceiver |
+| Receiver | swohostmetricsreceiver | No | github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swohostmetricsreceiver |
+| Receiver | swok8sdiscovery | No | github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swok8sdiscovery |
+| Receiver | swok8sobjectsreceiver | No | github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/swok8sobjectsreceiver |
+| Receiver | mqttreceiver | No | github.com/solarwinds/solarwinds-otel-collector-contrib/receiver/mqttreceiver |
+| Connector | forwardconnector | No | go.opentelemetry.io/collector/connector/forwardconnector |
+| Connector | routingconnector | No | github.com/open-telemetry/opentelemetry-collector-contrib/connector/routingconnector |
+| Connector | solarwindsentityconnector | No | github.com/solarwinds/solarwinds-otel-collector-contrib/connector/solarwindsentityconnector |
