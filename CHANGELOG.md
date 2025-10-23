@@ -239,3 +239,4 @@ from [opentelemetry-collector](https://github.com/open-telemetry/opentelemetry-c
 
 ### Additional details:
 - `solarwindsexporter` has been added to easily integrate with **SolarWinds Observability SaaS**. Please read its [documentation](exporter/solarwindsexporter/README.md) to learn more.
+Added line
