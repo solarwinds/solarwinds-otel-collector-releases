@@ -2,6 +2,11 @@
 
 ## vNext
 
+## v0.136.4
+- Consumes public solarwinds-otel-collector-contrib v0.136.4 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01364)
+- Consumes private solarwinds-otel-collector-contrib v0.136.4 changes:
+  - No changes.
+
 ## v0.136.3
 - Consumes public solarwinds-otel-collector-contrib v0.136.3 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01363)
 - Consumes private solarwinds-otel-collector-contrib v0.136.3 changes:
