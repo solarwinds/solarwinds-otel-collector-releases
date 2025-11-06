@@ -34,10 +34,10 @@ All components. Generated based on manifest file
 | Processor | [solarwindsprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/solarwindsprocessor) | No |
 | Processor | [swok8sworkloadtypeprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadtypeprocessor) | No |
 | Processor | [swok8sworkloadstatusprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadstatusprocessor) | No |
-| Processor | hostinfoprocessor | Yes |
-| Processor | hostvolumesprocessor | Yes |
-| Processor | utf8consistencyprocessor | Yes |
-| Processor | uuidprocessor | Yes |
+| Processor | [hostinfoprocessor](private-contrib-documentation/processor/hostinfoprocessor/README.md) | Yes |
+| Processor | [hostvolumesprocessor](private-contrib-documentation/processor/hostvolumesprocessor/README.md) | Yes |
+| Processor | [utf8consistencyprocessor](private-contrib-documentation/processor/utf8consistencyprocessor/README.md) | Yes |
+| Processor | [uuidprocessor](private-contrib-documentation/processor/uuidprocessor/README.md) | Yes |
 | Receiver | [nopreceiver](https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver/nopreceiver) | No |
 | Receiver | [otlpreceiver](https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver/otlpreceiver) | No |
 | Receiver | [apachereceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/apachereceiver) | No |
