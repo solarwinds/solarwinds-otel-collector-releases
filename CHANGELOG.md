@@ -2,6 +2,12 @@
 
 ## vNext
 
+## v0.136.6
+- Consumes public solarwinds-otel-collector-contrib v0.136.6 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01366)
+- Consumes private solarwinds-otel-collector-contrib v0.136.6 changes:
+  - No changes
+- Uses debian:bookworm-slim as base image for Linux Dockerfiles
+
 ## v0.136.5
 - Consumes public solarwinds-otel-collector-contrib v0.136.5 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01365)
 - Consumes private solarwinds-otel-collector-contrib v0.136.5 changes:
