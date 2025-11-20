@@ -2,6 +2,13 @@
 
 ## vNext
 
+## v0.136.7
+- Consumes public solarwinds-otel-collector-contrib v0.136.7 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01367)
+- Consumes private solarwinds-otel-collector-contrib v0.136.7 changes:
+  - No changes
+- Fixed default-config.yaml environment variable syntax to use proper expansion format (${VAR} instead of placeholders)"
+- Added NOTICE.md file to all Docker images (Linux and Windows distributions)
+
 ## v0.136.6
 - Consumes public solarwinds-otel-collector-contrib v0.136.6 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01366)
 - Consumes private solarwinds-otel-collector-contrib v0.136.6 changes:
