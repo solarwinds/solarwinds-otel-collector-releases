@@ -6,4 +6,4 @@ include submodules/solarwinds-otel-collector-core/build/Makefile.Release
 include submodules/solarwinds-otel-collector-core/build/Makefile.Licenses
 
 # Define compatible otel_version with the current version of the collector
-otel_version := 0.136.0
+otel_version := 0.140.0
