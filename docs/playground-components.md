@@ -42,7 +42,6 @@ All components. Generated based on manifest file
 | Extension | [cfgardenobserver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/cfgardenobserver) | No |
 | Extension | [dockerobserver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/dockerobserver) | No |
 | Extension | [ecsobserver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/ecsobserver) | No |
-| Extension | [ecstaskobserver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/ecstaskobserver) | No |
 | Extension | [hostobserver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/hostobserver) | No |
 | Extension | [k8sobserver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/k8sobserver) | No |
 | Extension | [kafkatopicsobserver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/kafkatopicsobserver) | No |
@@ -76,6 +75,7 @@ All components. Generated based on manifest file
 | Exporter | [faroexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/faroexporter) | No |
 | Exporter | [googlecloudexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/googlecloudexporter) | No |
 | Exporter | [googlecloudpubsubexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/googlecloudpubsubexporter) | No |
+| Exporter | [googlecloudstorageexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/googlecloudstorageexporter) | No |
 | Exporter | [googlemanagedprometheusexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/googlemanagedprometheusexporter) | No |
 | Exporter | [honeycombmarkerexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/honeycombmarkerexporter) | No |
 | Exporter | [influxdbexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/influxdbexporter) | No |
@@ -128,6 +128,7 @@ All components. Generated based on manifest file
 | Processor | [sumologicprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/sumologicprocessor) | No |
 | Processor | [tailsamplingprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor) | No |
 | Processor | [transformprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/transformprocessor) | No |
+| Processor | [unrollprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/unrollprocessor) | No |
 | Processor | [datadogsemanticsprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/datadogsemanticsprocessor) | No |
 | Processor | [dnslookupprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/dnslookupprocessor) | No |
 | Processor | [isolationforestprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/isolationforestprocessor) | No |
@@ -150,6 +151,7 @@ All components. Generated based on manifest file
 | Receiver | [awscontainerinsightreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscontainerinsightreceiver) | No |
 | Receiver | [awsecscontainermetricsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver) | No |
 | Receiver | [awsfirehosereceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsfirehosereceiver) | No |
+| Receiver | [awslambdareceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awslambdareceiver) | No |
 | Receiver | [awss3receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awss3receiver) | No |
 | Receiver | [awsxrayreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsxrayreceiver) | No |
 | Receiver | [azureblobreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/azureblobreceiver) | No |
@@ -158,6 +160,7 @@ All components. Generated based on manifest file
 | Receiver | [bigipreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/bigipreceiver) | No |
 | Receiver | [carbonreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/carbonreceiver) | No |
 | Receiver | [chronyreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/chronyreceiver) | No |
+| Receiver | [ciscoosreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/ciscoosreceiver) | No |
 | Receiver | [cloudflarereceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/cloudflarereceiver) | No |
 | Receiver | [cloudfoundryreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/cloudfoundryreceiver) | No |
 | Receiver | [collectdreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/collectdreceiver) | No |
@@ -173,10 +176,12 @@ All components. Generated based on manifest file
 | Receiver | [githubreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/githubreceiver) | No |
 | Receiver | [googlecloudmonitoringreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/googlecloudmonitoringreceiver) | No |
 | Receiver | [googlecloudpubsubreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/googlecloudpubsubreceiver) | No |
+| Receiver | [googlecloudpubsubpushreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/googlecloudpubsubpushreceiver) | No |
 | Receiver | [googlecloudspannerreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/googlecloudspannerreceiver) | No |
 | Receiver | [haproxyreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/haproxyreceiver) | No |
 | Receiver | [hostmetricsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/hostmetricsreceiver) | No |
 | Receiver | [httpcheckreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/httpcheckreceiver) | No |
+| Receiver | [icmpcheckreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/icmpcheckreceiver) | No |
 | Receiver | [iisreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/iisreceiver) | No |
 | Receiver | [influxdbreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/influxdbreceiver) | No |
 | Receiver | [jaegerreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/jaegerreceiver) | No |
@@ -210,6 +215,7 @@ All components. Generated based on manifest file
 | Receiver | [purefbreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/purefbreceiver) | No |
 | Receiver | [rabbitmqreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/rabbitmqreceiver) | No |
 | Receiver | [redisreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/redisreceiver) | No |
+| Receiver | [redfishreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/redfishreceiver) | No |
 | Receiver | [riakreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/riakreceiver) | No |
 | Receiver | [saphanareceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/saphanareceiver) | No |
 | Receiver | [signalfxreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/signalfxreceiver) | No |
@@ -234,6 +240,7 @@ All components. Generated based on manifest file
 | Receiver | [webhookeventreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/webhookeventreceiver) | No |
 | Receiver | [windowseventlogreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowseventlogreceiver) | No |
 | Receiver | [windowsperfcountersreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowsperfcountersreceiver) | No |
+| Receiver | [yanggrpcreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/yanggrpcreceiver) | No |
 | Receiver | [zipkinreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/zipkinreceiver) | No |
 | Receiver | [zookeeperreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/zookeeperreceiver) | No |
 | Receiver | [envoyalsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/envoyalsreceiver) | No |
@@ -262,6 +269,7 @@ All components. Generated based on manifest file
 | Connector | [roundrobinconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/roundrobinconnector) | No |
 | Connector | [routingconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/routingconnector) | No |
 | Connector | [servicegraphconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/servicegraphconnector) | No |
+| Connector | [slowsqlconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/slowsqlconnector) | No |
 | Connector | [spanmetricsconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/spanmetricsconnector) | No |
 | Connector | [sumconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/sumconnector) | No |
 | Connector | [signaltometricsconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/signaltometricsconnector) | No |

@@ -2,6 +2,17 @@
 
 ## vNext
 
+## v0.140.0
+- Consumes public solarwinds-otel-collector-contrib v0.140.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01400)
+- Consumes private solarwinds-otel-collector-contrib v0.140.0 changes:
+  - Updated OpenTelemetry modules to [v1.46.0/v0.140.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.140.0)
+- Updated OpenTelemetry packages to v1.46.0/v0.140.0
+- Added exporter to playground distribution: [googlecloudstorageexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/exporter/googlecloudstorageexporter)
+- Added processor to playground distribution: [unrollprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/processor/unrollprocessor)
+- Added receivers to playground distribution: [awslambdareceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/receiver/awslambdareceiver), [ciscoosreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/receiver/ciscoosreceiver), [googlecloudpubsubpushreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/receiver/googlecloudpubsubpushreceiver), [icmpcheckreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/receiver/icmpcheckreceiver), [redfishreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/receiver/redfishreceiver), [yanggrpcreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/receiver/yanggrpcreceiver)
+- Added connector to playground distribution: [slowsqlconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/connector/slowsqlconnector)
+- Removed deprecated `extension/observer/ecstaskobserver` from all distribution manifests (verified, playground, k8s)
+
 ## v0.136.7
 - Consumes public solarwinds-otel-collector-contrib v0.136.7 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01367)
 - Consumes private solarwinds-otel-collector-contrib v0.136.7 changes:
