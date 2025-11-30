@@ -4,7 +4,7 @@ go 1.25.3
 
 require (
 	github.com/PuerkitoBio/goquery v1.11.0
-	github.com/hashicorp/go-version v1.7.0
+	github.com/hashicorp/go-version v1.8.0
 )
 
 require (
