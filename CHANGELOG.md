@@ -1,6 +1,12 @@
 # Changelog
 
 ## vNext
+
+## v0.140.1
+- Consumes public solarwinds-otel-collector-contrib v0.140.1 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01401)
+- Consumes private solarwinds-otel-collector-contrib v0.140.1 changes:
+  - Updates golang to 1.25.5
+- Fixed missing journalctl binary in Linux Docker images
 - Updates golang to 1.25.5
 
 ## v0.140.0
