@@ -2,6 +2,12 @@
 
 ## vNext
 
+## v0.140.2
+- Consumes public solarwinds-otel-collector-contrib v0.140.2 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01402)
+- Consumes private solarwinds-otel-collector-contrib v0.140.2 changes:
+  - No changes
+- Added [windowsservicereceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/receiver/windowsservicereceiver) into verified distribution
+
 ## v0.140.1
 - Consumes public solarwinds-otel-collector-contrib v0.140.1 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01401)
 - Consumes private solarwinds-otel-collector-contrib v0.140.1 changes:
