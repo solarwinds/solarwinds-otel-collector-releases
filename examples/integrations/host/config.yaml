@@ -146,6 +146,10 @@ receivers:
 #     start_at: end
 #     poll_interval: 5s
 
+# Optional receiver for ingesting statuses from Windows services (works only on Windows machine)
+#   windowsservice:
+#     collection_interval: 1m
+
 processors:
   memory_limiter:
     check_interval: 1s
@@ -422,6 +426,16 @@ processors:
       - delete_key(resource.attributes, "ec2.tag.Name")
       - replace_all_patterns(resource.attributes, "key", "^ec2.tag.(.*)$", "tags.$1")
 
+# Optional processor for ingesting statuses from Windows services (works only on Windows machine)
+#  attributes/windowsservice:
+#    actions:
+#      # Renamed generic attribute 'name' to 'service_name' to avoid collision with other receivers.
+#      - key: service_name
+#        action: insert
+#        from_attribute: name
+#      - key: name
+#        action: delete
+
 extensions:
   solarwinds:
     collector_name: # Required parameter
@@ -478,5 +492,14 @@ service:
 #         - resourcedetection/system
 #         - batch
 #         - solarwinds/host
+#       exporters:
+#         - otlp
+
+#     Optional pipeline for ingesting windows service statuses (works only on Windows machine)
+#     windowsservice/host:
+#       receivers:
+#         - windowsservice
+#       processors:
+#         - attributes/windowsservice
 #       exporters:
 #         - otlp
