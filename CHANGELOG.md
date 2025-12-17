@@ -2,6 +2,13 @@
 
 ## vNext
 
+## v0.140.3
+- Consumes public solarwinds-otel-collector-contrib v0.140.3 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01403)
+- Consumes private solarwinds-otel-collector-contrib v0.140.3 changes:
+  - No changes
+- Removed PAM packages from Linux Docker images to address CVE-2025-6020 and CVE-2024-22365
+- Bumped debian:bookworm-slim base image to latest version
+
 ## v0.140.2
 - Consumes public solarwinds-otel-collector-contrib v0.140.2 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01402)
 - Consumes private solarwinds-otel-collector-contrib v0.140.2 changes:
