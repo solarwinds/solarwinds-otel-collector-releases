@@ -2,6 +2,13 @@
 
 ## vNext
 
+## v0.140.6
+- Consumes public solarwinds-otel-collector-contrib v0.140.6 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01406)
+- Consumes private solarwinds-otel-collector-contrib v0.140.6 changes:
+  - No changes
+- Added receivers to verified distribution: [mongodbreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/receiver/mongodbreceiver), [mysqlreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/receiver/mysqlreceiver), [postgresqlreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/receiver/postgresqlreceiver), [sqlserverreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.140.0/receiver/sqlserverreceiver)
+- Fixed CVE-2025-68973 in Linux Docker images
+
 ## v0.140.5
 - Consumes public solarwinds-otel-collector-contrib v0.140.5 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01405)
 - Consumes private solarwinds-otel-collector-contrib v0.140.5 changes:
