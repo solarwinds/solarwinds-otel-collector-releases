@@ -30,6 +30,7 @@ All components. Generated based on manifest file
 | Extension | [avrologencodingextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/encoding/avrologencodingextension) | No |
 | Extension | [awscloudwatchmetricstreamsencodingextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/encoding/awscloudwatchmetricstreamsencodingextension) | No |
 | Extension | [awslogsencodingextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/encoding/awslogsencodingextension) | No |
+| Extension | [azureencodingextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/encoding/azureencodingextension) | No |
 | Extension | [googlecloudlogentryencodingextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/encoding/googlecloudlogentryencodingextension) | No |
 | Extension | [jaegerencodingextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/encoding/jaegerencodingextension) | No |
 | Extension | [jsonlogencodingextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/encoding/jsonlogencodingextension) | No |
@@ -64,7 +65,6 @@ All components. Generated based on manifest file
 | Exporter | [azuredataexplorerexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/azuredataexplorerexporter) | No |
 | Exporter | [azuremonitorexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/azuremonitorexporter) | No |
 | Exporter | [bmchelixexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/bmchelixexporter) | No |
-| Exporter | [carbonexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/carbonexporter) | No |
 | Exporter | [cassandraexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/cassandraexporter) | No |
 | Exporter | [clickhouseexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/clickhouseexporter) | No |
 | Exporter | [coralogixexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/coralogixexporter) | No |
@@ -116,6 +116,7 @@ All components. Generated based on manifest file
 | Processor | [k8sattributesprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/k8sattributesprocessor) | No |
 | Processor | [logdedupprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/logdedupprocessor) | No |
 | Processor | [logstransformprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/logstransformprocessor) | No |
+| Processor | [lookupprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/lookupprocessor) | No |
 | Processor | [metricsgenerationprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricsgenerationprocessor) | No |
 | Processor | [metricstransformprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricstransformprocessor) | No |
 | Processor | [probabilisticsamplerprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/probabilisticsamplerprocessor) | No |
@@ -194,6 +195,7 @@ All components. Generated based on manifest file
 | Receiver | [kafkareceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkareceiver) | No |
 | Receiver | [kubeletstatsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kubeletstatsreceiver) | No |
 | Receiver | [lokireceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/lokireceiver) | No |
+| Receiver | [macosunifiedloggingreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/macosunifiedloggingreceiver) | No |
 | Receiver | [memcachedreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/memcachedreceiver) | No |
 | Receiver | [mongodbatlasreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/mongodbatlasreceiver) | No |
 | Receiver | [mongodbreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/mongodbreceiver) | No |
@@ -265,6 +267,7 @@ All components. Generated based on manifest file
 | Connector | [exceptionsconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/exceptionsconnector) | No |
 | Connector | [failoverconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/failoverconnector) | No |
 | Connector | [grafanacloudconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/grafanacloudconnector) | No |
+| Connector | [metricsaslogsconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/metricsaslogsconnector) | No |
 | Connector | [otlpjsonconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/otlpjsonconnector) | No |
 | Connector | [roundrobinconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/roundrobinconnector) | No |
 | Connector | [routingconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/routingconnector) | No |
