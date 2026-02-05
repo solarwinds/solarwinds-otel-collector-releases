@@ -1,6 +1,20 @@
 # Changelog
 
 ## vNext
+- Updates OpenTelemetry modules to [v1.51.0/v0.145.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.145.0)
+- Consumes public solarwinds-otel-collector-contrib v0.145.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01450)
+- Consumes private solarwinds-otel-collector-contrib v0.145.0 changes:
+  - Updates golang to 1.25.6
+  - Updates OpenTelemetry modules to [v1.51.0/v0.145.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.145.0)
+- Adds processor to playground distribution: [lookupprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.145.0/processor/lookupprocessor)
+- Adds receiver to playground distribution: [macosunifiedloggingreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.145.0/receiver/macosunifiedloggingreceiver)
+- Adds connector to playground distribution: [metricsaslogsconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.145.0/connector/metricsaslogsconnector)
+- Adds extension to playground distribution: [azureencodingextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.145.0/extension/encoding/azureencodingextension)
+- Removes deprecated `exporter/carbonexporter` from playground distribution
+- Updates golang to 1.25.6
+
+## v0.145.0
+- Updated OpenTelemetry packages to v1.51.0/v0.145.0
 - Updates golang to 1.25.6
 
 ## v0.140.8
