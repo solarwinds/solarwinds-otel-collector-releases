@@ -1,0 +1,175 @@
+receivers:
+  mysql:
+    endpoint: # Required parameter
+    collection_interval: # Required parameter
+    username: # Required secret
+    password: # Required secret
+
+    database: # Optional parameter
+    initial_delay: # Optional parameter
+    disable_innodb_metrics: # Optional parameter
+    allow_native_passwords: # Optional parameter
+    tls:
+      insecure: # Required parameter
+      insecure_skip_verify: # Required parameter
+      server_name_override: {{.config.server_name_override}}
+      ca_file: # Optional parameter
+      cert_file: # Optional parameter
+      key_file: # Optional parameter
+    transport: # Optional parameter
+    statement_events:
+      digest_text_limit: # Optional parameter
+      time_limit: # Optional parameter
+      limit: # Optional parameter
+    query_sample_collection:
+      max_rows_query: # Optional parameter
+
+    metrics:
+      mysql.buffer_pool.pages:
+        enabled: true
+      mysql.buffer_pool.data_pages:
+        enabled: true
+      mysql.buffer_pool.page_flushes:
+        enabled: true
+      mysql.buffer_pool.operations:
+        enabled: true
+      mysql.buffer_pool.limit:
+        enabled: true
+      mysql.buffer_pool.usage:
+        enabled: true
+      mysql.prepared_statements:
+        enabled: true
+      mysql.handlers:
+        enabled: true
+      mysql.double_writes:
+        enabled: true
+      mysql.log_operations:
+        enabled: true
+      mysql.operations:
+        enabled: true
+      mysql.page_operations:
+        enabled: true
+      mysql.table.io.wait.count:
+        enabled: true
+      mysql.table.io.wait.time:
+        enabled: true
+      mysql.index.io.wait.count:
+        enabled: true
+      mysql.index.io.wait.time:
+        enabled: true
+      mysql.row_locks:
+        enabled: true
+      mysql.row_operations:
+        enabled: true
+      mysql.locks:
+        enabled: true
+      mysql.sorts:
+        enabled: true
+      mysql.threads:
+        enabled: true
+      mysql.opened_resources:
+        enabled: true
+      mysql.uptime:
+        enabled: true
+      mysql.mysqlx_connections:
+        enabled: true
+      mysql.tmp_resources:
+        enabled: true
+      mysql.query.count:
+        enabled: true
+      mysql.query.slow.count:
+        enabled: true
+      mysql.query.client.count:
+        enabled: true
+      mysql.replica.time_behind_source:
+        enabled: true
+      mysql.joins:
+        enabled: true
+      mysql.connection.errors:
+        enabled: true
+      mysql.client.network.io:
+        enabled: true
+  # Optional receiver
+  # filelog:
+  #   include: # Required parameter
+  #   start_at: end
+  #   poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  solarwinds/mysql:
+    collector_attributes_decoration:
+      enabled: true
+      extension: solarwinds
+    resource:
+      sw.otelcol.receiver.name: "mysql"
+      sw.otelcol.integration.id: # Required parameter
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    collector_name: # Required parameter
+    grpc: &grpc_settings
+      endpoint: # Required parameter
+      tls:
+        insecure: false
+      headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
+
+exporters:
+  otlp:
+    <<: *grpc_settings
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/mysql:
+      receivers:
+        - mysql
+      processors:
+        - memory_limiter
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+        - solarwinds/mysql
+      exporters:
+        - otlp
+
+    # Optional pipeline
+    # logs/mysql:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #     - solarwinds/mysql
+    #   exporters:
+    #     - otlp
