@@ -1,0 +1,152 @@
+receivers:
+  sqlserver:
+    server: # Required parameter
+    port:  # Required parameter
+    collection_interval: # Required parameter
+    username: # Required secret
+    password: # Required secret
+    instance_name: # Optional parameter
+    computer_name: # Optional parameter
+    metrics:
+      sqlserver.batch.request.rate:
+        enabled: true
+      sqlserver.batch.sql_compilation.rate:
+        enabled: true
+      sqlserver.batch.sql_recompilation.rate:
+        enabled: true
+      sqlserver.lock.wait.rate:
+        enabled: true
+      sqlserver.lock.wait_time.avg:
+        enabled: true
+      sqlserver.page.buffer_cache.hit_ratio:
+        enabled: true
+      sqlserver.page.checkpoint.flush.rate:
+        enabled: true
+      sqlserver.page.lazy_write.rate:
+        enabled: true
+      sqlserver.page.life_expectancy:
+        enabled: true
+      sqlserver.page.operation.rate:
+        enabled: true
+      sqlserver.page.split.rate:
+        enabled: true
+      sqlserver.transaction.rate:
+        enabled: true
+      sqlserver.transaction.write.rate:
+        enabled: true
+      sqlserver.transaction_log.flush.data.rate:
+        enabled: true
+      sqlserver.transaction_log.flush.rate:
+        enabled: true
+      sqlserver.transaction_log.flush.wait.rate:
+        enabled: true
+      sqlserver.transaction_log.growth.count:
+        enabled: true
+      sqlserver.transaction_log.shrink.count:
+        enabled: true
+      sqlserver.transaction_log.usage:
+        enabled: true
+      sqlserver.user.connection.count:
+        enabled: true
+      sqlserver.database.io:
+        enabled: true
+      sqlserver.page.lookup.rate:
+        enabled: true
+      sqlserver.database.count:
+        enabled: true
+      sqlserver.page.buffer_cache.free_list.stalls.rate:
+        enabled: true
+      sqlserver.memory.usage:
+        enabled: true
+      sqlserver.database.latency:
+        enabled: true
+      sqlserver.login.rate:
+        enabled: true
+      sqlserver.logout.rate:
+        enabled: true
+      sqlserver.processes.blocked:
+        enabled: true
+  # Optional receiver
+  # filelog:
+  #   include: # Required parameter
+  #   start_at: end
+  #   poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  solarwinds/oracledb:
+    collector_attributes_decoration:
+      enabled: true
+      extension: solarwinds
+    resource:
+      sw.otelcol.receiver.name: "sqlserver"
+      sw.otelcol.integration.id: # Required parameter
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    collector_name: # Required parameter
+    grpc: &grpc_settings
+      endpoint: # Required parameter
+      tls:
+        insecure: false
+      headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
+
+exporters:
+  otlp:
+    <<: *grpc_settings
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/oracledb:
+      receivers:
+        - sqlserver
+      processors:
+        - memory_limiter
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+        - solarwinds/sqlserver
+      exporters:
+        - otlp
+
+    # Optional pipeline
+    # logs/sqlserver:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #     - solarwinds/sqlserver
+    #   exporters:
+    #     - otlp

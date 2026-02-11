@@ -1,0 +1,161 @@
+receivers:
+  postgresql:
+    endpoint: # Required parameter
+    collection_interval: # Required parameter
+    username: # Required secret
+    password: # Required secret
+    databases: # Optional parameter, comma separated [db1,db2]
+    exclude_databases: # Optional parameter, comma separated [xdb1,xdb2]
+    tls: 
+      insecure: # Required parameter
+      insecure_skip_verify: # Required parameter
+      ca_file: # Optional parameter
+      cert_file: # Optional parameter
+      key_file: # Optional parameter
+    metrics:
+      postgresql.bgwriter.maxwritten:
+        enabled: true
+      postgresql.bgwriter.duration:
+        enabled: true
+      postgresql.table.count:
+        enabled: true
+      postgresql.blocks_read:
+        enabled: true
+      postgresql.index.scans:
+        enabled: true
+      postgresql.table.size:
+        enabled: true
+      postgresql.operations:
+        enabled: true
+      postgresql.connection.max:
+        enabled: true
+      postgresql.index.size:
+        enabled: true
+      postgresql.wal.lag:
+        enabled: true
+      postgresql.db_size:
+        enabled: true
+      postgresql.wal.age:
+        enabled: true
+      postgresql.table.vacuum.count:
+        enabled: true
+      postgresql.database.count:
+        enabled: true
+      postgresql.replication.data_delay:
+        enabled: true
+      postgresql.bgwriter.checkpoint.count:
+        enabled: true
+      postgresql.rows:
+        enabled: true
+      postgresql.backends:
+        enabled: true
+      postgresql.deadlocks:
+        enabled: true
+      postgresql.commits:
+        enabled: true
+      postgresql.rollbacks:
+        enabled: true
+      postgresql.tup_fetched:
+        enabled: true
+      postgresql.tup_returned:
+        enabled: true
+      postgresql.tup_inserted:
+        enabled: true
+      postgresql.tup_updated:
+        enabled: true
+      postgresql.tup_deleted:
+        enabled: true
+      postgresql.temp_files:
+        enabled: true
+      postgresql.blks_read:
+        enabled: true                
+      postgresql.blks_hit:
+        enabled: true
+      postgresql.bgwriter.buffers.allocated:
+        enabled: true
+      postgresql.bgwriter.buffers.writes:
+        enabled: true   
+  # Optional receiver
+  # filelog:
+  #   include: # Required parameter
+  #   start_at: end
+  #   poll_interval: 5s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  solarwinds/postgresql:
+    collector_attributes_decoration:
+      enabled: true
+      extension: solarwinds
+    resource:
+      sw.otelcol.receiver.name: "postgresql"
+      sw.otelcol.integration.id: # Required parameter
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    collector_name: # Required parameter
+    grpc: &grpc_settings
+      endpoint: # Required parameter
+      tls:
+        insecure: false
+      headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
+
+exporters:
+  otlp:
+    <<: *grpc_settings
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/postgresql:
+      receivers:
+        - postgresql
+      processors:
+        - memory_limiter
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+        - solarwinds/postgresql
+      exporters:
+        - otlp
+
+    # Optional pipeline
+    # logs/postgresql:
+    #   receivers:
+    #     - filelog
+    #   processors:
+    #     - memory_limiter
+    #     - resourcedetection/ec2
+    #     - resourcedetection/azure
+    #     - resourcedetection/gcp
+    #     - resourcedetection/system
+    #     - batch
+    #     - solarwinds/postgresql
+    #   exporters:
+    #     - otlp
