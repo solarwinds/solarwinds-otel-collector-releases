@@ -68,6 +68,16 @@ jobs:
               exit 1
             fi
           done
+      - name: Verify that installers exist
+        run: |
+          for distro in verified playground; do
+            s3_url="https://ssp-prod-global-agent-binaries.s3.amazonaws.com/?prefix=solarwinds-otel-collector/${distro}/${{ steps.get-tag.outputs.tag }}/"
+            response=$(curl -s "$s3_url")
+            if ! echo "$response" | grep -q "<Contents>"; then
+              echo "No installers found for ${distro} in S3 bucket"
+              exit 1
+            fi
+          done
   create_release:
     runs-on: ubuntu-latest
     permissions:
@@ -110,6 +120,32 @@ jobs:
           echo "- [K8s](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${{ needs.release_checks.outputs.image_tag }}-k8s)" >> notes.md
 
           gh release edit v${{ needs.release_checks.outputs.image_tag }} --notes-file notes.md
+      
+      - name: Append Installer links to release notes
+        env:
+          # for gh cli
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ needs.release_checks.outputs.image_tag }}"
+          BASE_URL="https://agent-binaries.cloud.solarwinds.com"
+          
+          gh release view v${VERSION} --json body -q .body > notes.md
+          echo "" >> notes.md
+          echo "### Installers" >> notes.md
+          
+          for distro_display in Verified Playground; do
+            distro="${distro_display,,}"  # Convert to lowercase
+            installer_prefix="solarwinds-otel-collector-${distro}"
+            distro_path="${BASE_URL}/solarwinds-otel-collector/${distro}/v${VERSION}"
+            
+            echo "- [${distro_display}](${BASE_URL}/?prefix=solarwinds-otel-collector/${distro}/v${VERSION}/)" >> notes.md
+            echo "  - [${installer_prefix}_linux_amd64.deb](${distro_path}/${installer_prefix}_linux_amd64.deb)" >> notes.md
+            echo "  - [${installer_prefix}_linux_amd64.rpm](${distro_path}/${installer_prefix}_linux_amd64.rpm)" >> notes.md
+            echo "  - [${installer_prefix}_windows_x64.msi](${distro_path}/${installer_prefix}_windows_x64.msi)" >> notes.md
+          done
+          
+          gh release edit v${VERSION} --notes-file notes.md
+
       - name: Tag Go packages on GitHub
         run: |
           folders=("./pkg")
