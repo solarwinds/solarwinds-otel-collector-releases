@@ -38,7 +38,7 @@ jobs:
     permissions:
       contents: read
     outputs:
-      image_tag: ${{ steps.get-tag.outputs.tag }}
+      release_tag: ${{ steps.get-tag.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -102,8 +102,8 @@ jobs:
           # for gh cli
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create v${{ needs.release_checks.outputs.image_tag }} \
-            --title v${{ needs.release_checks.outputs.image_tag }} \
+          gh release create v${{ needs.release_checks.outputs.release_tag }} \
+            --title v${{ needs.release_checks.outputs.release_tag }} \
             --generate-notes \
             --notes-start-tag ${{ env.PREVIOUS_TAG }}
       
@@ -112,39 +112,39 @@ jobs:
           # for gh cli
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view v${{ needs.release_checks.outputs.image_tag }} --json body -q .body > notes.md
+          gh release view v${{ needs.release_checks.outputs.release_tag }} --json body -q .body > notes.md
           echo "" >> notes.md
           echo "### Docker Images" >> notes.md
-          echo "- [Playground](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${{ needs.release_checks.outputs.image_tag }}-playground)" >> notes.md
-          echo "- [Verified](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${{ needs.release_checks.outputs.image_tag }}-verified)" >> notes.md
-          echo "- [K8s](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${{ needs.release_checks.outputs.image_tag }}-k8s)" >> notes.md
+          echo "- [Playground](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${{ needs.release_checks.outputs.release_tag }}-playground)" >> notes.md
+          echo "- [Verified](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${{ needs.release_checks.outputs.release_tag }}-verified)" >> notes.md
+          echo "- [K8s](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${{ needs.release_checks.outputs.release_tag }}-k8s)" >> notes.md
 
-          gh release edit v${{ needs.release_checks.outputs.image_tag }} --notes-file notes.md
+          gh release edit v${{ needs.release_checks.outputs.release_tag }} --notes-file notes.md
       
       - name: Append Installer links to release notes
         env:
           # for gh cli
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION="${{ needs.release_checks.outputs.image_tag }}"
+          VERSION="v${{ needs.release_checks.outputs.release_tag }}"
           BASE_URL="https://agent-binaries.cloud.solarwinds.com"
           
-          gh release view v${VERSION} --json body -q .body > notes.md
+          gh release view ${VERSION} --json body -q .body > notes.md
           echo "" >> notes.md
           echo "### Installers" >> notes.md
           
           for distro_display in Verified Playground; do
             distro="${distro_display,,}"  # Convert to lowercase
             installer_prefix="solarwinds-otel-collector-${distro}"
-            distro_path="${BASE_URL}/solarwinds-otel-collector/${distro}/v${VERSION}"
+            distro_path="${BASE_URL}/solarwinds-otel-collector/${distro}/${VERSION}"
             
-            echo "- [${distro_display}](${BASE_URL}/?prefix=solarwinds-otel-collector/${distro}/v${VERSION}/)" >> notes.md
+            echo "- [${distro_display}](${distro_path})" >> notes.md
             echo "  - [${installer_prefix}_linux_amd64.deb](${distro_path}/${installer_prefix}_linux_amd64.deb)" >> notes.md
             echo "  - [${installer_prefix}_linux_amd64.rpm](${distro_path}/${installer_prefix}_linux_amd64.rpm)" >> notes.md
             echo "  - [${installer_prefix}_windows_x64.msi](${distro_path}/${installer_prefix}_windows_x64.msi)" >> notes.md
           done
           
-          gh release edit v${VERSION} --notes-file notes.md
+          gh release edit ${VERSION} --notes-file notes.md
 
       - name: Tag Go packages on GitHub
         run: |
@@ -153,9 +153,9 @@ jobs:
           for folder in "${folders[@]}"; do
               for package_folder in $folder/*/; do
                   if [ -f "$package_folder/go.mod" ]; then
-                      git tag ${package_folder#./}v${{ needs.release_checks.outputs.image_tag }}
-                      git push origin ${package_folder#./}v${{ needs.release_checks.outputs.image_tag }}
-                      echo "Pushed tag ${package_folder#./}v${{ needs.release_checks.outputs.image_tag }}"
+                      git tag ${package_folder#./}v${{ needs.release_checks.outputs.release_tag }}
+                      git push origin ${package_folder#./}v${{ needs.release_checks.outputs.release_tag }}
+                      echo "Pushed tag ${package_folder#./}v${{ needs.release_checks.outputs.release_tag }}"
                   fi
               done
           done
