@@ -2,6 +2,13 @@
 
 ## vNext
 
+## v0.145.2
+- Consumes public solarwinds-otel-collector-contrib v0.145.2 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01452)
+- Consumes private solarwinds-otel-collector-contrib v0.145.2 changes:
+  - No changes
+- Adds exporter to verified distribution: [loadbalancingexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/loadbalancingexporter)
+- Adds processor to verified distribution: [tailsamplingprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor)
+
 ## v0.145.1
 - Consumes public solarwinds-otel-collector-contrib v0.145.1 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01451)
 - Consumes private solarwinds-otel-collector-contrib v0.145.1 changes:
