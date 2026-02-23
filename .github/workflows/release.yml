@@ -38,20 +38,20 @@ jobs:
     permissions:
       contents: read
     outputs:
-      release_tag: ${{ steps.get-tag.outputs.tag }}
+      version: ${{ steps.get-version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Get Current Tag
-        id: get-tag
-        run: echo "tag=$(grep -oP '(?<=const Version = ")[^"]+' "./pkg/version/version.go")" >> $GITHUB_OUTPUT
+      - name: Get Current Version
+        id: get-version
+        run: echo "version=$(grep -oP '(?<=const Version = ")[^"]+' "./pkg/version/version.go")" >> $GITHUB_OUTPUT
       - name: Verify that release does not already exist
         env:
           # for gh cli
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if ! gh release view "v${{ steps.get-tag.outputs.tag }}" 2>&1 | grep -q "^release not found$"; then
-            echo "Release v${{ steps.get-tag.outputs.tag }} already exists on GitHub."
+          if ! gh release view "v${{ steps.get-version.outputs.version }}" 2>&1 | grep -q "^release not found$"; then
+            echo "Release v${{ steps.get-version.outputs.version }} already exists on GitHub."
             exit 1
           fi
       - name: Login to Docker Hub
@@ -62,7 +62,7 @@ jobs:
       - name: Verify that Docker images exist
         run: |
           for suffix in verified playground k8s; do
-            image="${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-tag.outputs.tag }}-${suffix}"
+            image="${{ env.DOCKERHUB_IMAGE }}:${{ steps.get-version.outputs.version }}-${suffix}"
             if docker manifest inspect "$image" 2>&1 | grep -q "no such manifest"; then
               echo "Docker image $image does not exist on DockerHub."
               exit 1
@@ -71,7 +71,7 @@ jobs:
       - name: Verify that installers exist
         run: |
           for distro in verified playground; do
-            s3_url="https://ssp-prod-global-agent-binaries.s3.amazonaws.com/?prefix=solarwinds-otel-collector/${distro}/${{ steps.get-tag.outputs.tag }}/"
+            s3_url="https://ssp-prod-global-agent-binaries.s3.amazonaws.com/?prefix=solarwinds-otel-collector/${distro}/v${{ steps.get-version.outputs.version }}/"
             response=$(curl -s "$s3_url")
             if ! echo "$response" | grep -q "<Contents>"; then
               echo "No installers found for ${distro} in S3 bucket"
@@ -89,6 +89,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v6
         with:
+          submodules: true
           fetch-depth: 0
 
       - name: Find Previous Tag
@@ -101,42 +102,40 @@ jobs:
         env:
           # for gh cli
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create v${{ needs.release_checks.outputs.release_tag }} \
-            --title v${{ needs.release_checks.outputs.release_tag }} \
-            --generate-notes \
-            --notes-start-tag ${{ env.PREVIOUS_TAG }}
+        run: make create-github-release current_tag="v${{ needs.release_checks.outputs.version }}" previous_tag="${{ env.PREVIOUS_TAG }}"
       
       - name: Append Docker image links to release notes
         env:
           # for gh cli
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view v${{ needs.release_checks.outputs.release_tag }} --json body -q .body > notes.md
+          TAG_VERSION="${{ needs.release_checks.outputs.version }}"
+          RELEASE_VERSION="v${TAG_VERSION}"
+          gh release view ${RELEASE_VERSION} --json body -q .body > notes.md
           echo "" >> notes.md
           echo "### Docker Images" >> notes.md
-          echo "- [Playground](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${{ needs.release_checks.outputs.release_tag }}-playground)" >> notes.md
-          echo "- [Verified](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${{ needs.release_checks.outputs.release_tag }}-verified)" >> notes.md
-          echo "- [K8s](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${{ needs.release_checks.outputs.release_tag }}-k8s)" >> notes.md
+          echo "- [Playground](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${TAG_VERSION}-playground)" >> notes.md
+          echo "- [Verified](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${TAG_VERSION}-verified)" >> notes.md
+          echo "- [K8s](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${TAG_VERSION}-k8s)" >> notes.md
 
-          gh release edit v${{ needs.release_checks.outputs.release_tag }} --notes-file notes.md
+          gh release edit ${RELEASE_VERSION} --notes-file notes.md
       
       - name: Append Installer links to release notes
         env:
           # for gh cli
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION="v${{ needs.release_checks.outputs.release_tag }}"
+          RELEASE_VERSION="v${{ needs.release_checks.outputs.version }}"
           BASE_URL="https://agent-binaries.cloud.solarwinds.com"
           
-          gh release view ${VERSION} --json body -q .body > notes.md
+          gh release view ${RELEASE_VERSION} --json body -q .body > notes.md
           echo "" >> notes.md
           echo "### Installers" >> notes.md
           
           for distro_display in Verified Playground; do
             distro="${distro_display,,}"  # Convert to lowercase
             installer_prefix="solarwinds-otel-collector-${distro}"
-            distro_path="${BASE_URL}/solarwinds-otel-collector/${distro}/${VERSION}"
+            distro_path="${BASE_URL}/solarwinds-otel-collector/${distro}/${RELEASE_VERSION}"
             
             echo "- [${distro_display}](${distro_path})" >> notes.md
             echo "  - [${installer_prefix}_linux_amd64.deb](${distro_path}/${installer_prefix}_linux_amd64.deb)" >> notes.md
@@ -144,18 +143,10 @@ jobs:
             echo "  - [${installer_prefix}_windows_x64.msi](${distro_path}/${installer_prefix}_windows_x64.msi)" >> notes.md
           done
           
-          gh release edit ${VERSION} --notes-file notes.md
+          gh release edit ${RELEASE_VERSION} --notes-file notes.md
 
       - name: Tag Go packages on GitHub
         run: |
-          folders=("./pkg")
-
-          for folder in "${folders[@]}"; do
-              for package_folder in $folder/*/; do
-                  if [ -f "$package_folder/go.mod" ]; then
-                      git tag ${package_folder#./}v${{ needs.release_checks.outputs.release_tag }}
-                      git push origin ${package_folder#./}v${{ needs.release_checks.outputs.release_tag }}
-                      echo "Pushed tag ${package_folder#./}v${{ needs.release_checks.outputs.release_tag }}"
-                  fi
-              done
-          done
+          TAG="v${{ needs.release_checks.outputs.version }}"
+          FOLDERS="./pkg"
+          make tag-github-packages tag="$TAG" folders="$FOLDERS"
