@@ -132,15 +132,17 @@ jobs:
           echo "" >> notes.md
           echo "### Installers" >> notes.md
           
-          for distro_display in Verified Playground; do
+          for distro_display in Playground Verified; do
             distro="${distro_display,,}"  # Convert to lowercase
             installer_prefix="solarwinds-otel-collector-${distro}"
-            distro_path="${BASE_URL}/solarwinds-otel-collector/${distro}/${RELEASE_VERSION}"
+            distro_path="solarwinds-otel-collector/${distro}/${RELEASE_VERSION}"
+            distro_list_path="${BASE_URL}/?prefix=${distro_path}"
+            distro_file_path="${BASE_URL}/${distro_path}"
             
-            echo "- [${distro_display}](${distro_path})" >> notes.md
-            echo "  - [${installer_prefix}_linux_amd64.deb](${distro_path}/${installer_prefix}_linux_amd64.deb)" >> notes.md
-            echo "  - [${installer_prefix}_linux_amd64.rpm](${distro_path}/${installer_prefix}_linux_amd64.rpm)" >> notes.md
-            echo "  - [${installer_prefix}_windows_x64.msi](${distro_path}/${installer_prefix}_windows_x64.msi)" >> notes.md
+            echo "- [${distro_display}](${distro_list_path})" >> notes.md
+            echo "  - [${installer_prefix}_linux_amd64.deb](${distro_file_path}/${installer_prefix}_linux_amd64.deb)" >> notes.md
+            echo "  - [${installer_prefix}_linux_amd64.rpm](${distro_file_path}/${installer_prefix}_linux_amd64.rpm)" >> notes.md
+            echo "  - [${installer_prefix}_windows_x64.msi](${distro_file_path}/${installer_prefix}_windows_x64.msi)" >> notes.md
           done
           
           gh release edit ${RELEASE_VERSION} --notes-file notes.md
