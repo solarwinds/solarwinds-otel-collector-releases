@@ -222,13 +222,15 @@ processors:
             experimental_scale: 100
       - include: system.memory.utilization
         action: insert
+        match_type: strict
         new_name: system.memory.utilization.aggregated
+        experimental_match_labels: {"state": "used"}
         operations:
-          - action: aggregate_label_values
+          - action: update_label
             label: state
-            aggregated_values: [cached, buffered, used]
-            new_value: aggregated
-            aggregation_type: sum
+            value_actions:
+              - value: used
+                new_value: aggregated
       - include: system.memory.utilization.aggregated
         action: update
         operations:
@@ -333,18 +335,6 @@ processors:
           - action: delete_label_value
             label: state
             label_value: idle
-      - include: system.memory.utilization.aggregated
-        action: update
-        operations:
-          - action: delete_label_value
-            label: state
-            label_value: free
-          - action: delete_label_value
-            label: state
-            label_value: slab_reclaimable
-          - action: delete_label_value
-            label: state
-            label_value: slab_unreclaimable
       - include: process.cpu.time
         action: insert
         new_name: process.cpu.time.rate
