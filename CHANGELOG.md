@@ -1,6 +1,7 @@
 # Changelog
 
 ## vNext
+- [Host integration example](./examples/integrations/host/config.yaml): Updates calculation of system.memory.utilization.aggregated metric to include only `used` state
 
 ## v0.145.3
 - Consumes public solarwinds-otel-collector-contrib v0.145.3 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01453)
