@@ -61,10 +61,6 @@ service:
         - otlp
       processors:
         - memory_limiter
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
         - batch
         - solarwinds/otlp
       exporters:
@@ -87,10 +83,6 @@ service:
         - otlp
       processors:
         - memory_limiter
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
         - batch
         - solarwinds/otlp
       exporters:
