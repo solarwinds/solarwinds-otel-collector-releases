@@ -1,0 +1,81 @@
+receivers:
+  filelog:
+    include: # Required parameter
+    start_at: # Required parameter
+    poll_interval: # Required parameter
+    ordering_criteria:
+      top_n: 1
+      sort_by:
+        - sort_type: mtime
+    encoding: # Optional parameter
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  solarwinds/filelog:
+    collector_attributes_decoration:
+      enabled: true
+      extension: solarwinds
+    resource:
+      sw.otelcol.receiver.name: "filelog"
+      sw.otelcol.integration.id: # Required parameter
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  transform/log_enrichment:
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["syslog.facility"], 1)
+          - set(attributes["syslog.version"], 1)
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    collector_name: # Required parameter
+    grpc: &grpc_settings
+      endpoint: # Required parameter
+      tls:
+        insecure: false
+      headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
+
+exporters:
+  otlp:
+    <<: *grpc_settings
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    logs/filelog:
+      receivers:
+        - filelog
+      processors:
+        - memory_limiter
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - transform/log_enrichment
+        - batch
+        - solarwinds/filelog
+      exporters:
+        - otlp
