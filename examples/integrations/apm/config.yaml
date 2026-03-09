@@ -1,0 +1,65 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 80
+  solarwinds/otlp:
+    collector_attributes_decoration:
+      enabled: true
+      extension: solarwinds
+    resource:
+      sw.otelcol.receiver.name: "otlp"
+      sw.otelcol.integration.id: # Required parameter
+  batch:
+
+extensions:
+  solarwinds:
+    collector_name: # Required parameter
+    grpc: &grpc_settings
+      endpoint: # Required parameter
+      tls:
+        insecure: false
+      headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
+
+exporters:
+  otlp:
+    <<: *grpc_settings
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    traces/otlp:
+      receivers:
+        - otlp
+      processors:
+        - memory_limiter
+        - batch
+        - solarwinds/otlp
+      exporters:
+        - otlp
+    metrics/otlp:
+      receivers:
+        - otlp
+      processors:
+        - memory_limiter
+        - batch
+        - solarwinds/otlp
+      exporters:
+        - otlp
+    logs/otlp:
+      receivers:
+        - otlp
+      processors:
+        - memory_limiter
+        - batch
+        - solarwinds/otlp
+      exporters:
+        - otlp
