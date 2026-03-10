@@ -14,9 +14,6 @@ processors:
     collector_attributes_decoration:
       enabled: true
       extension: solarwinds
-    resource:
-      sw.otelcol.receiver.name: "otlp"
-      sw.otelcol.integration.id: # Required parameter
   batch:
 
 extensions:
