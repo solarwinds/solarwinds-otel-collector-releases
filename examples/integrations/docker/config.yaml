@@ -2,6 +2,7 @@ receivers:
   docker_stats:
     endpoint: # Required parameter
     collection_interval: # Required parameter
+    # api_version: Optional parameter
     metrics:
       container.uptime:
         enabled: true
