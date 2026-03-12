@@ -1,0 +1,89 @@
+receivers:
+  otlp/notls:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+extensions:
+  solarwinds:
+    collector_name: ${env:SOLARWINDS_OTELCOL_NAME}
+    grpc:
+      endpoint: ${env:SOLARWINDS_ENDPOINT}
+      headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
+
+exporters:
+  # Unused but here for debugging if needed.
+  debug:
+    verbosity: detailed
+  # Example loadbalancing exporter that routes spans based on trace ID to a statically configured set of
+  # backends running in the same Docker Compose network. See upstream documentation on the resolver and
+  # resiliency options available:
+  # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/loadbalancingexporter/README.md
+  # Note currently only OTLP/gRPC is supported https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/19185.
+  loadbalancing:
+    routing_key: "traceID"
+    protocol:
+      otlp:
+        timeout: 1s
+        tls:
+          insecure: true
+    resolver:
+      static:
+        hostnames:
+          - collector-ts1:4317
+          - collector-ts2:4317
+  otlp_grpc:
+    endpoint: ${env:SOLARWINDS_ENDPOINT}
+    headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
+    # Example of using exporter helper for batching.
+    # https://github.com/open-telemetry/opentelemetry-collector/issues/8122
+    # https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/exporterhelper/README.md
+    sending_queue:
+      batch: {}
+
+processors:
+  # Example that sets memory limit as a percentage, typical for dynamic environments like Docker.
+  # https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/memorylimiterprocessor
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 80
+  solarwinds/otlp:
+    collector_attributes_decoration:
+      enabled: true
+      extension: solarwinds
+
+service:
+  extensions: [solarwinds]
+  # Export traces to second tier of collectors for tail sampling, and logs/metrics directly to backend.
+  pipelines:
+    traces:
+      receivers: [otlp/notls]
+      processors: [memory_limiter]
+      exporters: [debug, loadbalancing] # [debug, loadbalancing] for debugging.
+    logs:
+      receivers: [otlp/notls]
+      processors: [memory_limiter, solarwinds/otlp]
+      exporters: [otlp_grpc]
+    metrics:
+      receivers: [otlp/notls]
+      processors: [memory_limiter, solarwinds/otlp]
+      exporters: [otlp_grpc]
+  telemetry:
+    resource:
+      # Set to same values as what solarwinds extension sets on received telemetry, so that
+      # internal telemetry is attributed to the collector entity.
+      sw.otelcol.collector.name: ${env:SOLARWINDS_OTELCOL_NAME}
+      sw.otelcol.collector.entity_creation: "on"
+    metrics:
+      readers:
+        - periodic:
+            exporter:
+              # Note internal telemetry exporter has a different config schema.
+              # It requires "protocol" and does not support the "tls" property.
+              # https://github.com/open-telemetry/opentelemetry-collector/issues/13554#issuecomment-3185182587
+              otlp:
+                protocol: grpc
+                endpoint: ${env:SOLARWINDS_ENDPOINT}
+                headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
