@@ -33,7 +33,6 @@ services:
     environment:
       - SOLARWINDS_TOKEN=${SOLARWINDS_TOKEN}
       - SOLARWINDS_ENDPOINT=${SOLARWINDS_ENDPOINT}
-      # Set a unique name to create a distinct collector entity in SolarWinds Observability.
       - SOLARWINDS_OTELCOL_NAME=collector-ts1
     volumes:
       - ./collector.tail-sampling.yaml:/etc/otel-collector-config.yaml
@@ -47,7 +46,6 @@ services:
     environment:
       - SOLARWINDS_TOKEN=${SOLARWINDS_TOKEN}
       - SOLARWINDS_ENDPOINT=${SOLARWINDS_ENDPOINT}
-      # Set a unique name to create a distinct collector entity in SolarWinds Observability.
       - SOLARWINDS_OTELCOL_NAME=collector-ts2
     volumes:
       - ./collector.tail-sampling.yaml:/etc/otel-collector-config.yaml
