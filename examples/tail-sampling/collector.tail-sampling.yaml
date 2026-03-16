@@ -1,0 +1,148 @@
+receivers:
+  otlp/notls:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+extensions:
+  solarwinds:
+    collector_name: ${env:SOLARWINDS_OTELCOL_NAME}
+    grpc:
+      endpoint: ${env:SOLARWINDS_ENDPOINT}
+      headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
+
+exporters:
+  # Unused but here for debugging if needed.
+  debug:
+    verbosity: detailed
+  otlp_grpc:
+    endpoint: ${env:SOLARWINDS_ENDPOINT}
+    headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
+    # Example of using exporter helper for batching.
+    # https://github.com/open-telemetry/opentelemetry-collector/issues/8122
+    # https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/exporterhelper/README.md
+    sending_queue:
+      batch: {}
+
+processors:
+  # Example that sets memory limit as a percentage, typical for dynamic environments like Docker.
+  # https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/memorylimiterprocessor
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 80
+  solarwinds/otlp:
+    collector_attributes_decoration:
+      enabled: true
+      extension: solarwinds
+  tail_sampling:
+    # Example configuration that waits up to 10 seconds for all spans form a trace before making
+    # the sampling decision, keeps a maximum of 100 traces in memory, and caches the decision for
+    # late arriving spans.
+    # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor#readme
+    decision_wait: 10s
+    num_traces: 100
+    decision_cache:
+      sampled_cache_size: 100_000
+      non_sampled_cache_size: 100_000
+    # Example set of policies that drops uninteresting traces, always sample error, high latency and
+    # triggered traces, applies high sampling rate to critical endpoints, and applies low sampling rate
+    # to everything else.
+    policies: [
+      {
+        # Never sample healthchecks.
+        name: healthcheck-policy,
+        type: drop,
+        drop: {
+          drop_sub_policy:
+            [
+              {
+                  name: drop-healthcheck-policy,
+                  type: string_attribute,
+                  string_attribute:
+                    {
+                      key: url.path,
+                      values: [/health.*],
+                      enabled_regex_matching: true
+                    },
+              }
+            ]
+        }
+      },
+      {
+        # Always sample errors.
+        name: error-policy,
+        type: status_code,
+        status_code: {status_codes: [ERROR]}
+      },
+      {
+        # Always sample requests that took more than 5 seconds.
+        name: high-latency-policy,
+        type: latency,
+        latency: {threshold_ms: 5000}
+      },
+      {
+        # Always sample trigger-traced requests.
+        name: trigger-trace-policy,
+        type: boolean_attribute,
+        boolean_attribute: {key: TriggeredTrace, value: true}
+      },
+      {
+        # High sampling rate for critical transactions.
+        name: critical-transactions-policy,
+        type: and,
+        and:
+          {
+            and_sub_policy:
+              [
+                {
+                  name: http-route-policy,
+                  type: string_attribute,
+                  string_attribute:
+                    {
+                      key: http.route,
+                      values: [/login, /payment]
+                    },
+                },
+                {
+                  name: high-sampling-policy,
+                  type: probabilistic,
+                  probabilistic: {sampling_percentage: 50},
+                },
+              ],
+          },
+      },
+      {
+        # Fallback: low sampling for any traces not meeting above policies.
+        name: fallback-policy,
+        type: probabilistic,
+        probabilistic: {sampling_percentage: 1},
+      },
+    ]
+
+service:
+  extensions: [solarwinds]
+  pipelines:
+    traces:
+      receivers: [otlp/notls]
+      processors: [memory_limiter, tail_sampling, solarwinds/otlp]
+      exporters: [otlp_grpc] # [debug, otlp_grpc] for debugging.
+  # Configure and export internal telemetry useful for monitoring the collector.
+  telemetry:
+    resource:
+      # Set to same values as what solarwinds extension sets on received telemetry, so that
+      # internal telemetry is attributed to the collector entity.
+      sw.otelcol.collector.name: ${env:SOLARWINDS_OTELCOL_NAME}
+      sw.otelcol.collector.entity_creation: "on"
+    metrics:
+      readers:
+        - periodic:
+            exporter:
+              # Note internal telemetry exporter has a different config schema.
+              # It requires "protocol" and does not support the "tls" property.
+              # https://github.com/open-telemetry/opentelemetry-collector/issues/13554#issuecomment-3185182587
+              otlp:
+                protocol: grpc
+                endpoint: ${env:SOLARWINDS_ENDPOINT}
+                headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}

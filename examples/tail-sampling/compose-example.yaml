@@ -1,0 +1,51 @@
+# Note each collector instance is assigned a unique SOLARWINDS_OTELCOL_NAME, to create a distinct
+# entity in SolarWinds Observability for monitoring.
+
+services:
+  # First tier collector acting as load-balancer, receiving telemetry from instrumented app
+  # and forwarding spans to second-tier collectors.
+  collector-lb:
+    image: solarwinds/solarwinds-otel-collector:latest-verified
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    depends_on:
+      - collector-ts1
+      - collector-ts2
+    environment:
+      - SOLARWINDS_TOKEN=${SOLARWINDS_TOKEN}
+      - SOLARWINDS_ENDPOINT=${SOLARWINDS_ENDPOINT}
+      - SOLARWINDS_OTELCOL_NAME=collector-lb
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+      - ./collector.load-balancing.yaml:/etc/otel-collector-config.yaml
+
+  # Set of second tier collectors performing tail sampling and exporting traces to backend. They are
+  # run with the processor.tailsamplingprocessor.recordpolicy feature gate enabled to track the policy
+  # that applied to sampled traces:
+  # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor#tracking-sampling-policy
+  collector-ts1:
+    image: solarwinds/solarwinds-otel-collector:latest-verified
+    command: [
+      "--config=/etc/otel-collector-config.yaml",
+      "--feature-gates=+processor.tailsamplingprocessor.recordpolicy"
+    ]
+    environment:
+      - SOLARWINDS_TOKEN=${SOLARWINDS_TOKEN}
+      - SOLARWINDS_ENDPOINT=${SOLARWINDS_ENDPOINT}
+      - SOLARWINDS_OTELCOL_NAME=collector-ts1
+    volumes:
+      - ./collector.tail-sampling.yaml:/etc/otel-collector-config.yaml
+
+  collector-ts2:
+    image: solarwinds/solarwinds-otel-collector:latest-verified
+    command: [
+      "--config=/etc/otel-collector-config.yaml",
+      "--feature-gates=+processor.tailsamplingprocessor.recordpolicy"
+    ]
+    environment:
+      - SOLARWINDS_TOKEN=${SOLARWINDS_TOKEN}
+      - SOLARWINDS_ENDPOINT=${SOLARWINDS_ENDPOINT}
+      - SOLARWINDS_OTELCOL_NAME=collector-ts2
+    volumes:
+      - ./collector.tail-sampling.yaml:/etc/otel-collector-config.yaml
