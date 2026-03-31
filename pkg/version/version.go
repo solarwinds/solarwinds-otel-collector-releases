@@ -15,4 +15,4 @@
 package version
 
 // Version of the latest SolarWinds OpenTelemetry Collector
-const Version = "0.145.6"
+const Version = "0.145.8"
