@@ -11,7 +11,7 @@ extensions:
     collector_name: ${env:SOLARWINDS_OTELCOL_NAME}
     grpc:
       endpoint: ${env:SOLARWINDS_ENDPOINT}
-      headers: { "Authorization": "Bearer ${env:SOLARWINDS_TOKEN}" }
+      headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
 
 exporters:
   # Unused but here for debugging if needed.
@@ -19,7 +19,7 @@ exporters:
     verbosity: detailed
   otlp_grpc:
     endpoint: ${env:SOLARWINDS_ENDPOINT}
-    headers: { "Authorization": "Bearer ${env:SOLARWINDS_TOKEN}" }
+    headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
     # Example of using exporter helper for batching.
     # https://github.com/open-telemetry/opentelemetry-collector/issues/8122
     # https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/exporterhelper/README.md
@@ -50,74 +50,76 @@ processors:
     # triggered traces, applies high sampling rate to critical endpoints, and applies low sampling rate
     # to everything else.
     policies: [
-        {
-          # Never sample healthchecks.
-          name: healthcheck-policy,
-          type: drop,
-          drop:
-            {
-              drop_sub_policy:
-                [
-                  {
-                    name: drop-healthcheck-policy,
-                    type: string_attribute,
-                    string_attribute:
-                      {
-                        key: url.path,
-                        values: [/health.*],
-                        enabled_regex_matching: true,
-                      },
-                  },
-                ],
-            },
-        },
-        {
-          # Always sample errors.
-          name: error-policy,
-          type: status_code,
-          status_code: { status_codes: [ERROR] },
-        },
-        {
-          # Always sample requests that took more than 5 seconds.
-          name: high-latency-policy,
-          type: latency,
-          latency: { threshold_ms: 5000 },
-        },
-        {
-          # Always sample trigger-traced requests.
-          name: trigger-trace-policy,
-          type: boolean_attribute,
-          boolean_attribute: { key: TriggeredTrace, value: true },
-        },
-        {
-          # High sampling rate for critical transactions.
-          name: critical-transactions-policy,
-          type: and,
-          and:
-            {
-              and_sub_policy:
-                [
-                  {
-                    name: http-route-policy,
-                    type: string_attribute,
-                    string_attribute:
-                      { key: http.route, values: [/login, /payment] },
-                  },
-                  {
-                    name: high-sampling-policy,
-                    type: probabilistic,
-                    probabilistic: { sampling_percentage: 50 },
-                  },
-                ],
-            },
-        },
-        {
-          # Fallback: low sampling for any traces not meeting above policies.
-          name: fallback-policy,
-          type: probabilistic,
-          probabilistic: { sampling_percentage: 1 },
-        },
-      ]
+      {
+        # Never sample healthchecks.
+        name: healthcheck-policy,
+        type: drop,
+        drop: {
+          drop_sub_policy:
+            [
+              {
+                  name: drop-healthcheck-policy,
+                  type: string_attribute,
+                  string_attribute:
+                    {
+                      key: url.path,
+                      values: [/health.*],
+                      enabled_regex_matching: true
+                    },
+              }
+            ]
+        }
+      },
+      {
+        # Always sample errors.
+        name: error-policy,
+        type: status_code,
+        status_code: {status_codes: [ERROR]}
+      },
+      {
+        # Always sample requests that took more than 5 seconds.
+        name: high-latency-policy,
+        type: latency,
+        latency: {threshold_ms: 5000}
+      },
+      {
+        # Always sample trigger-traced requests.
+        name: trigger-trace-policy,
+        type: boolean_attribute,
+        boolean_attribute: {key: TriggeredTrace, value: true}
+      },
+      {
+        # High sampling rate for critical transactions.
+        name: critical-transactions-policy,
+        type: and,
+        and:
+          {
+            and_sub_policy:
+              [
+                {
+                  name: http-route-policy,
+                  type: string_attribute,
+                  string_attribute:
+                    {
+                      key: http.route,
+                      values: [/login, /payment]
+                    },
+                },
+                {
+                  name: high-sampling-policy,
+                  type: probabilistic,
+                  probabilistic: {sampling_percentage: 50},
+                },
+              ],
+          },
+      },
+      {
+        # Fallback: low sampling for any traces not meeting above policies.
+        name: fallback-policy,
+        type: probabilistic,
+        probabilistic: {sampling_percentage: 1},
+      },
+    ]
 
 service:
   extensions: [solarwinds]
@@ -143,4 +145,4 @@ service:
               otlp:
                 protocol: grpc
                 endpoint: ${env:SOLARWINDS_ENDPOINT}
-                headers: { "Authorization": "Bearer ${env:SOLARWINDS_TOKEN}" }
+                headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}"}
