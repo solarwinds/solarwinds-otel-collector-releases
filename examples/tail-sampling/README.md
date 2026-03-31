@@ -45,4 +45,4 @@ The example sampling policies are defined in `collector.tail-sampling.yaml`:
 
 Tail sampling requires careful configuration and monitoring. The Compose and collector YAML files in this example highlight key areas and link to relevant documentation that should be consulted in order to set up production usage in your environment.
 
-See also the [customer documentation page](TBD) on tail sampling support in SolarWinds Observability.
+See also the [customer documentation page](https://documentation.solarwinds.com/en/success_center/observability/content/intro/services/tail-sampling.htm) on tail sampling support in SolarWinds Observability.
