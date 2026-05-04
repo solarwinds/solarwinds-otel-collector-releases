@@ -175,7 +175,7 @@ extensions:
 
 
 exporters:
-  otlp:
+  otlp_grpc:
     <<: *grpc_settings
 
 service:
@@ -197,7 +197,7 @@ service:
         - batch
         - solarwinds/kafka
       exporters:
-        - otlp
+        - otlp_grpc
 
     # Optional pipeline
     # logs/kafka:
