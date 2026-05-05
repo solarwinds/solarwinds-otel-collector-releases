@@ -100,6 +100,7 @@ All components. Generated based on manifest file
 | Exporter | [tencentcloudlogserviceexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/tencentcloudlogserviceexporter) | No |
 | Exporter | [tinybirdexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/tinybirdexporter) | No |
 | Exporter | [zipkinexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/zipkinexporter) | No |
+| Exporter | [googlesecopsexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/googlesecopsexporter) | No |
 | Processor | [batchprocessor](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/batchprocessor) | No |
 | Processor | [memorylimiterprocessor](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/memorylimiterprocessor) | No |
 | Processor | [attributesprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/attributesprocessor) | No |
@@ -132,6 +133,7 @@ All components. Generated based on manifest file
 | Processor | [dnslookupprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/dnslookupprocessor) | No |
 | Processor | [isolationforestprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/isolationforestprocessor) | No |
 | Processor | [metricstarttimeprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricstarttimeprocessor) | No |
+| Processor | [spanpruningprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/spanpruningprocessor) | No |
 | Processor | [k8seventgenerationprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/k8seventgenerationprocessor) | No |
 | Processor | [solarwindsprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/solarwindsprocessor) | No |
 | Processor | [swok8sworkloadtypeprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadtypeprocessor) | No |
@@ -253,6 +255,8 @@ All components. Generated based on manifest file
 | Receiver | [stefreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/stefreceiver) | No |
 | Receiver | [tcpcheckreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/tcpcheckreceiver) | No |
 | Receiver | [windowsservicereceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowsservicereceiver) | No |
+| Receiver | [azurefunctionsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/azurefunctionsreceiver) | No |
+| Receiver | [vcrreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/vcrreceiver) | No |
 | Receiver | [swohostmetricsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swohostmetricsreceiver) | No |
 | Receiver | [swok8sdiscovery](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sdiscovery) | No |
 | Receiver | [swok8sobjectsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sobjectsreceiver) | No |
