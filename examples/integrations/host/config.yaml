@@ -39,7 +39,7 @@ receivers:
         metrics:
           swo.hardwareinventory.cpu:
             enabled: true
-  hostmetrics/system:
+  host_metrics/system:
     collection_interval: # Required parameter
     scrapers:
       cpu:
@@ -120,7 +120,7 @@ receivers:
         metrics:
           system.uptime:
             enabled: false
-  hostmetrics/processes:
+  host_metrics/processes:
     collection_interval: # Required parameter
     scrapers:
       process:
@@ -447,8 +447,8 @@ service:
       receivers:
         - swohostmetrics/hostinfo
         - swohostmetrics/hw-asset
-        - hostmetrics/system
-        - hostmetrics/processes
+        - host_metrics/system
+        - host_metrics/processes
       processors:
         - memory_limiter
         - resourcedetection/ec2
