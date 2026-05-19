@@ -2,6 +2,12 @@
 
 ## vNext
 
+## v0.150.2
+- Consumes public solarwinds-otel-collector-contrib v0.150.2 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01502)
+- Consumes private solarwinds-otel-collector-contrib v0.150.2 changes:
+  - No changes
+- Added `pprofextension` to the `verified` distribution for diagnostics support
+
 ## v0.150.0
 - Consumes public solarwinds-otel-collector-contrib v0.150.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01500)
 - Consumes private solarwinds-otel-collector-contrib v0.150.0 changes:
