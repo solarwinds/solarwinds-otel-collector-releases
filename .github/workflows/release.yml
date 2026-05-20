@@ -114,9 +114,9 @@ jobs:
           gh release view ${RELEASE_VERSION} --json body -q .body > notes.md
           echo "" >> notes.md
           echo "### Docker Images" >> notes.md
-          echo "- [Playground](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${TAG_VERSION}-playground)" >> notes.md
-          echo "- [Verified](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${TAG_VERSION}-verified)" >> notes.md
-          echo "- [K8s](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=${TAG_VERSION}-k8s)" >> notes.md
+          echo "- [Playground](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=playground)" >> notes.md
+          echo "- [Verified](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=verified)" >> notes.md
+          echo "- [K8s](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=k8s)" >> notes.md
 
           gh release edit ${RELEASE_VERSION} --notes-file notes.md
       
@@ -132,18 +132,8 @@ jobs:
           echo "" >> notes.md
           echo "### Installers" >> notes.md
           
-          for distro_display in Playground Verified; do
-            distro="${distro_display,,}"  # Convert to lowercase
-            installer_prefix="solarwinds-otel-collector-${distro}"
-            distro_path="solarwinds-otel-collector/${distro}/${RELEASE_VERSION}"
-            distro_list_path="${BASE_URL}/?prefix=${distro_path}"
-            distro_file_path="${BASE_URL}/${distro_path}"
-            
-            echo "- [${distro_display}](${distro_list_path})" >> notes.md
-            echo "  - [${installer_prefix}_linux_amd64.deb](${distro_file_path}/${installer_prefix}_linux_amd64.deb)" >> notes.md
-            echo "  - [${installer_prefix}_linux_amd64.rpm](${distro_file_path}/${installer_prefix}_linux_amd64.rpm)" >> notes.md
-            echo "  - [${installer_prefix}_windows_x64.msi](${distro_file_path}/${installer_prefix}_windows_x64.msi)" >> notes.md
-          done
+          echo "- [Verified](https://agent-binaries.cloud.solarwinds.com/?prefix=solarwinds-otel-collector/verified/)" >> notes.md
+          echo "- [Playground](https://agent-binaries.cloud.solarwinds.com/?prefix=solarwinds-otel-collector/playground/)" >> notes.md
           
           gh release edit ${RELEASE_VERSION} --notes-file notes.md
 
