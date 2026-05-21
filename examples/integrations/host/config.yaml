@@ -128,6 +128,11 @@ receivers:
         mute_process_name_error: true
         mute_process_exe_error: true
         mute_process_io_error: true
+        resource_attributes:
+          process.command_line:
+            enabled: false
+          process.command:
+            enabled: false
         metrics:
           process.cpu.time:
             enabled: true
@@ -436,7 +441,7 @@ extensions:
       headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}", "swi-reporter": "otel solarwinds-otel-collector"}
 
 exporters:
-  otlp:
+  otlp_grpc:
     <<: *grpc_settings
 
 service:
@@ -468,7 +473,7 @@ service:
         - batch
         - solarwinds/host
       exporters:
-        - otlp
+        - otlp_grpc
 
 #     Optional pipeline for ingesting logs
 #     logs/host:

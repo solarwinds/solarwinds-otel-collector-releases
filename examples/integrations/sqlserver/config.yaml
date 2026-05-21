@@ -115,7 +115,7 @@ extensions:
       headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}", "swi-reporter": "dbo solarwinds-otel-collector"}
 
 exporters:
-  otlp:
+  otlp_grpc:
     <<: *grpc_settings
 
 service:
@@ -134,7 +134,7 @@ service:
         - batch
         - solarwinds/sqlserver
       exporters:
-        - otlp
+        - otlp_grpc
 
     # Optional pipeline
     # logs/sqlserver:

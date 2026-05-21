@@ -61,7 +61,7 @@ service:
     traces:
       receivers: [otlp/notls]
       processors: [memory_limiter]
-      exporters: [debug, loadbalancing] # [debug, loadbalancing] for debugging.
+      exporters: [loadbalancing] # [debug, loadbalancing] for debugging.
     logs:
       receivers: [otlp/notls]
       processors: [memory_limiter, solarwinds/otlp]

@@ -234,7 +234,7 @@ extensions:
       headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}", "swi-reporter": "otel solarwinds-otel-collector"}
 
 exporters:
-  otlp:
+  otlp_grpc:
     <<: *grpc_settings
 
 service:
@@ -257,7 +257,7 @@ service:
         - batch
         - solarwinds/elasticsearch
       exporters:
-        - otlp
+        - otlp_grpc
 
     # Optional pipeline
     # logs/elasticsearch:
