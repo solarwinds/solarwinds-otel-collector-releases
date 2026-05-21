@@ -114,8 +114,8 @@ jobs:
           gh release view ${RELEASE_VERSION} --json body -q .body > notes.md
           echo "" >> notes.md
           echo "### Docker Images" >> notes.md
-          echo "- [Playground](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=playground)" >> notes.md
           echo "- [Verified](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=verified)" >> notes.md
+          echo "- [Playground](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=playground)" >> notes.md
           echo "- [K8s](https://hub.docker.com/r/${{ env.DOCKERHUB_IMAGE }}/tags?name=k8s)" >> notes.md
 
           gh release edit ${RELEASE_VERSION} --notes-file notes.md
