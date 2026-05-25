@@ -128,6 +128,11 @@ receivers:
         mute_process_name_error: true
         mute_process_exe_error: true
         mute_process_io_error: true
+        resource_attributes:
+          process.command_line:
+            enabled: false
+          process.command:
+            enabled: false
         metrics:
           process.cpu.time:
             enabled: true
