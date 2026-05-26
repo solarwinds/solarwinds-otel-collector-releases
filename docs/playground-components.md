@@ -138,6 +138,7 @@ All components. Generated based on manifest file
 | Processor | [solarwindsprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/solarwindsprocessor) | No |
 | Processor | [swok8sworkloadtypeprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadtypeprocessor) | No |
 | Processor | [swok8sworkloadstatusprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadstatusprocessor) | No |
+| Processor | [swootelentityrefprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swootelentityrefprocessor) | No |
 | Processor | [hostinfoprocessor](private-contrib-documentation/processor/hostinfoprocessor/README.md) | Yes |
 | Processor | [hostvolumesprocessor](private-contrib-documentation/processor/hostvolumesprocessor/README.md) | Yes |
 | Processor | [utf8consistencyprocessor](private-contrib-documentation/processor/utf8consistencyprocessor/README.md) | Yes |
