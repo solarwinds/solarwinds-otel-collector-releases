@@ -17,6 +17,11 @@ exporters:
 service:
   extensions:
     - solarwinds
+  telemetry:
+    metrics:
+      # Disable the default metrics endpoint (port 8888) to avoid port conflicts
+      # when running multiple collectors on the same host.
+      level: none
   pipelines:
     metrics:
       receivers:
