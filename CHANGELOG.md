@@ -1,7 +1,13 @@
 # Changelog
 
 ## vNext
+
+## v0.152.0
+- Consumes public solarwinds-otel-collector-contrib v0.152.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01520)
+- Consumes private solarwinds-otel-collector-contrib v0.152.0 changes:
+  - Updates OpenTelemetry modules to [v1.58.0/v0.152.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.152.0)
 - Updates OpenTelemetry modules to [v1.58.0/v0.152.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.152.0)
+- :warning: Removes `dnslookupprocessor` from the `playground` distribution — deleted from upstream [opentelemetry-collector-contrib](https://github.com/open-telemetry/opentelemetry-collector-contrib) as of v0.151.0
 
 ## v0.150.3
 - Consumes public solarwinds-otel-collector-contrib v0.150.3 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01503)
