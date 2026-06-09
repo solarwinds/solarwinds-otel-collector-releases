@@ -19,14 +19,15 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/hashicorp/go-version"
 	"io"
 	"net/http"
 	"os"
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/hashicorp/go-version"
 )
 
 var client = &http.Client{}
@@ -46,8 +47,8 @@ func parseVersion(verStr string) (*version.Version, error) {
 // parseLinkHeader extracts pagination URLs from the GitHub API Link header.
 func parseLinkHeader(header string) map[string]string {
 	links := make(map[string]string)
-	parts := strings.Split(header, ",")
-	for _, part := range parts {
+	parts := strings.SplitSeq(header, ",")
+	for part := range parts {
 		sections := strings.Split(part, ";")
 		if len(sections) < 2 {
 			continue

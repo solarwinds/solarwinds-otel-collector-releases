@@ -18,7 +18,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -176,7 +175,7 @@ func TestGetComponentsFromGoMod(t *testing.T) {
 				// For "file not found", use a nonexistent path
 				goModPath = "/nonexistent/path/to/go.mod"
 			} else {
-				tmpFile, err := ioutil.TempFile("", "test-gomod-*.mod")
+				tmpFile, err := os.CreateTemp("", "test-gomod-*.mod")
 				if err != nil {
 					t.Fatalf("failed to create temp file: %v", err)
 				}
