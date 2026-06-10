@@ -265,6 +265,7 @@ All components. Generated based on manifest file
 | Receiver | [swok8sdiscovery](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sdiscovery) | No |
 | Receiver | [swok8sobjectsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sobjectsreceiver) | No |
 | Receiver | [mqttreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/mqttreceiver) | No |
+| Receiver | [osconfigreceiver](private-contrib-documentation/receiver/osconfigreceiver/README.md) | Yes |
 | Connector | [forwardconnector](https://github.com/open-telemetry/opentelemetry-collector/tree/main/connector/forwardconnector) | No |
 | Connector | [countconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/countconnector) | No |
 | Connector | [datadogconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/datadogconnector) | No |
