@@ -2,6 +2,12 @@
 
 ## vNext
 
+## v0.152.2
+- Adds receiver to `verified` and `playground` distributions: [osconfigreceiver](https://github.com/solarwinds-cloud/solarwinds-otel-collector-contrib/tree/main/receiver/osconfigreceiver)
+- Consumes public solarwinds-otel-collector-contrib v0.152.2 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01522)
+- Consumes private solarwinds-otel-collector-contrib v0.152.2 changes:
+  - Added `osconfigreceiver` receiver
+
 ## v0.152.1
 - Consumes public solarwinds-otel-collector-contrib v0.152.1 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01521)
 - Consumes private solarwinds-otel-collector-contrib v0.152.1 changes:
