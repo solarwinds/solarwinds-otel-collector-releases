@@ -8,6 +8,11 @@
 - Consumes private solarwinds-otel-collector-contrib v0.152.2 changes:
   - Added `osconfigreceiver` receiver
 
+## v0.152.1
+- Consumes public solarwinds-otel-collector-contrib v0.152.1 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01521)
+- Consumes private solarwinds-otel-collector-contrib v0.152.1 changes:
+  - No changes
+
 ## v0.152.0
 - Consumes public solarwinds-otel-collector-contrib v0.152.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01520)
 - Consumes private solarwinds-otel-collector-contrib v0.152.0 changes:
