@@ -21,7 +21,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: true
       - name: Setup Go
@@ -41,7 +41,7 @@ jobs:
       version: ${{ steps.get-version.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Get Current Version
         id: get-version
         run: echo "version=$(grep -oP '(?<=const Version = ")[^"]+' "./pkg/version/version.go")" >> $GITHUB_OUTPUT
@@ -87,7 +87,7 @@ jobs:
       - release_checks
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: true
           fetch-depth: 0
