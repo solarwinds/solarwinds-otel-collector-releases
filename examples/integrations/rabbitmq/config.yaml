@@ -108,4 +108,4 @@ service:
     #     - batch
     #     - solarwinds/rabbitmq
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc

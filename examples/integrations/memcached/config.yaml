@@ -146,4 +146,4 @@ service:
     #     - batch
     #     - solarwinds/memcached
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc

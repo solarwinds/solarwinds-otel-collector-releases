@@ -212,4 +212,4 @@ service:
     #     - batch
     #     - solarwinds/kafka
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc

@@ -181,4 +181,4 @@ service:
     #     - batch
     #     - solarwinds/nginx
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc

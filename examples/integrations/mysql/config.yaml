@@ -172,4 +172,4 @@ service:
     #     - batch
     #     - solarwinds/mysql
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc

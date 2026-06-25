@@ -488,7 +488,7 @@ service:
 #         - batch
 #         - solarwinds/host
 #       exporters:
-#         - otlp
+#         - otlp_grpc
 
 #     Optional pipeline for ingesting windows service statuses (works only on Windows machine)
 #     windowsservice/host:
@@ -497,4 +497,4 @@ service:
 #       processors:
 #         - attributes/windowsservice
 #       exporters:
-#         - otlp
+#         - otlp_grpc

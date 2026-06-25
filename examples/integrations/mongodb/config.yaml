@@ -195,4 +195,4 @@ service:
     #     - batch
     #     - solarwinds/mongodb
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc

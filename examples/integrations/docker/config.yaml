@@ -119,4 +119,4 @@ service:
     #     - batch
     #     - solarwinds/docker 
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc

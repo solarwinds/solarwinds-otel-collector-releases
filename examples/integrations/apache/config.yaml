@@ -177,4 +177,4 @@ service:
     #     - batch
     #     - solarwinds/apache
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc
