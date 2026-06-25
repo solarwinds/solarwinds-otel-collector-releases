@@ -168,4 +168,4 @@ service:
     #     - batch
     #     - solarwinds/zookeeper
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc

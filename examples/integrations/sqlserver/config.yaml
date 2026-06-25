@@ -149,4 +149,4 @@ service:
     #     - batch
     #     - solarwinds/sqlserver
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc

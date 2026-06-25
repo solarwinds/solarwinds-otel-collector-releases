@@ -143,4 +143,4 @@ service:
     #     - batch
     #     - solarwinds/oracledb
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc

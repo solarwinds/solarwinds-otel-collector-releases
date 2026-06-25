@@ -158,4 +158,4 @@ service:
     #     - batch
     #     - solarwinds/postgresql
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc

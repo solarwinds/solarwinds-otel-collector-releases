@@ -272,4 +272,4 @@ service:
     #     - batch
     #     - solarwinds/elasticsearch
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc

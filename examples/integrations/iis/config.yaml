@@ -150,4 +150,4 @@ service:
     #     - batch
     #     - solarwinds/iis
     #   exporters:
-    #     - otlp
+    #     - otlp_grpc
