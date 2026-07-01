@@ -2,10 +2,11 @@
 
 ## vNext
 
-## v0.152.3
-- Consumes public solarwinds-otel-collector-contrib v0.152.3 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01523)
-- Consumes private solarwinds-otel-collector-contrib v0.152.3 changes:
+## v0.152.4
+- Consumes public solarwinds-otel-collector-contrib v0.152.4 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01524)
+- Consumes private solarwinds-otel-collector-contrib v0.152.4 changes:
   - No changes
+- Changed the `k8s` distribution Docker image to use the distroless (`gcr.io/distroless/cc-debian12`) base image; all other distributions continue to use Debian slim.
 
 ## v0.152.2
 - Adds receiver to `verified` and `playground` distributions: [osconfigreceiver](https://github.com/solarwinds-cloud/solarwinds-otel-collector-contrib/tree/main/receiver/osconfigreceiver)
