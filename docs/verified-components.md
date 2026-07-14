@@ -69,12 +69,14 @@ All components. Generated based on manifest file
 | Receiver | [snowflakereceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/snowflakereceiver) | No |
 | Receiver | [sqlserverreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/sqlserverreceiver) | No |
 | Receiver | [statsdreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/statsdreceiver) | No |
+| Receiver | [windowseventlogreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowseventlogreceiver) | No |
 | Receiver | [windowsservicereceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowsservicereceiver) | No |
 | Receiver | [zookeeperreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/zookeeperreceiver) | No |
 | Receiver | [swohostmetricsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swohostmetricsreceiver) | No |
 | Receiver | [swok8sdiscovery](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sdiscovery) | No |
 | Receiver | [swok8sobjectsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sobjectsreceiver) | No |
 | Receiver | [mqttreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/mqttreceiver) | No |
+| Receiver | [dnsqueryreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/dnsqueryreceiver) | No |
 | Receiver | [osconfigreceiver](private-contrib-documentation/receiver/osconfigreceiver/README.md) | Yes |
 | Connector | [forwardconnector](https://github.com/open-telemetry/opentelemetry-collector/tree/main/connector/forwardconnector) | No |
 | Connector | [routingconnector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/routingconnector) | No |

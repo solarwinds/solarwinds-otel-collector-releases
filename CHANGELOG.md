@@ -2,6 +2,13 @@
 
 ## vNext
 
+## v0.152.6
+- Consumes public solarwinds-otel-collector-contrib v0.152.6 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01526)
+- Consumes private solarwinds-otel-collector-contrib v0.152.6 changes:
+  - No changes
+- Adds receiver to `k8s` distribution: [kubeletstatsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kubeletstatsreceiver)
+- Adds receiver to `verified` distribution: [windowseventlogreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowseventlogreceiver)
+
 ## v0.152.4
 - Consumes public solarwinds-otel-collector-contrib v0.152.4 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01524)
 - Consumes private solarwinds-otel-collector-contrib v0.152.4 changes:
