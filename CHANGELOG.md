@@ -1,6 +1,9 @@
 # Changelog
 
 ## vNext
+- Bumped OpenTelemetry packages to v0.157.0 (core v1.63.0 / contrib v0.157.0)
+- Removed `exporter/googlesecopsexporter` from `playground` distribution (removed upstream in v0.154.0)
+- Removed `receiver/jmxreceiver` from `playground` distribution (removed upstream in v0.157.0)
 
 ## v0.152.6
 - Consumes public solarwinds-otel-collector-contrib v0.152.6 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01526)
