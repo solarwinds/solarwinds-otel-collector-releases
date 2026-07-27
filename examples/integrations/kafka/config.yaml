@@ -24,19 +24,19 @@ processors:
     resource:
       sw.otelcol.receiver.name: "kafka"
       sw.otelcol.integration.id: # Required parameter
-  resourcedetection/ec2:
+  resource_detection/ec2:
     detectors: ["ec2"]
     timeout: 2s
     override: true
-  resourcedetection/azure:
+  resource_detection/azure:
     detectors: ["azure"]
     timeout: 2s
     override: true
-  resourcedetection/gcp:
+  resource_detection/gcp:
     detectors: ["gcp"]
     timeout: 2s
     override: true
-  resourcedetection/system:
+  resource_detection/system:
     detectors: ["system"]
     timeout: 2s
     override: false
@@ -187,10 +187,10 @@ service:
         - prometheus/kafka
       processors:
         - memory_limiter
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
+        - resource_detection/ec2
+        - resource_detection/azure
+        - resource_detection/gcp
+        - resource_detection/system
         - metricstransform/kafka
         - filter/kafka
         - transform/desc/kafka
@@ -205,10 +205,10 @@ service:
     #     - filelog
     #   processors:
     #     - memory_limiter
-    #     - resourcedetection/ec2
-    #     - resourcedetection/azure
-    #     - resourcedetection/gcp
-    #     - resourcedetection/system
+    #     - resource_detection/ec2
+    #     - resource_detection/azure
+    #     - resource_detection/gcp
+    #     - resource_detection/system
     #     - batch
     #     - solarwinds/kafka
     #   exporters:

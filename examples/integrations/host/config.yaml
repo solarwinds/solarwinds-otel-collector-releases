@@ -160,20 +160,20 @@ processors:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  resourcedetection/ec2:
+  resource_detection/ec2:
     detectors: ["ec2"]
     timeout: 2s
     override: true
-  resourcedetection/azure:
+  resource_detection/azure:
     detectors: ["azure"]
     timeout: 2s
     override: true
-  resourcedetection/gcp:
+  resource_detection/gcp:
     detectors: ["gcp"]
     timeout: 2s
     override: true
-  resourcedetection: null
-  resourcedetection/system:
+  resource_detection: null
+  resource_detection/system:
     detectors: ["system"]
     timeout: 2s
     override: false
@@ -349,7 +349,7 @@ processors:
         - include: system.network.io
           binding_attribute: device
   hostvolumes:
-  cumulativetodelta/host:
+  cumulative_to_delta/host:
     include:
       metrics:
         - system.disk.operations.aggregated
@@ -408,7 +408,7 @@ processors:
           - set(description, "Total filesystem size, in bytes.") where name == "system.filesystem.total"
 
   # Adding EC2 tags
-  resourcedetection/tagging-feature:
+  resource_detection/tagging-feature:
     detectors: ["ec2"]
     timeout: 2s
     override: true
@@ -456,17 +456,17 @@ service:
         - host_metrics/processes
       processors:
         - memory_limiter
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
+        - resource_detection/ec2
+        - resource_detection/azure
+        - resource_detection/gcp
+        - resource_detection/system
         - uuid
-        - resourcedetection/tagging-feature
+        - resource_detection/tagging-feature
         - transform/tagging-feature/host
         - hostinfo/host
         - hostvolumes
         - metricstransform/host
-        - cumulativetodelta/host
+        - cumulative_to_delta/host
         - deltatorate/host
         - transform/desc/host
         - utf8consistency
@@ -481,10 +481,10 @@ service:
 #         - filelog
 #       processors:
 #         - memory_limiter
-#         - resourcedetection/ec2
-#         - resourcedetection/azure
-#         - resourcedetection/gcp
-#         - resourcedetection/system
+#         - resource_detection/ec2
+#         - resource_detection/azure
+#         - resource_detection/gcp
+#         - resource_detection/system
 #         - batch
 #         - solarwinds/host
 #       exporters:

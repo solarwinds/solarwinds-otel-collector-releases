@@ -48,19 +48,19 @@ processors:
     resource:
       sw.otelcol.receiver.name: "iis"
       sw.otelcol.integration.id: # Required parameter
-  resourcedetection/ec2:
+  resource_detection/ec2:
     detectors: ["ec2"]
     timeout: 2s
     override: true
-  resourcedetection/azure:
+  resource_detection/azure:
     detectors: ["azure"]
     timeout: 2s
     override: true
-  resourcedetection/gcp:
+  resource_detection/gcp:
     detectors: ["gcp"]
     timeout: 2s
     override: true
-  resourcedetection/system:
+  resource_detection/system:
     detectors: ["system"]
     timeout: 2s
     override: false
@@ -77,7 +77,7 @@ processors:
       - include: iis.network.io
         action: insert
         new_name: iis.network.io.rate
-  cumulativetodelta/rates/iis:
+  cumulative_to_delta/rates/iis:
     include:
       metrics:
         - iis.connection.anonymous.rate
@@ -124,12 +124,12 @@ service:
         - iis
       processors:
         - memory_limiter
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
+        - resource_detection/ec2
+        - resource_detection/azure
+        - resource_detection/gcp
+        - resource_detection/system
         - metricstransform/rates/iis
-        - cumulativetodelta/rates/iis
+        - cumulative_to_delta/rates/iis
         - deltatorate/rates/iis
         - transform/desc/iis
         - batch
@@ -143,10 +143,10 @@ service:
     #     - filelog
     #   processors:
     #     - memory_limiter
-    #     - resourcedetection/ec2
-    #     - resourcedetection/azure
-    #     - resourcedetection/gcp
-    #     - resourcedetection/system
+    #     - resource_detection/ec2
+    #     - resource_detection/azure
+    #     - resource_detection/gcp
+    #     - resource_detection/system
     #     - batch
     #     - solarwinds/iis
     #   exporters:
