@@ -7,7 +7,7 @@ receivers:
           static_configs:
             - targets: # Required parameter
   # Optional receiver
-  # filelog:
+  # file_log:
   #   include: # Required parameter
   #   start_at: end
   #   poll_interval: 5s
@@ -24,25 +24,25 @@ processors:
     resource:
       sw.otelcol.receiver.name: "kafka"
       sw.otelcol.integration.id: # Required parameter
-  resourcedetection/ec2:
+  resource_detection/ec2:
     detectors: ["ec2"]
     timeout: 2s
     override: true
-  resourcedetection/azure:
+  resource_detection/azure:
     detectors: ["azure"]
     timeout: 2s
     override: true
-  resourcedetection/gcp:
+  resource_detection/gcp:
     detectors: ["gcp"]
     timeout: 2s
     override: true
-  resourcedetection/system:
+  resource_detection/system:
     detectors: ["system"]
     timeout: 2s
     override: false
     system:
       hostname_sources: ["os"]
-  metricstransform/kafka:
+  metrics_transform/kafka:
     transforms:
       - include: kafka_log_logflushstats_logflushrateandtimems
         match_type: strict
@@ -187,11 +187,11 @@ service:
         - prometheus/kafka
       processors:
         - memory_limiter
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
-        - metricstransform/kafka
+        - resource_detection/ec2
+        - resource_detection/azure
+        - resource_detection/gcp
+        - resource_detection/system
+        - metrics_transform/kafka
         - filter/kafka
         - transform/desc/kafka
         - batch
@@ -202,13 +202,13 @@ service:
     # Optional pipeline
     # logs/kafka:
     #   receivers:
-    #     - filelog
+    #     - file_log
     #   processors:
     #     - memory_limiter
-    #     - resourcedetection/ec2
-    #     - resourcedetection/azure
-    #     - resourcedetection/gcp
-    #     - resourcedetection/system
+    #     - resource_detection/ec2
+    #     - resource_detection/azure
+    #     - resource_detection/gcp
+    #     - resource_detection/system
     #     - batch
     #     - solarwinds/kafka
     #   exporters:

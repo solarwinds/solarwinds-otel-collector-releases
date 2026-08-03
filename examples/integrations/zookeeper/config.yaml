@@ -36,7 +36,7 @@ receivers:
       zookeeper.znode.count:
         enabled: true
   # Optional receiver
-  # filelog:
+  # file_log:
   #   include: # Required parameter
   #   start_at: end
   #   poll_interval: 5s
@@ -53,25 +53,25 @@ processors:
     resource:
       sw.otelcol.receiver.name: "zookeeper"
       sw.otelcol.integration.id: # Required parameter
-  resourcedetection/ec2:
+  resource_detection/ec2:
     detectors: ["ec2"]
     timeout: 2s
     override: true
-  resourcedetection/azure:
+  resource_detection/azure:
     detectors: ["azure"]
     timeout: 2s
     override: true
-  resourcedetection/gcp:
+  resource_detection/gcp:
     detectors: ["gcp"]
     timeout: 2s
     override: true
-  resourcedetection/system:
+  resource_detection/system:
     detectors: ["system"]
     timeout: 2s
     override: false
     system:
       hostname_sources: ["os"]
-  metricstransform/zookeeper:
+  metrics_transform/zookeeper:
     transforms:
       - include: zookeeper.file_descriptor.open
         action: insert
@@ -79,7 +79,7 @@ processors:
       - include: zookeeper.packet.count
         action: insert
         new_name: zookeeper.packet.count.rate
-  cumulativetodelta/zookeeper:
+  cumulative_to_delta/zookeeper:
     include:
       metrics:
         - zookeeper.packet.count.rate
@@ -139,12 +139,12 @@ service:
         - zookeeper
       processors:
         - memory_limiter
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
-        - metricstransform/zookeeper
-        - cumulativetodelta/zookeeper
+        - resource_detection/ec2
+        - resource_detection/azure
+        - resource_detection/gcp
+        - resource_detection/system
+        - metrics_transform/zookeeper
+        - cumulative_to_delta/zookeeper
         - deltatorate/zookeeper
         - transform/convert_limit/zookeeper
         - metricsgeneration/zookeeper
@@ -158,13 +158,13 @@ service:
     # Optional pipeline
     # logs/zookeeper:
     #   receivers:
-    #     - filelog
+    #     - file_log
     #   processors:
     #     - memory_limiter
-    #     - resourcedetection/ec2
-    #     - resourcedetection/azure
-    #     - resourcedetection/gcp
-    #     - resourcedetection/system
+    #     - resource_detection/ec2
+    #     - resource_detection/azure
+    #     - resource_detection/gcp
+    #     - resource_detection/system
     #     - batch
     #     - solarwinds/zookeeper
     #   exporters:
