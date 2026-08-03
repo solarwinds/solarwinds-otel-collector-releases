@@ -36,7 +36,7 @@ receivers:
       zookeeper.znode.count:
         enabled: true
   # Optional receiver
-  # filelog:
+  # file_log:
   #   include: # Required parameter
   #   start_at: end
   #   poll_interval: 5s
@@ -71,7 +71,7 @@ processors:
     override: false
     system:
       hostname_sources: ["os"]
-  metricstransform/zookeeper:
+  metrics_transform/zookeeper:
     transforms:
       - include: zookeeper.file_descriptor.open
         action: insert
@@ -143,7 +143,7 @@ service:
         - resource_detection/azure
         - resource_detection/gcp
         - resource_detection/system
-        - metricstransform/zookeeper
+        - metrics_transform/zookeeper
         - cumulative_to_delta/zookeeper
         - deltatorate/zookeeper
         - transform/convert_limit/zookeeper
@@ -158,7 +158,7 @@ service:
     # Optional pipeline
     # logs/zookeeper:
     #   receivers:
-    #     - filelog
+    #     - file_log
     #   processors:
     #     - memory_limiter
     #     - resource_detection/ec2

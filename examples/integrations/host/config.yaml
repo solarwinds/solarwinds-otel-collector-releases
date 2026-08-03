@@ -146,13 +146,13 @@ receivers:
             enabled: true
 
 # Optional receiver for ingesting logs
-#   filelog:
+#   file_log:
 #     include: # Required parameter
 #     start_at: end
 #     poll_interval: 5s
 
 # Optional receiver for ingesting statuses from Windows services (works only on Windows machine)
-#   windowsservice:
+#   windows_service:
 #     collection_interval: 1m
 
 processors:
@@ -193,7 +193,7 @@ processors:
       sw.otelcol.receiver.name: "hostmetrics"
       sw.otelcol.integration.id: # Required parameter
   utf8consistency:
-  metricstransform/host:
+  metrics_transform/host:
     transforms:
       - include: process.cpu.utilization
         action: insert
@@ -422,7 +422,7 @@ processors:
       - replace_all_patterns(resource.attributes, "key", "^ec2.tag.(.*)$", "tags.$1")
 
 # Optional processor for ingesting statuses from Windows services (works only on Windows machine)
-#  attributes/windowsservice:
+#  attributes/windows_service:
 #    actions:
 #      # Renamed generic attribute 'name' to 'service_name' to avoid collision with other receivers.
 #      - key: service_name
@@ -465,7 +465,7 @@ service:
         - transform/tagging-feature/host
         - hostinfo/host
         - hostvolumes
-        - metricstransform/host
+        - metrics_transform/host
         - cumulative_to_delta/host
         - deltatorate/host
         - transform/desc/host
@@ -478,7 +478,7 @@ service:
 #     Optional pipeline for ingesting logs
 #     logs/host:
 #       receivers:
-#         - filelog
+#         - file_log
 #       processors:
 #         - memory_limiter
 #         - resource_detection/ec2
@@ -491,10 +491,10 @@ service:
 #         - otlp_grpc
 
 #     Optional pipeline for ingesting windows service statuses (works only on Windows machine)
-#     windowsservice/host:
+#     windows_service/host:
 #       receivers:
-#         - windowsservice
+#         - windows_service
 #       processors:
-#         - attributes/windowsservice
+#         - attributes/windows_service
 #       exporters:
 #         - otlp_grpc

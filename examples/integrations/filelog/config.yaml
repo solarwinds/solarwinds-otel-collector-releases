@@ -1,5 +1,5 @@
 receivers:
-  filelog:
+  file_log:
     include: # Required parameter
     start_at: # Required parameter
     poll_interval: # Required parameter
@@ -14,7 +14,7 @@ processors:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  solarwinds/filelog:
+  solarwinds/file_log:
     collector_attributes_decoration:
       enabled: true
       extension: solarwinds
@@ -65,9 +65,9 @@ service:
   extensions:
     - solarwinds
   pipelines:
-    logs/filelog:
+    logs/file_log:
       receivers:
-        - filelog
+        - file_log
       processors:
         - memory_limiter
         - resource_detection/ec2
@@ -76,6 +76,6 @@ service:
         - resource_detection/system
         - transform/log_enrichment
         - batch
-        - solarwinds/filelog
+        - solarwinds/file_log
       exporters:
         - otlp_grpc

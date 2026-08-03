@@ -152,7 +152,7 @@ receivers:
       jvm.threads.count:
         enabled: true
   # Optional receiver
-  # filelog:
+  # file_log:
   #   include: # Required parameter
   #   start_at: end
   #   poll_interval: 5s
@@ -187,7 +187,7 @@ processors:
     override: false
     system:
       hostname_sources: ["os"]
-  metricstransform/elasticsearch:
+  metrics_transform/elasticsearch:
     transforms:
       - include: jvm.gc.collections.count
         action: insert
@@ -250,7 +250,7 @@ service:
         - resource_detection/azure
         - resource_detection/gcp
         - resource_detection/system
-        - metricstransform/elasticsearch
+        - metrics_transform/elasticsearch
         - cumulative_to_delta/elasticsearch
         - deltatorate/elasticsearch
         - transform/desc/elasticsearch
@@ -262,7 +262,7 @@ service:
     # Optional pipeline
     # logs/elasticsearch:
     #   receivers:
-    #     - filelog
+    #     - file_log
     #   processors:
     #     - memory_limiter
     #     - resource_detection/ec2

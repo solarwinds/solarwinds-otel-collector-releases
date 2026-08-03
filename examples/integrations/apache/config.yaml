@@ -28,7 +28,7 @@ receivers:
       apache.workers:
         enabled: true
   # Optional receiver
-  # filelog:
+  # file_log:
   #   include: # Required parameter
   #   start_at: end
   #   poll_interval: 5s
@@ -63,7 +63,7 @@ processors:
     override: false
     system:
       hostname_sources: ["os"]
-  metricstransform/apache:
+  metrics_transform/apache:
     transforms:
       - include: apache.requests
         action: insert
@@ -153,7 +153,7 @@ service:
         - resource_detection/azure
         - resource_detection/gcp
         - resource_detection/system
-        - metricstransform/apache
+        - metrics_transform/apache
         - cumulative_to_delta/apache
         - deltatorate/apache
         - metricsgeneration/apache
@@ -167,7 +167,7 @@ service:
     # Optional pipeline
     # logs/apache:
     #   receivers:
-    #     - filelog
+    #     - file_log
     #   processors:
     #     - memory_limiter
     #     - resource_detection/ec2

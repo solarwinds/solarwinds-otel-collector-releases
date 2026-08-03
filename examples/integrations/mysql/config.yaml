@@ -90,7 +90,7 @@ receivers:
       mysql.client.network.io:
         enabled: true
   # Optional receiver
-  # filelog:
+  # file_log:
   #   include: # Required parameter
   #   start_at: end
   #   poll_interval: 5s
@@ -162,7 +162,7 @@ service:
     # Optional pipeline
     # logs/mysql:
     #   receivers:
-    #     - filelog
+    #     - file_log
     #   processors:
     #     - memory_limiter
     #     - resource_detection/ec2

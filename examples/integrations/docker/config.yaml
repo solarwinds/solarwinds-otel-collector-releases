@@ -37,7 +37,7 @@ receivers:
       container.cpu.throttling_data.periods:
         enabled: true
   # Optional receiver
-  # filelog:
+  # file_log:
   #  include: # Required parameter
   #  start_at: end
   #  poll_interval: 5s
@@ -109,7 +109,7 @@ service:
     # Optional pipeline
     # logs/docker:
     #   receivers:
-    #     - filelog
+    #     - file_log
     #   processors:
     #     - memory_limiter
     #     - resource_detection/ec2

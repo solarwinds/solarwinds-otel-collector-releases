@@ -31,7 +31,7 @@ receivers:
       iis.uptime:
         enabled: true
   # Optional receiver
-  # filelog:
+  # file_log:
   #   include: # Required parameter
   #   start_at: end
   #   poll_interval: 5s
@@ -66,7 +66,7 @@ processors:
     override: false
     system:
       hostname_sources: ["os"]
-  metricstransform/rates/iis:
+  metrics_transform/rates/iis:
     transforms:
       - include: iis.connection.anonymous
         action: insert
@@ -128,7 +128,7 @@ service:
         - resource_detection/azure
         - resource_detection/gcp
         - resource_detection/system
-        - metricstransform/rates/iis
+        - metrics_transform/rates/iis
         - cumulative_to_delta/rates/iis
         - deltatorate/rates/iis
         - transform/desc/iis
@@ -140,7 +140,7 @@ service:
     # Optional pipeline
     # logs/iis:
     #   receivers:
-    #     - filelog
+    #     - file_log
     #   processors:
     #     - memory_limiter
     #     - resource_detection/ec2

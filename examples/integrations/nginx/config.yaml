@@ -12,7 +12,7 @@ receivers:
       nginx.requests:
         enabled: true
   # Optional receiver
-  # filelog:
+  # file_log:
   #   include: # Required parameter
   #   start_at: end
   #   poll_interval: 5s
@@ -47,7 +47,7 @@ processors:
     override: false
     system:
       hostname_sources: ["os"]
-  metricstransform/nginx:
+  metrics_transform/nginx:
     transforms:
       - include: nginx.connections_accepted
         action: insert
@@ -80,7 +80,7 @@ processors:
         metric1: nginx.connections_accepted.gauge.temp
         metric2: nginx.connections_handled.gauge.temp
         operation: subtract
-  metricstransform/copy_dropped_rate/nginx:
+  metrics_transform/copy_dropped_rate/nginx:
     transforms:
       - include: nginx.connections_dropped
         action: insert
@@ -154,10 +154,10 @@ service:
         - resource_detection/azure
         - resource_detection/gcp
         - resource_detection/system
-        - metricstransform/nginx
+        - metrics_transform/nginx
         - transform/nginx
         - metricsgeneration/nginx
-        - metricstransform/copy_dropped_rate/nginx
+        - metrics_transform/copy_dropped_rate/nginx
         - transform/convert_dropped_rate/nginx
         - cumulative_to_delta/nginx
         - deltatorate/nginx
@@ -171,7 +171,7 @@ service:
     # Optional pipeline
     # logs/nginx:
     #   receivers:
-    #     - filelog
+    #     - file_log
     #   processors:
     #     - memory_limiter
     #     - resource_detection/ec2

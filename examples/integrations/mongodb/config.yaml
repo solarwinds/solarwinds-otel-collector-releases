@@ -113,7 +113,7 @@ receivers:
       mongodb.queries.rate:
         enabled: true
   # Optional receiver
-  # filelog:
+  # file_log:
   #   include: # Required parameter
   #   start_at: end
   #   poll_interval: 5s
@@ -185,7 +185,7 @@ service:
     # Optional pipeline
     # logs/mongodb:
     #   receivers:
-    #     - filelog
+    #     - file_log
     #   processors:
     #     - memory_limiter
     #     - resource_detection/ec2
