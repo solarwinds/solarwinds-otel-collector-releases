@@ -1,0 +1,73 @@
+receivers:
+  dnsquery:
+    servers: # Required parameter, list of DNS servers e.g. ["8.8.8.8"]
+    collection_interval: # Required parameter e.g. 30s
+    # domains: ["."]  # Optional: list of domains to query, default ["."]
+    # record_type: "NS"  # Optional: A, AAAA, ANY, CNAME, MX, NS, PTR, SOA, SPF, SRV, TXT
+    # network: "udp"     # Optional: udp, tcp or tcp-tls (DNS over TLS, usually port 853)
+    # port: 53           # Optional: DNS server port
+    # timeout: 2s        # Optional: per-query timeout, default 2s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  solarwinds/dnsquery:
+    collector_attributes_decoration:
+      enabled: true
+      extension: solarwinds
+    resource:
+      sw.otelcol.receiver.name: "dnsquery"
+      sw.otelcol.integration.id: # Required parameter
+  resourcedetection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resourcedetection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resourcedetection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resourcedetection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    collector_name: # Required parameter
+    grpc: &grpc_settings
+      endpoint: # Required parameter
+      tls:
+        insecure: false
+      headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}", "swi-reporter": "dbo solarwinds-otel-collector"}
+
+exporters:
+  otlp_grpc:
+    <<: *grpc_settings
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/dnsquery:
+      receivers:
+        - dnsquery
+      processors:
+        - memory_limiter
+        - resourcedetection/ec2
+        - resourcedetection/azure
+        - resourcedetection/gcp
+        - resourcedetection/system
+        - batch
+        - solarwinds/dnsquery
+      exporters:
+        - otlp_grpc

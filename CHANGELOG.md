@@ -1,6 +1,8 @@
 # Changelog
 
 ## vNext
+- Adds a [DNS Query integration example](./examples/integrations/dnsquery/config.yaml) compatible with SolarWinds Observability SaaS.
+- Lists `dnsqueryreceiver` in the `verified` and `playground` component documentation; it was already part of both distributions.
 
 ## v0.152.4
 - Consumes public solarwinds-otel-collector-contrib v0.152.4 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01524)
