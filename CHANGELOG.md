@@ -1,6 +1,11 @@
 # Changelog
 
 ## vNext
+
+## v0.157.0
+- Consumes public solarwinds-otel-collector-contrib v0.157.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01570)
+- Consumes private solarwinds-otel-collector-contrib v0.157.0 changes:
+  - Updates OpenTelemetry modules to [v1.63.0/v0.157.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.157.0)
 - Updates OpenTelemetry modules to [v1.63.0/v0.157.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.157.0)
 
 ## v0.152.6
