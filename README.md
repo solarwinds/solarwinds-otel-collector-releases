@@ -1,5 +1,7 @@
 # SolarWinds OpenTelemetry Collector
 
+<!-- testing kai -->
+
 SolarWinds OpenTelemetry Collector (swotelcol) is a distribution of OpenTelemetry Collector with components
 bundled from [opentelemetry-collector], [opentelemetry-collector-contrib] and [solarwinds-otel-collector-contrib].
 It contains SolarWinds-specific components for better integration with SolarWinds Observability (SWO) and enhances telemetry collection.
