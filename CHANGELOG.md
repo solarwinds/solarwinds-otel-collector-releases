@@ -1,6 +1,8 @@
 # Changelog
 
 ## vNext
+- Updates golang to 1.26.6
+- Updates `solarwinds-otel-collector-core` submodule to latest main
 
 ## v0.157.0
 - Consumes public solarwinds-otel-collector-contrib v0.157.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01570)
