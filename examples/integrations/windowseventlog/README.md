@@ -5,7 +5,7 @@ This directory contains an example configuration for Windows Event Log observabi
 - `config.yaml`: Example configuration file for Windows Event Logs integration.
 
 > [!NOTE]
-> The `windows_event_log` receiver is Windows-only; the published image tags are multiarch manifests that include Windows nanoserver builds. Run the collector on the Windows host whose channel you want to collect — a container reads its own Event Log channels, not the host's. To collect from another machine, use the receiver's [`remote`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowseventlogreceiver#remote-configuration) configuration instead of `channel`.
+> The `windows_event_log` receiver is Windows-only. Note that running it in Docker means reading the container's own event log, not the host's — use the installer instead, or the receiver's [`remote`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowseventlogreceiver#remote-configuration) option to reach another machine.
 
 ## Filtering by log level
 
