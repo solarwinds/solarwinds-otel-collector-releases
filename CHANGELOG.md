@@ -1,7 +1,12 @@
 # Changelog
 
 ## vNext
+
+## v0.157.3
 - Updates golang to 1.26.6
+- Consumes public solarwinds-otel-collector-contrib v0.157.3 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01573)
+- Consumes private solarwinds-otel-collector-contrib v0.157.3 changes:
+  - No changes
 
 ## v0.157.0
 - Consumes public solarwinds-otel-collector-contrib v0.157.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01570)
