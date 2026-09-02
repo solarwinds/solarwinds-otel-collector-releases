@@ -1,6 +1,8 @@
 # Changelog
 
 ## vNext
+- Adds a [DNS Query integration example](./examples/integrations/dnsquery/config.yaml) compatible with SolarWinds Observability SaaS.
+- Lists `dnsqueryreceiver` in the `verified` and `playground` component documentation; it was already part of both distributions.
 
 ## v0.157.3
 - Updates golang to 1.26.6
