@@ -1,5 +1,5 @@
 receivers:
-  dns_query:
+  dnsquery:
     servers: # Required parameter, list of DNS servers e.g. ["8.8.8.8"]
     collection_interval: # Required parameter e.g. 30s
     # domains: ["."]  # Optional: list of domains to query, default ["."]
@@ -13,26 +13,26 @@ processors:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  solarwinds/dns_query:
+  solarwinds/dnsquery:
     collector_attributes_decoration:
       enabled: true
       extension: solarwinds
     resource:
-      sw.otelcol.receiver.name: "dns_query"
+      sw.otelcol.receiver.name: "dnsquery"
       sw.otelcol.integration.id: # Required parameter
-  resourcedetection/ec2:
+  resource_detection/ec2:
     detectors: ["ec2"]
     timeout: 2s
     override: true
-  resourcedetection/azure:
+  resource_detection/azure:
     detectors: ["azure"]
     timeout: 2s
     override: true
-  resourcedetection/gcp:
+  resource_detection/gcp:
     detectors: ["gcp"]
     timeout: 2s
     override: true
-  resourcedetection/system:
+  resource_detection/system:
     detectors: ["system"]
     timeout: 2s
     override: false
@@ -58,16 +58,16 @@ service:
   extensions:
     - solarwinds
   pipelines:
-    metrics/dns_query:
+    metrics/dnsquery:
       receivers:
-        - dns_query
+        - dnsquery
       processors:
         - memory_limiter
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
+        - resource_detection/ec2
+        - resource_detection/azure
+        - resource_detection/gcp
+        - resource_detection/system
         - batch
-        - solarwinds/dns_query
+        - solarwinds/dnsquery
       exporters:
         - otlp_grpc
