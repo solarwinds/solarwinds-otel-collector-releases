@@ -27,7 +27,7 @@ receivers:
       memcached.threads:
         enabled: true
   # Optional receiver
-  # filelog:
+  # file_log:
   #   include: # Required parameter
   #   start_at: end
   #   poll_interval: 5s
@@ -44,25 +44,25 @@ processors:
     resource:
       sw.otelcol.receiver.name: "memcached"
       sw.otelcol.integration.id: # Required parameter
-  resourcedetection/ec2:
+  resource_detection/ec2:
     detectors: ["ec2"]
     timeout: 2s
     override: true
-  resourcedetection/azure:
+  resource_detection/azure:
     detectors: ["azure"]
     timeout: 2s
     override: true
-  resourcedetection/gcp:
+  resource_detection/gcp:
     detectors: ["gcp"]
     timeout: 2s
     override: true
-  resourcedetection/system:
+  resource_detection/system:
     detectors: ["system"]
     timeout: 2s
     override: false
     system:
       hostname_sources: ["os"]
-  metricstransform/memcached:
+  metrics_transform/memcached:
     transforms:
       - include: memcached.commands
         action: insert
@@ -73,7 +73,7 @@ processors:
       - include: memcached.network
         action: insert
         new_name: memcached.network.rate
-  cumulativetodelta/memcached:
+  cumulative_to_delta/memcached:
     include:
       metrics:
         - memcached.commands.rate
@@ -120,12 +120,12 @@ service:
         - memcached
       processors:
         - memory_limiter
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
-        - metricstransform/memcached
-        - cumulativetodelta/memcached
+        - resource_detection/ec2
+        - resource_detection/azure
+        - resource_detection/gcp
+        - resource_detection/system
+        - metrics_transform/memcached
+        - cumulative_to_delta/memcached
         - deltatorate/memcached
         - transform/desc/memcached
         - batch
@@ -136,13 +136,13 @@ service:
     # Optional pipeline
     # logs/memcached:
     #   receivers:
-    #     - filelog
+    #     - file_log
     #   processors:
     #     - memory_limiter
-    #     - resourcedetection/ec2
-    #     - resourcedetection/azure
-    #     - resourcedetection/gcp
-    #     - resourcedetection/system
+    #     - resource_detection/ec2
+    #     - resource_detection/azure
+    #     - resource_detection/gcp
+    #     - resource_detection/system
     #     - batch
     #     - solarwinds/memcached
     #   exporters:

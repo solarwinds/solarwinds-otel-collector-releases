@@ -12,7 +12,7 @@ receivers:
       nginx.requests:
         enabled: true
   # Optional receiver
-  # filelog:
+  # file_log:
   #   include: # Required parameter
   #   start_at: end
   #   poll_interval: 5s
@@ -29,25 +29,25 @@ processors:
     resource:
       sw.otelcol.receiver.name: "nginx"
       sw.otelcol.integration.id: # Required parameter
-  resourcedetection/ec2:
+  resource_detection/ec2:
     detectors: ["ec2"]
     timeout: 2s
     override: true
-  resourcedetection/azure:
+  resource_detection/azure:
     detectors: ["azure"]
     timeout: 2s
     override: true
-  resourcedetection/gcp:
+  resource_detection/gcp:
     detectors: ["gcp"]
     timeout: 2s
     override: true
-  resourcedetection/system:
+  resource_detection/system:
     detectors: ["system"]
     timeout: 2s
     override: false
     system:
       hostname_sources: ["os"]
-  metricstransform/nginx:
+  metrics_transform/nginx:
     transforms:
       - include: nginx.connections_accepted
         action: insert
@@ -80,7 +80,7 @@ processors:
         metric1: nginx.connections_accepted.gauge.temp
         metric2: nginx.connections_handled.gauge.temp
         operation: subtract
-  metricstransform/copy_dropped_rate/nginx:
+  metrics_transform/copy_dropped_rate/nginx:
     transforms:
       - include: nginx.connections_dropped
         action: insert
@@ -90,7 +90,7 @@ processors:
       - context: metric
         statements:
           - convert_gauge_to_sum("cumulative", true) where name == "nginx.connections_dropped.rate"
-  cumulativetodelta/nginx:
+  cumulative_to_delta/nginx:
     include:
       metrics:
         - nginx.connections_accepted.rate
@@ -150,16 +150,16 @@ service:
         - nginx
       processors:
         - memory_limiter
-        - resourcedetection/ec2
-        - resourcedetection/azure
-        - resourcedetection/gcp
-        - resourcedetection/system
-        - metricstransform/nginx
+        - resource_detection/ec2
+        - resource_detection/azure
+        - resource_detection/gcp
+        - resource_detection/system
+        - metrics_transform/nginx
         - transform/nginx
         - metricsgeneration/nginx
-        - metricstransform/copy_dropped_rate/nginx
+        - metrics_transform/copy_dropped_rate/nginx
         - transform/convert_dropped_rate/nginx
-        - cumulativetodelta/nginx
+        - cumulative_to_delta/nginx
         - deltatorate/nginx
         - transform/desc/nginx
         - filter/nginx
@@ -171,13 +171,13 @@ service:
     # Optional pipeline
     # logs/nginx:
     #   receivers:
-    #     - filelog
+    #     - file_log
     #   processors:
     #     - memory_limiter
-    #     - resourcedetection/ec2
-    #     - resourcedetection/azure
-    #     - resourcedetection/gcp
-    #     - resourcedetection/system
+    #     - resource_detection/ec2
+    #     - resource_detection/azure
+    #     - resource_detection/gcp
+    #     - resource_detection/system
     #     - batch
     #     - solarwinds/nginx
     #   exporters:

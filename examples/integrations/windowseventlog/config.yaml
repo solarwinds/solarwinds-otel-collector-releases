@@ -1,23 +1,29 @@
 receivers:
-  prometheus:
-    config:
-      scrape_configs:
-        - job_name: 'prometheus'
-          scrape_interval: # Required parameter
-          static_configs:
-            - targets: # Required parameter
+  windows_event_log:
+    channel: # Required parameter
+    # Optional log level filtering — replace `channel` with an XPath query, which
+    # carries the channel in `Path`. `channel` and `query` are mutually exclusive.
+    # Level codes: 1 Critical, 2 Error, 3 Warning, 4 Information, 5 Verbose.
+    # query: |-
+    #   <QueryList>
+    #     <Query Id="0">
+    #       <Select Path="Application">*[System[(Level=1 or Level=2 or Level=3)]]</Select>
+    #     </Query>
+    #   </QueryList>
+    start_at: # Required parameter
+    poll_interval: # Required parameter
 
 processors:
   memory_limiter:
     check_interval: 1s
     limit_percentage: 50
     spike_limit_percentage: 30
-  solarwinds/prometheus:
+  solarwinds/windows_event_log:
     collector_attributes_decoration:
       enabled: true
       extension: solarwinds
     resource:
-      sw.otelcol.receiver.name: "prometheus"
+      sw.otelcol.receiver.name: "windowseventlog"
       sw.otelcol.integration.id: # Required parameter
   resource_detection/ec2:
     detectors: ["ec2"]
@@ -37,6 +43,12 @@ processors:
     override: false
     system:
       hostname_sources: ["os"]
+  transform/log_enrichment:
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["syslog.facility"], 1)
+          - set(attributes["syslog.version"], 1)
   batch:
     send_batch_max_size: 20000
 
@@ -57,16 +69,17 @@ service:
   extensions:
     - solarwinds
   pipelines:
-    metrics/prometheus:
+    logs/windows_event_log:
       receivers:
-        - prometheus
+        - windows_event_log
       processors:
         - memory_limiter
         - resource_detection/ec2
         - resource_detection/azure
         - resource_detection/gcp
         - resource_detection/system
+        - transform/log_enrichment
         - batch
-        - solarwinds/prometheus
+        - solarwinds/windows_event_log
       exporters:
         - otlp_grpc

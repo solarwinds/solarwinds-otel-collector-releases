@@ -101,14 +101,15 @@ All components. Generated based on manifest file
 | Exporter | [tencentcloudlogserviceexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/tencentcloudlogserviceexporter) | No |
 | Exporter | [tinybirdexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/tinybirdexporter) | No |
 | Exporter | [zipkinexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/zipkinexporter) | No |
-| Exporter | [googlesecopsexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/googlesecopsexporter) | No |
 | Processor | [batchprocessor](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/batchprocessor) | No |
 | Processor | [memorylimiterprocessor](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/memorylimiterprocessor) | No |
 | Processor | [attributesprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/attributesprocessor) | No |
+| Processor | [awsecsattributesprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/awsecsattributesprocessor) | No |
 | Processor | [coralogixprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/coralogixprocessor) | No |
 | Processor | [cumulativetodeltaprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/cumulativetodeltaprocessor) | No |
 | Processor | [deltatocumulativeprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/deltatocumulativeprocessor) | No |
 | Processor | [deltatorateprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/deltatorateprocessor) | No |
+| Processor | [dynamicsamplingprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/dynamicsamplingprocessor) | No |
 | Processor | [filterprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor) | No |
 | Processor | [geoipprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/geoipprocessor) | No |
 | Processor | [groupbyattrsprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/groupbyattrsprocessor) | No |
@@ -189,7 +190,6 @@ All components. Generated based on manifest file
 | Receiver | [iisreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/iisreceiver) | No |
 | Receiver | [influxdbreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/influxdbreceiver) | No |
 | Receiver | [jaegerreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/jaegerreceiver) | No |
-| Receiver | [jmxreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/jmxreceiver) | No |
 | Receiver | [journaldreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/journaldreceiver) | No |
 | Receiver | [k8sclusterreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/k8sclusterreceiver) | No |
 | Receiver | [k8seventsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/k8seventsreceiver) | No |

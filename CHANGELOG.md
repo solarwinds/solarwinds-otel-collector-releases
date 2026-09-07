@@ -4,6 +4,25 @@
 - Adds a [DNS Query integration example](./examples/integrations/dnsquery/config.yaml) compatible with SolarWinds Observability SaaS.
 - Lists `dnsqueryreceiver` in the `verified` and `playground` component documentation; it was already part of both distributions.
 
+## v0.157.3
+- Updates golang to 1.26.6
+- Consumes public solarwinds-otel-collector-contrib v0.157.3 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01573)
+- Consumes private solarwinds-otel-collector-contrib v0.157.3 changes:
+  - No changes
+
+## v0.157.0
+- Consumes public solarwinds-otel-collector-contrib v0.157.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01570)
+- Consumes private solarwinds-otel-collector-contrib v0.157.0 changes:
+  - Updates OpenTelemetry modules to [v1.63.0/v0.157.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.157.0)
+- Updates OpenTelemetry modules to [v1.63.0/v0.157.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.157.0)
+
+## v0.152.6
+- Consumes public solarwinds-otel-collector-contrib v0.152.6 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01526)
+- Consumes private solarwinds-otel-collector-contrib v0.152.6 changes:
+  - No changes
+- Adds receiver to `k8s` distribution: [kubeletstatsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kubeletstatsreceiver)
+- Adds receiver to `verified` distribution: [windowseventlogreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowseventlogreceiver)
+
 ## v0.152.4
 - Consumes public solarwinds-otel-collector-contrib v0.152.4 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01524)
 - Consumes private solarwinds-otel-collector-contrib v0.152.4 changes:
