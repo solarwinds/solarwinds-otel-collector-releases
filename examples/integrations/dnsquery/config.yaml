@@ -1,7 +1,7 @@
 receivers:
   dnsquery:
     servers: # Required parameter, list of DNS servers e.g. ["8.8.8.8"]
-    collection_interval: # Required parameter e.g. 30s
+    # collection_interval: 60s  # Optional: how often to collect metrics, default 60s
     # domains: ["."]  # Optional: list of domains to query, default ["."]
     # record_type: "NS"  # Optional: A, AAAA, ANY, CNAME, MX, NS, PTR, SOA, SPF, SRV, TXT
     # network: "udp"     # Optional: udp, tcp or tcp-tls (DNS over TLS, usually port 853)
@@ -48,7 +48,7 @@ extensions:
       endpoint: # Required parameter
       tls:
         insecure: false
-      headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}", "swi-reporter": "dbo solarwinds-otel-collector"}
+      headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}", "swi-reporter": "otel solarwinds-otel-collector"}
 
 exporters:
   otlp_grpc:
