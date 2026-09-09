@@ -1,6 +1,7 @@
 # Changelog
 
 ## vNext
+- Adds a [DNS Query integration example](./examples/integrations/dnsquery/config.yaml) compatible with SolarWinds Observability SaaS.
 
 ## v0.157.3
 - Updates golang to 1.26.6
