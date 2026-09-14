@@ -2,6 +2,7 @@
 
 ## vNext
 - Adds a [DNS Query integration example](./examples/integrations/dnsquery/config.yaml) compatible with SolarWinds Observability SaaS.
+- Updates OpenTelemetry modules to [v1.66.0/v0.160.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.160.0)
 
 ## v0.157.3
 - Updates golang to 1.26.6
