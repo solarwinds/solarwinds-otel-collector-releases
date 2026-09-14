@@ -205,7 +205,7 @@ processors:
         - elasticsearch.node.operations.completed.rate
         - elasticsearch.node.cluster.io.rate
       match_type: strict
-  deltatorate/elasticsearch:
+  delta_to_rate/elasticsearch:
     metrics:
       - jvm.gc.collections.count.rate
       - elasticsearch.node.operations.completed.rate
@@ -252,7 +252,7 @@ service:
         - resource_detection/system
         - metrics_transform/elasticsearch
         - cumulative_to_delta/elasticsearch
-        - deltatorate/elasticsearch
+        - delta_to_rate/elasticsearch
         - transform/desc/elasticsearch
         - batch
         - solarwinds/elasticsearch

@@ -84,7 +84,7 @@ processors:
       metrics:
         - zookeeper.packet.count.rate
       match_type: strict
-  deltatorate/zookeeper:
+  delta_to_rate/zookeeper:
     metrics:
       - zookeeper.packet.count.rate
   transform/convert_limit/zookeeper:
@@ -145,7 +145,7 @@ service:
         - resource_detection/system
         - metrics_transform/zookeeper
         - cumulative_to_delta/zookeeper
-        - deltatorate/zookeeper
+        - delta_to_rate/zookeeper
         - transform/convert_limit/zookeeper
         - metricsgeneration/zookeeper
         - transform/desc/zookeeper
