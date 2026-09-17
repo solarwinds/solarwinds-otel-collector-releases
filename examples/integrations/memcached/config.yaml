@@ -80,7 +80,7 @@ processors:
         - memcached.operations.rate
         - memcached.network.rate
       match_type: strict
-  deltatorate/memcached:
+  delta_to_rate/memcached:
     metrics:
       - memcached.commands.rate
       - memcached.operations.rate
@@ -126,7 +126,7 @@ service:
         - resource_detection/system
         - metrics_transform/memcached
         - cumulative_to_delta/memcached
-        - deltatorate/memcached
+        - delta_to_rate/memcached
         - transform/desc/memcached
         - batch
         - solarwinds/memcached

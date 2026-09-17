@@ -3,6 +3,8 @@
 ## vNext
 - Adds a [DNS Query integration example](./examples/integrations/dnsquery/config.yaml) compatible with SolarWinds Observability SaaS.
 - Updates [host integration example](./examples/integrations/host/config.yaml) to explicitly configure `attributes: [cpu, state]` for `system.cpu.time` and `system.cpu.utilization` metrics, required since v0.157.0 where the `cpu` attribute became opt-in.
+- Updates OpenTelemetry modules to [v1.67.0/v0.161.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.161.0)
+- Renames the `deltatorate` processor to `delta_to_rate` in the Apache, Elasticsearch, Host, IIS, Memcached, Nginx and Zookeeper integration examples — the old name became a deprecated alias upstream in v0.158.0 and logs a deprecation warning on startup, so these examples now require collector v0.158.0 or newer
 
 ## v0.157.3
 - Updates golang to 1.26.6

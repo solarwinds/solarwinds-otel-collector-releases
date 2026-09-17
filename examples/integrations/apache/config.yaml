@@ -88,7 +88,7 @@ processors:
         - apache.traffic.rate
         - apache.request.time.rate.temp
       match_type: strict
-  deltatorate/apache:
+  delta_to_rate/apache:
     metrics:
       - apache.requests.rate
       - apache.traffic.rate
@@ -155,7 +155,7 @@ service:
         - resource_detection/system
         - metrics_transform/apache
         - cumulative_to_delta/apache
-        - deltatorate/apache
+        - delta_to_rate/apache
         - metricsgeneration/apache
         - transform/desc/apache
         - filter/apache

@@ -84,7 +84,7 @@ processors:
         - iis.connection.attempt.count.rate
         - iis.network.io.rate
       match_type: strict
-  deltatorate/rates/iis:
+  delta_to_rate/rates/iis:
     metrics:
       - iis.connection.anonymous.rate
       - iis.connection.attempt.count.rate
@@ -130,7 +130,7 @@ service:
         - resource_detection/system
         - metrics_transform/rates/iis
         - cumulative_to_delta/rates/iis
-        - deltatorate/rates/iis
+        - delta_to_rate/rates/iis
         - transform/desc/iis
         - batch
         - solarwinds/iis

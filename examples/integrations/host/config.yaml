@@ -365,7 +365,7 @@ processors:
         - system.disk.operations.read.aggregated.rate
         - system.disk.operations.write.aggregated.rate
       match_type: strict
-  deltatorate/host:
+  delta_to_rate/host:
     metrics:
       - system.disk.operations.aggregated
       - system.network.io.aggregated
@@ -469,7 +469,7 @@ service:
         - hostvolumes
         - metrics_transform/host
         - cumulative_to_delta/host
-        - deltatorate/host
+        - delta_to_rate/host
         - transform/desc/host
         - utf8consistency
         - batch

@@ -98,7 +98,7 @@ processors:
         - nginx.connections_dropped.rate
         - nginx.requests.rate
       match_type: strict
-  deltatorate/nginx:
+  delta_to_rate/nginx:
     metrics:
       - nginx.connections_accepted.rate
       - nginx.connections_handled.rate
@@ -160,7 +160,7 @@ service:
         - metrics_transform/copy_dropped_rate/nginx
         - transform/convert_dropped_rate/nginx
         - cumulative_to_delta/nginx
-        - deltatorate/nginx
+        - delta_to_rate/nginx
         - transform/desc/nginx
         - filter/nginx
         - batch
