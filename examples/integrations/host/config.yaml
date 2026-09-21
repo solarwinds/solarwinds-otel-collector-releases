@@ -417,6 +417,13 @@ processors:
     ec2:
       tags:
         - ^.*$
+  transform/lastboot:
+    metric_statements:
+      - context: datapoint
+        statements:
+          - set(resource.attributes["sw.host.last_boot"], String(Int(attributes["osdetails.boottime"]) * 10000000))
+            where metric.name == "swo.hostinfo.uptime"
+
   transform/tagging-feature/host:
     metric_statements:
       - set(resource.attributes["sw.entity.type"], "host")
@@ -464,6 +471,7 @@ service:
         - resource_detection/system
         - uuid
         - resource_detection/tagging-feature
+        - transform/lastboot
         - transform/tagging-feature/host
         - hostinfo/host
         - hostvolumes
