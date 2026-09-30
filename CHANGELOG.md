@@ -6,6 +6,8 @@
 - Consumes public solarwinds-otel-collector-contrib v0.161.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01610)
 - Consumes private solarwinds-otel-collector-contrib v0.161.0 changes:
   - Updates OpenTelemetry modules to [v1.67.0/v0.161.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.161.0)
+- Adds a [DNS Query integration example](./examples/integrations/dnsquery/config.yaml) compatible with SolarWinds Observability SaaS.
+- Updates [host integration example](./examples/integrations/host/config.yaml) to explicitly configure `attributes: [cpu, state]` for `system.cpu.time` and `system.cpu.utilization` metrics, required since v0.157.0 where the `cpu` attribute became opt-in.
 - Updates OpenTelemetry modules to [v1.67.0/v0.161.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.161.0)
 - Pins [processor/k8sattributesprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.161.0/processor/k8sattributesprocessor) to v1.0.0 in the `verified`, `playground` and `k8s` distributions — its signals were promoted to stable upstream in v0.161.0, which moves the module off the shared version line
 - Drops the `replaces:` entries that pinned every SolarWinds contrib component (public and private) to `v0.157.7-0.2026091710...` pseudo-versions in all four distributions. Those pins were release-prep scaffolding from a point where the contrib repos had not tagged `v0.161.0` yet; with the tags published, the components now resolve to `v0.161.0` as the manifests declare. Previously the collector reported version `0.157.6` at runtime despite being built as `0.161.0`.
