@@ -45,11 +45,12 @@ All components. Generated based on manifest file
 | Extension | [ecsobserver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/ecsobserver) | No |
 | Extension | [hostobserver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/hostobserver) | No |
 | Extension | [k8sobserver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/k8sobserver) | No |
-| Extension | [kafkatopicsobserver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/kafkatopicsobserver) | No |
 | Extension | [dbstorage](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/storage/dbstorage) | No |
 | Extension | [filestorage](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/storage/filestorage) | No |
 | Extension | [redisstorageextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/storage/redisstorageextension) | No |
 | Extension | [pebbletailstorageextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/tailstorage/pebbletailstorageextension) | No |
+| Extension | [awsiamdbauthextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/dbauth/awsiamdbauthextension) | No |
+| Extension | [sdnotifyextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/sdnotifyextension) | No |
 | Extension | [solarwindsextension](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/extension/solarwindsextension) | No |
 | Exporter | [debugexporter](https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/debugexporter) | No |
 | Exporter | [nopexporter](https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/nopexporter) | No |
@@ -84,7 +85,6 @@ All components. Generated based on manifest file
 | Exporter | [loadbalancingexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/loadbalancingexporter) | No |
 | Exporter | [logicmonitorexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/logicmonitorexporter) | No |
 | Exporter | [logzioexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/logzioexporter) | No |
-| Exporter | [mezmoexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/mezmoexporter) | No |
 | Exporter | [opensearchexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/opensearchexporter) | No |
 | Exporter | [otelarrowexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/otelarrowexporter) | No |
 | Exporter | [prometheusexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/prometheusexporter) | No |
@@ -103,13 +103,13 @@ All components. Generated based on manifest file
 | Exporter | [zipkinexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/zipkinexporter) | No |
 | Processor | [batchprocessor](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/batchprocessor) | No |
 | Processor | [memorylimiterprocessor](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/memorylimiterprocessor) | No |
+| Processor | [adaptivetailsamplingprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/adaptivetailsamplingprocessor) | No |
 | Processor | [attributesprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/attributesprocessor) | No |
 | Processor | [awsecsattributesprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/awsecsattributesprocessor) | No |
 | Processor | [coralogixprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/coralogixprocessor) | No |
 | Processor | [cumulativetodeltaprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/cumulativetodeltaprocessor) | No |
 | Processor | [deltatocumulativeprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/deltatocumulativeprocessor) | No |
 | Processor | [deltatorateprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/deltatorateprocessor) | No |
-| Processor | [dynamicsamplingprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/dynamicsamplingprocessor) | No |
 | Processor | [filterprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor) | No |
 | Processor | [geoipprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/geoipprocessor) | No |
 | Processor | [groupbyattrsprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/groupbyattrsprocessor) | No |
@@ -138,6 +138,8 @@ All components. Generated based on manifest file
 | Processor | [cardinalityguardianprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/cardinalityguardianprocessor) | No |
 | Processor | [drainprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/drainprocessor) | No |
 | Processor | [genainormalizerprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/genainormalizerprocessor) | No |
+| Processor | [rollingspanlatencyprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/rollingspanlatencyprocessor) | No |
+| Processor | [signingprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/signingprocessor) | No |
 | Processor | [k8seventgenerationprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/k8seventgenerationprocessor) | No |
 | Processor | [solarwindsprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/solarwindsprocessor) | No |
 | Processor | [swok8sworkloadtypeprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadtypeprocessor) | No |
@@ -261,6 +263,7 @@ All components. Generated based on manifest file
 | Receiver | [windowsservicereceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowsservicereceiver) | No |
 | Receiver | [azurefunctionsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/azurefunctionsreceiver) | No |
 | Receiver | [vcrreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/vcrreceiver) | No |
+| Receiver | [dnscheckreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/dnscheckreceiver) | No |
 | Receiver | [swohostmetricsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swohostmetricsreceiver) | No |
 | Receiver | [swok8sdiscovery](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sdiscovery) | No |
 | Receiver | [swok8sobjectsreceiver](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/receiver/swok8sobjectsreceiver) | No |
