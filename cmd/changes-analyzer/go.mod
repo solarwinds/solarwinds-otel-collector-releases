@@ -1,6 +1,6 @@
 module github.com/solarwinds/solarwinds-otel-collector-releases/changes-analyzer
 
-go 1.26.6
+go 1.26.9
 
 require (
 	github.com/PuerkitoBio/goquery v1.13.0
@@ -9,5 +9,5 @@ require (
 
 require (
 	github.com/andybalholm/cascadia v1.3.4 // indirect
-	golang.org/x/net v0.58.0 // indirect
+	golang.org/x/net v0.61.0 // indirect
 )
