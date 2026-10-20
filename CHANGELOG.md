@@ -5,10 +5,6 @@
 ## v0.161.3
 - Consumes public solarwinds-otel-collector-contrib v0.161.3 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01613)
 - Consumes private solarwinds-otel-collector-contrib v0.161.3 changes:
-  - Adds `exporter/topologysnapshotexporter`: caches JobEngine topology entity events and
-  periodically writes the whole cache into a staging directory as one protobuf snapshot
-  for the NIO collector plugin to ship to SWO over UAMS. Cadence is configured with
-  `interval` (default 30m) and `initial_delay` (default 35m).
   - Updates golang to 1.26.9
 
 ## v0.161.1
