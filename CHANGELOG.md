@@ -1,6 +1,7 @@
 # Changelog
 
 ## vNext
+- Adds an [NVIDIA GPU (DCGM) integration example](./examples/integrations/nvidia_dcgm/config.yaml) compatible with SolarWinds Observability SaaS. It scrapes the NVIDIA DCGM Exporter Prometheus endpoint and converts `DCGM_FI_*` metrics to `nvidia.gpu.*` metrics with OpenTelemetry-style names, units and attributes.
 
 ## v0.161.3
 - Consumes public solarwinds-otel-collector-contrib v0.161.3 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01613)
