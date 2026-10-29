@@ -1,0 +1,311 @@
+receivers:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'nvidia_dcgm'
+          scrape_interval: # Required parameter
+          static_configs:
+            - targets:
+                - ${env:DCGM_EXPORTER_ENDPOINT} # Required parameter, host:port of the DCGM Exporter (e.g. localhost:9400)
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 30
+  solarwinds/nvidia_dcgm:
+    collector_attributes_decoration:
+      enabled: true
+      extension: solarwinds
+    resource:
+      sw.otelcol.receiver.name: "nvidia_dcgm"
+      sw.otelcol.integration.id: # Required parameter
+  resource_detection/ec2:
+    detectors: ["ec2"]
+    timeout: 2s
+    override: true
+  resource_detection/azure:
+    detectors: ["azure"]
+    timeout: 2s
+    override: true
+  resource_detection/gcp:
+    detectors: ["gcp"]
+    timeout: 2s
+    override: true
+  resource_detection/system:
+    detectors: ["system"]
+    timeout: 2s
+    override: false
+    system:
+      hostname_sources: ["os"]
+  transform/nvidia_dcgm:
+    error_mode: ignore
+    metric_statements:
+      # Runs first, while source names and labels are still original.
+      - context: datapoint
+        statements:
+          - set(value_double, Double(value_int)) where IsMatch(metric.name, "^(DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION|DCGM_FI_DEV_FAN_SPEED|DCGM_FI_DEV_GPU_UTIL|DCGM_FI_DEV_MEM_COPY_UTIL|DCGM_FI_DEV_ENC_UTIL|DCGM_FI_DEV_DEC_UTIL|DCGM_FI_DEV_POWER_VIOLATION|DCGM_FI_DEV_THERMAL_VIOLATION|DCGM_FI_DEV_SYNC_BOOST_VIOLATION|DCGM_FI_DEV_BOARD_LIMIT_VIOLATION|DCGM_FI_DEV_LOW_UTIL_VIOLATION|DCGM_FI_DEV_RELIABILITY_VIOLATION)$") and value_int != 0
+          - set(attributes["nvidia.gpu.index"], attributes["gpu"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["gpu"] != nil and attributes["nvidia.gpu.index"] == nil
+          - delete_key(attributes, "gpu") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.uuid"], attributes["UUID"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["UUID"] != nil and attributes["nvidia.gpu.uuid"] == nil
+          - set(attributes["nvidia.gpu.uuid"], attributes["uuid"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["uuid"] != nil and attributes["nvidia.gpu.uuid"] == nil
+          - set(attributes["nvidia.gpu.uuid"], attributes["gpu_uuid"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["gpu_uuid"] != nil and attributes["nvidia.gpu.uuid"] == nil
+          - delete_key(attributes, "UUID") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - delete_key(attributes, "uuid") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - delete_key(attributes, "gpu_uuid") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.model"], attributes["modelName"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["modelName"] != nil and attributes["nvidia.gpu.model"] == nil
+          - set(attributes["nvidia.gpu.model"], attributes["model_name"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["model_name"] != nil and attributes["nvidia.gpu.model"] == nil
+          - delete_key(attributes, "modelName") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - delete_key(attributes, "model_name") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.pci_bus_id"], attributes["pci_bus_id"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["pci_bus_id"] != nil and attributes["nvidia.gpu.pci_bus_id"] == nil
+          - delete_key(attributes, "pci_bus_id") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.device"], attributes["device"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["device"] != nil and attributes["nvidia.gpu.device"] == nil
+          - delete_key(attributes, "device") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.mig.profile"], attributes["GPU_I_PROFILE"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["GPU_I_PROFILE"] != nil and attributes["nvidia.gpu.mig.profile"] == nil
+          - delete_key(attributes, "GPU_I_PROFILE") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.mig.instance_id"], attributes["GPU_I_ID"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["GPU_I_ID"] != nil and attributes["nvidia.gpu.mig.instance_id"] == nil
+          - delete_key(attributes, "GPU_I_ID") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.nvlink.index"], attributes["nvlink"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["nvlink"] != nil and attributes["nvidia.gpu.nvlink.index"] == nil
+          - delete_key(attributes, "nvlink") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.nvswitch.index"], attributes["nvswitch"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["nvswitch"] != nil and attributes["nvidia.gpu.nvswitch.index"] == nil
+          - delete_key(attributes, "nvswitch") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.driver.version"], attributes["DCGM_FI_DRIVER_VERSION"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["DCGM_FI_DRIVER_VERSION"] != nil and attributes["nvidia.gpu.driver.version"] == nil
+          - delete_key(attributes, "DCGM_FI_DRIVER_VERSION") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.nvml.version"], attributes["DCGM_FI_NVML_VERSION"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["DCGM_FI_NVML_VERSION"] != nil and attributes["nvidia.gpu.nvml.version"] == nil
+          - delete_key(attributes, "DCGM_FI_NVML_VERSION") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.brand"], attributes["DCGM_FI_DEV_BRAND"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["DCGM_FI_DEV_BRAND"] != nil and attributes["nvidia.gpu.brand"] == nil
+          - delete_key(attributes, "DCGM_FI_DEV_BRAND") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.serial"], attributes["DCGM_FI_DEV_SERIAL"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["DCGM_FI_DEV_SERIAL"] != nil and attributes["nvidia.gpu.serial"] == nil
+          - delete_key(attributes, "DCGM_FI_DEV_SERIAL") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.inforom.oem.version"], attributes["DCGM_FI_DEV_OEM_INFOROM_VER"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["DCGM_FI_DEV_OEM_INFOROM_VER"] != nil and attributes["nvidia.gpu.inforom.oem.version"] == nil
+          - delete_key(attributes, "DCGM_FI_DEV_OEM_INFOROM_VER") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.inforom.ecc.version"], attributes["DCGM_FI_DEV_ECC_INFOROM_VER"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["DCGM_FI_DEV_ECC_INFOROM_VER"] != nil and attributes["nvidia.gpu.inforom.ecc.version"] == nil
+          - delete_key(attributes, "DCGM_FI_DEV_ECC_INFOROM_VER") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.inforom.power.version"], attributes["DCGM_FI_DEV_POWER_INFOROM_VER"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["DCGM_FI_DEV_POWER_INFOROM_VER"] != nil and attributes["nvidia.gpu.inforom.power.version"] == nil
+          - delete_key(attributes, "DCGM_FI_DEV_POWER_INFOROM_VER") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.inforom.image.version"], attributes["DCGM_FI_DEV_INFOROM_IMAGE_VER"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["DCGM_FI_DEV_INFOROM_IMAGE_VER"] != nil and attributes["nvidia.gpu.inforom.image.version"] == nil
+          - delete_key(attributes, "DCGM_FI_DEV_INFOROM_IMAGE_VER") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+          - set(attributes["nvidia.gpu.vbios.version"], attributes["DCGM_FI_DEV_VBIOS_VERSION"]) where IsMatch(metric.name, "^DCGM_(FI|EXP)_") and attributes["DCGM_FI_DEV_VBIOS_VERSION"] != nil and attributes["nvidia.gpu.vbios.version"] == nil
+          - delete_key(attributes, "DCGM_FI_DEV_VBIOS_VERSION") where IsMatch(metric.name, "^DCGM_(FI|EXP)_")
+      - context: metric
+        statements:
+          - set(unit, "MHz") where name == "DCGM_FI_DEV_SM_CLOCK"
+          - set(name, "nvidia.gpu.clock.sm") where name == "DCGM_FI_DEV_SM_CLOCK"
+          - set(unit, "MHz") where name == "DCGM_FI_DEV_MEM_CLOCK"
+          - set(name, "nvidia.gpu.clock.memory") where name == "DCGM_FI_DEV_MEM_CLOCK"
+          - set(unit, "Cel") where name == "DCGM_FI_DEV_MEMORY_TEMP"
+          - set(name, "nvidia.gpu.memory.temperature") where name == "DCGM_FI_DEV_MEMORY_TEMP"
+          - set(unit, "Cel") where IsMatch(name, "^(DCGM_FI_DEV_GPU_TEMP|DCGM_FI_DEV_GPU_TEMP_CELSIUS)$")
+          - set(name, "nvidia.gpu.temperature") where IsMatch(name, "^(DCGM_FI_DEV_GPU_TEMP|DCGM_FI_DEV_GPU_TEMP_CELSIUS)$")
+          - set(unit, "W") where IsMatch(name, "^(DCGM_FI_DEV_POWER_USAGE|DCGM_FI_DEV_BOARD_POWER_WATTS)$")
+          - set(name, "nvidia.gpu.power.usage") where IsMatch(name, "^(DCGM_FI_DEV_POWER_USAGE|DCGM_FI_DEV_BOARD_POWER_WATTS)$")
+          - set(unit, "W") where name == "DCGM_FI_DEV_BOARD_POWER_LIMIT_REQUESTED_WATTS"
+          - set(name, "nvidia.gpu.power.limit.requested") where name == "DCGM_FI_DEV_BOARD_POWER_LIMIT_REQUESTED_WATTS"
+          - set(unit, "W") where name == "DCGM_FI_DEV_BOARD_POWER_LIMIT_ENFORCED_WATTS"
+          - set(name, "nvidia.gpu.power.limit.enforced") where name == "DCGM_FI_DEV_BOARD_POWER_LIMIT_ENFORCED_WATTS"
+          - scale_metric(0.001, "J") where name == "DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION"
+          - set(name, "nvidia.gpu.energy.consumption") where name == "DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION"
+          - set(unit, "1") where name == "DCGM_FI_DEV_MIG_MODE"
+          - set(name, "nvidia.gpu.mig.mode") where name == "DCGM_FI_DEV_MIG_MODE"
+          - set(unit, "1") where name == "DCGM_FI_DEV_GPU_PSTATE"
+          - set(name, "nvidia.gpu.performance_state") where name == "DCGM_FI_DEV_GPU_PSTATE"
+          - set(unit, "1") where name == "DCGM_FI_DEV_ECC_MODE"
+          - set(name, "nvidia.gpu.ecc.mode") where name == "DCGM_FI_DEV_ECC_MODE"
+          - set(unit, "1") where name == "DCGM_FI_DEV_ECC_PENDING"
+          - set(name, "nvidia.gpu.ecc.mode.pending") where name == "DCGM_FI_DEV_ECC_PENDING"
+          - scale_metric(0.01, "1") where name == "DCGM_FI_DEV_FAN_SPEED"
+          - set(name, "nvidia.gpu.fan.speed") where name == "DCGM_FI_DEV_FAN_SPEED"
+          - scale_metric(0.01, "1") where name == "DCGM_FI_DEV_GPU_UTIL"
+          - set(name, "nvidia.gpu.utilization") where name == "DCGM_FI_DEV_GPU_UTIL"
+          - scale_metric(0.01, "1") where name == "DCGM_FI_DEV_MEM_COPY_UTIL"
+          - set(name, "nvidia.gpu.memory.utilization") where name == "DCGM_FI_DEV_MEM_COPY_UTIL"
+          - scale_metric(0.01, "1") where name == "DCGM_FI_DEV_ENC_UTIL"
+          - set(name, "nvidia.gpu.encoder.utilization") where name == "DCGM_FI_DEV_ENC_UTIL"
+          - scale_metric(0.01, "1") where name == "DCGM_FI_DEV_DEC_UTIL"
+          - set(name, "nvidia.gpu.decoder.utilization") where name == "DCGM_FI_DEV_DEC_UTIL"
+          - set(unit, "{retries}") where name == "DCGM_FI_DEV_PCIE_REPLAY_COUNTER"
+          - set(name, "nvidia.gpu.pcie.replay.count") where name == "DCGM_FI_DEV_PCIE_REPLAY_COUNTER"
+          - set(unit, "1") where name == "DCGM_FI_DEV_PCIE_MAX_LINK_GEN"
+          - set(name, "nvidia.gpu.pcie.link.generation.max") where name == "DCGM_FI_DEV_PCIE_MAX_LINK_GEN"
+          - set(unit, "{lanes}") where name == "DCGM_FI_DEV_PCIE_MAX_LINK_WIDTH"
+          - set(name, "nvidia.gpu.pcie.link.width.max") where name == "DCGM_FI_DEV_PCIE_MAX_LINK_WIDTH"
+          - set(unit, "1") where name == "DCGM_FI_DEV_PCIE_LINK_GEN"
+          - set(name, "nvidia.gpu.pcie.link.generation") where name == "DCGM_FI_DEV_PCIE_LINK_GEN"
+          - set(unit, "{lanes}") where name == "DCGM_FI_DEV_PCIE_LINK_WIDTH"
+          - set(name, "nvidia.gpu.pcie.link.width") where name == "DCGM_FI_DEV_PCIE_LINK_WIDTH"
+          - set(unit, "1") where IsMatch(name, "^(DCGM_FI_DEV_XID_ERRORS|DCGM_FI_DEV_XID_ERROR)$")
+          - set(name, "nvidia.gpu.xid.last_error") where IsMatch(name, "^(DCGM_FI_DEV_XID_ERRORS|DCGM_FI_DEV_XID_ERROR)$")
+          - scale_metric(0.000000001, "s") where name == "DCGM_FI_DEV_POWER_VIOLATION"
+          - set(name, "nvidia.gpu.violation.power.duration") where name == "DCGM_FI_DEV_POWER_VIOLATION"
+          - scale_metric(0.000000001, "s") where name == "DCGM_FI_DEV_THERMAL_VIOLATION"
+          - set(name, "nvidia.gpu.violation.thermal.duration") where name == "DCGM_FI_DEV_THERMAL_VIOLATION"
+          - scale_metric(0.000000001, "s") where name == "DCGM_FI_DEV_SYNC_BOOST_VIOLATION"
+          - set(name, "nvidia.gpu.violation.sync_boost.duration") where name == "DCGM_FI_DEV_SYNC_BOOST_VIOLATION"
+          - scale_metric(0.000000001, "s") where name == "DCGM_FI_DEV_BOARD_LIMIT_VIOLATION"
+          - set(name, "nvidia.gpu.violation.board_limit.duration") where name == "DCGM_FI_DEV_BOARD_LIMIT_VIOLATION"
+          - scale_metric(0.000000001, "s") where name == "DCGM_FI_DEV_LOW_UTIL_VIOLATION"
+          - set(name, "nvidia.gpu.violation.low_utilization.duration") where name == "DCGM_FI_DEV_LOW_UTIL_VIOLATION"
+          - scale_metric(0.000000001, "s") where name == "DCGM_FI_DEV_RELIABILITY_VIOLATION"
+          - set(name, "nvidia.gpu.violation.reliability.duration") where name == "DCGM_FI_DEV_RELIABILITY_VIOLATION"
+          - scale_metric(1048576.0, "By") where name == "DCGM_FI_DEV_FB_TOTAL"
+          - set(name, "nvidia.gpu.memory.total") where name == "DCGM_FI_DEV_FB_TOTAL"
+          - scale_metric(1048576.0, "By") where name == "DCGM_FI_DEV_FB_FREE"
+          - set(name, "nvidia.gpu.memory.free") where name == "DCGM_FI_DEV_FB_FREE"
+          - scale_metric(1048576.0, "By") where name == "DCGM_FI_DEV_FB_USED"
+          - set(name, "nvidia.gpu.memory.used") where name == "DCGM_FI_DEV_FB_USED"
+          - scale_metric(1048576.0, "By") where name == "DCGM_FI_DEV_FB_RESERVED"
+          - set(name, "nvidia.gpu.memory.reserved") where name == "DCGM_FI_DEV_FB_RESERVED"
+          - scale_metric(1048576.0, "By") where name == "DCGM_FI_DEV_BAR1_TOTAL"
+          - set(name, "nvidia.gpu.bar1.total") where name == "DCGM_FI_DEV_BAR1_TOTAL"
+          - scale_metric(1048576.0, "By") where name == "DCGM_FI_DEV_BAR1_FREE"
+          - set(name, "nvidia.gpu.bar1.free") where name == "DCGM_FI_DEV_BAR1_FREE"
+          - scale_metric(1048576.0, "By") where name == "DCGM_FI_DEV_BAR1_USED"
+          - set(name, "nvidia.gpu.bar1.used") where name == "DCGM_FI_DEV_BAR1_USED"
+          - set(unit, "{errors}") where name == "DCGM_FI_DEV_ECC_SBE_VOL_TOTAL"
+          - set(name, "nvidia.gpu.ecc.errors.single_bit.volatile") where name == "DCGM_FI_DEV_ECC_SBE_VOL_TOTAL"
+          - set(unit, "{errors}") where name == "DCGM_FI_DEV_ECC_DBE_VOL_TOTAL"
+          - set(name, "nvidia.gpu.ecc.errors.double_bit.volatile") where name == "DCGM_FI_DEV_ECC_DBE_VOL_TOTAL"
+          - set(unit, "{errors}") where name == "DCGM_FI_DEV_ECC_SBE_AGG_TOTAL"
+          - set(name, "nvidia.gpu.ecc.errors.single_bit.aggregate") where name == "DCGM_FI_DEV_ECC_SBE_AGG_TOTAL"
+          - set(unit, "{errors}") where name == "DCGM_FI_DEV_ECC_DBE_AGG_TOTAL"
+          - set(name, "nvidia.gpu.ecc.errors.double_bit.aggregate") where name == "DCGM_FI_DEV_ECC_DBE_AGG_TOTAL"
+          - set(unit, "{pages}") where name == "DCGM_FI_DEV_RETIRED_SBE"
+          - set(name, "nvidia.gpu.retired_pages.single_bit") where name == "DCGM_FI_DEV_RETIRED_SBE"
+          - set(unit, "{pages}") where name == "DCGM_FI_DEV_RETIRED_DBE"
+          - set(name, "nvidia.gpu.retired_pages.double_bit") where name == "DCGM_FI_DEV_RETIRED_DBE"
+          - set(unit, "1") where name == "DCGM_FI_DEV_RETIRED_PENDING"
+          - set(name, "nvidia.gpu.retired_pages.pending") where name == "DCGM_FI_DEV_RETIRED_PENDING"
+          - set(unit, "{rows}") where name == "DCGM_FI_DEV_UNCORRECTABLE_REMAPPED_ROWS"
+          - set(name, "nvidia.gpu.remapped_rows.uncorrectable") where name == "DCGM_FI_DEV_UNCORRECTABLE_REMAPPED_ROWS"
+          - set(unit, "{rows}") where name == "DCGM_FI_DEV_CORRECTABLE_REMAPPED_ROWS"
+          - set(name, "nvidia.gpu.remapped_rows.correctable") where name == "DCGM_FI_DEV_CORRECTABLE_REMAPPED_ROWS"
+          - set(unit, "1") where name == "DCGM_FI_DEV_ROW_REMAP_FAILURE"
+          - set(name, "nvidia.gpu.row_remap.failure") where name == "DCGM_FI_DEV_ROW_REMAP_FAILURE"
+          - set(unit, "1") where name == "DCGM_FI_DEV_ROW_REMAP_PENDING"
+          - set(name, "nvidia.gpu.row_remap.pending") where name == "DCGM_FI_DEV_ROW_REMAP_PENDING"
+          - set(unit, "1") where name == "DCGM_FI_DEV_VGPU_LICENSE_STATUS"
+          - set(name, "nvidia.gpu.vgpu.license.status") where name == "DCGM_FI_DEV_VGPU_LICENSE_STATUS"
+          - set(unit, "1") where name == "DCGM_FI_DEV_FABRIC_HEALTH_MASK"
+          - set(name, "nvidia.gpu.fabric.health.mask") where name == "DCGM_FI_DEV_FABRIC_HEALTH_MASK"
+          - set(unit, "1") where name == "DCGM_FI_DEV_FABRIC_HEALTH_SUMMARY"
+          - set(name, "nvidia.gpu.fabric.health.summary") where name == "DCGM_FI_DEV_FABRIC_HEALTH_SUMMARY"
+          - set(unit, "{errors}") where name == "DCGM_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_TOTAL"
+          - set(name, "nvidia.gpu.nvlink.crc.flit.errors") where name == "DCGM_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_TOTAL"
+          - set(unit, "{errors}") where name == "DCGM_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_TOTAL"
+          - set(name, "nvidia.gpu.nvlink.crc.data.errors") where name == "DCGM_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_TOTAL"
+          - set(unit, "{errors}") where name == "DCGM_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_TOTAL"
+          - set(name, "nvidia.gpu.nvlink.replay.errors") where name == "DCGM_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_TOTAL"
+          - set(unit, "{errors}") where name == "DCGM_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_TOTAL"
+          - set(name, "nvidia.gpu.nvlink.recovery.errors") where name == "DCGM_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_TOTAL"
+          - scale_metric(1000000.0, "By/s") where name == "DCGM_FI_DEV_NVLINK_BANDWIDTH_L0"
+          - set(name, "nvidia.gpu.nvlink.bandwidth.link0") where name == "DCGM_FI_DEV_NVLINK_BANDWIDTH_L0"
+          - scale_metric(1000000.0, "By/s") where IsMatch(name, "^(DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL|DCGM_FI_DEV_NVLINK_THROUGHPUT_TOTAL)$")
+          - set(name, "nvidia.gpu.nvlink.bandwidth") where IsMatch(name, "^(DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL|DCGM_FI_DEV_NVLINK_THROUGHPUT_TOTAL)$")
+          - set(unit, "{errors}") where name == "DCGM_FI_DEV_NVLINK_CRC_ERROR_TOTAL"
+          - set(name, "nvidia.gpu.nvlink.data_link.crc.errors") where name == "DCGM_FI_DEV_NVLINK_CRC_ERROR_TOTAL"
+          - set(unit, "{errors}") where name == "DCGM_FI_DEV_NVLINK_RECOVERY_TOTAL"
+          - set(name, "nvidia.gpu.nvlink.data_link.recovery.errors") where name == "DCGM_FI_DEV_NVLINK_RECOVERY_TOTAL"
+          - set(unit, "{errors}") where name == "DCGM_FI_DEV_NVLINK_REPLAY_TOTAL"
+          - set(name, "nvidia.gpu.nvlink.data_link.replay.errors") where name == "DCGM_FI_DEV_NVLINK_REPLAY_TOTAL"
+          - set(unit, "{events}") where name == "DCGM_FI_DEV_NVLINK_RECOVERY_SUCCESSFUL_TOTAL"
+          - set(name, "nvidia.gpu.nvlink.recovery.successful") where name == "DCGM_FI_DEV_NVLINK_RECOVERY_SUCCESSFUL_TOTAL"
+          - set(unit, "{events}") where name == "DCGM_FI_DEV_NVLINK_RECOVERY_FAILED_TOTAL"
+          - set(name, "nvidia.gpu.nvlink.recovery.failed") where name == "DCGM_FI_DEV_NVLINK_RECOVERY_FAILED_TOTAL"
+          - set(unit, "{events}") where name == "DCGM_FI_DEV_NVLINK_RECOVERY_EVENT_TOTAL"
+          - set(name, "nvidia.gpu.nvlink.recovery.events") where name == "DCGM_FI_DEV_NVLINK_RECOVERY_EVENT_TOTAL"
+          - set(unit, "1") where IsMatch(name, "^(DCGM_FI_PROF_GR_ENGINE_ACTIVE|DCGM_FI_PROF_GR_ENGINE_UTIL_RATIO)$")
+          - set(name, "nvidia.gpu.graphics_engine.active") where IsMatch(name, "^(DCGM_FI_PROF_GR_ENGINE_ACTIVE|DCGM_FI_PROF_GR_ENGINE_UTIL_RATIO)$")
+          - set(unit, "1") where name == "DCGM_FI_PROF_SM_ACTIVE"
+          - set(name, "nvidia.gpu.sm.warp_active") where name == "DCGM_FI_PROF_SM_ACTIVE"
+          - set(unit, "1") where name == "DCGM_FI_PROF_SM_OCCUPANCY"
+          - set(name, "nvidia.gpu.sm.occupancy") where name == "DCGM_FI_PROF_SM_OCCUPANCY"
+          - set(unit, "1") where IsMatch(name, "^(DCGM_FI_PROF_PIPE_TENSOR_ACTIVE|DCGM_FI_PROF_TENSOR_UTIL_RATIO)$")
+          - set(name, "nvidia.gpu.tensor.active") where IsMatch(name, "^(DCGM_FI_PROF_PIPE_TENSOR_ACTIVE|DCGM_FI_PROF_TENSOR_UTIL_RATIO)$")
+          - set(unit, "1") where name == "DCGM_FI_PROF_DRAM_ACTIVE"
+          - set(name, "nvidia.gpu.dram.active") where name == "DCGM_FI_PROF_DRAM_ACTIVE"
+          - set(unit, "1") where name == "DCGM_FI_PROF_PIPE_FP64_ACTIVE"
+          - set(name, "nvidia.gpu.pipe.fp64.active") where name == "DCGM_FI_PROF_PIPE_FP64_ACTIVE"
+          - set(unit, "1") where name == "DCGM_FI_PROF_PIPE_FP32_ACTIVE"
+          - set(name, "nvidia.gpu.pipe.fp32.active") where name == "DCGM_FI_PROF_PIPE_FP32_ACTIVE"
+          - set(unit, "1") where name == "DCGM_FI_PROF_PIPE_FP16_ACTIVE"
+          - set(name, "nvidia.gpu.pipe.fp16.active") where name == "DCGM_FI_PROF_PIPE_FP16_ACTIVE"
+          - set(unit, "By/s") where name == "DCGM_FI_PROF_PCIE_TX_BYTES"
+          - set(name, "nvidia.gpu.pcie.io.transmit") where name == "DCGM_FI_PROF_PCIE_TX_BYTES"
+          - set(unit, "By/s") where name == "DCGM_FI_PROF_PCIE_RX_BYTES"
+          - set(name, "nvidia.gpu.pcie.io.receive") where name == "DCGM_FI_PROF_PCIE_RX_BYTES"
+          - set(unit, "By/s") where name == "DCGM_FI_PROF_NVLINK_TX_BYTES"
+          - set(name, "nvidia.gpu.nvlink.io.transmit") where name == "DCGM_FI_PROF_NVLINK_TX_BYTES"
+          - set(unit, "By/s") where name == "DCGM_FI_PROF_NVLINK_RX_BYTES"
+          - set(name, "nvidia.gpu.nvlink.io.receive") where name == "DCGM_FI_PROF_NVLINK_RX_BYTES"
+          - set(unit, "By") where name == "DCGM_FI_PROF_PCIE_TX_BYTES_TOTAL"
+          - set(name, "nvidia.gpu.pcie.io.transmit.bytes") where name == "DCGM_FI_PROF_PCIE_TX_BYTES_TOTAL"
+          - set(unit, "By") where name == "DCGM_FI_PROF_PCIE_RX_BYTES_TOTAL"
+          - set(name, "nvidia.gpu.pcie.io.receive.bytes") where name == "DCGM_FI_PROF_PCIE_RX_BYTES_TOTAL"
+          - set(unit, "{cycles}") where name == "DCGM_FI_PROF_SM_CYCLES_ELAPSED_TOTAL"
+          - set(name, "nvidia.gpu.cycles.sm.elapsed") where name == "DCGM_FI_PROF_SM_CYCLES_ELAPSED_TOTAL"
+          - set(unit, "{cycles}") where name == "DCGM_FI_PROF_SM_CYCLES_ACTIVE_TOTAL"
+          - set(name, "nvidia.gpu.cycles.sm.active") where name == "DCGM_FI_PROF_SM_CYCLES_ACTIVE_TOTAL"
+          - set(unit, "{cycles}") where name == "DCGM_FI_PROF_MMA_CYCLES_ACTIVE_TOTAL"
+          - set(name, "nvidia.gpu.cycles.mma.active") where name == "DCGM_FI_PROF_MMA_CYCLES_ACTIVE_TOTAL"
+          - set(unit, "{cycles}") where name == "DCGM_FI_PROF_DMMA_CYCLES_ACTIVE_TOTAL"
+          - set(name, "nvidia.gpu.cycles.dmma.active") where name == "DCGM_FI_PROF_DMMA_CYCLES_ACTIVE_TOTAL"
+          - set(unit, "{cycles}") where name == "DCGM_FI_PROF_HMMA_CYCLES_ACTIVE_TOTAL"
+          - set(name, "nvidia.gpu.cycles.hmma.active") where name == "DCGM_FI_PROF_HMMA_CYCLES_ACTIVE_TOTAL"
+          - set(unit, "{cycles}") where name == "DCGM_FI_PROF_IMMA_CYCLES_ACTIVE_TOTAL"
+          - set(name, "nvidia.gpu.cycles.imma.active") where name == "DCGM_FI_PROF_IMMA_CYCLES_ACTIVE_TOTAL"
+          - set(unit, "{cycles}") where name == "DCGM_FI_PROF_DFMA_CYCLES_ACTIVE_TOTAL"
+          - set(name, "nvidia.gpu.cycles.dfma.active") where name == "DCGM_FI_PROF_DFMA_CYCLES_ACTIVE_TOTAL"
+          - set(unit, "{cycles}") where name == "DCGM_FI_PROF_INT_CYCLES_ACTIVE_TOTAL"
+          - set(name, "nvidia.gpu.cycles.int.active") where name == "DCGM_FI_PROF_INT_CYCLES_ACTIVE_TOTAL"
+          - set(unit, "{cycles}") where name == "DCGM_FI_PROF_FP64_CYCLES_ACTIVE_TOTAL"
+          - set(name, "nvidia.gpu.cycles.fp64.active") where name == "DCGM_FI_PROF_FP64_CYCLES_ACTIVE_TOTAL"
+          - set(unit, "{cycles}") where name == "DCGM_FI_PROF_FP32_CYCLES_ACTIVE_TOTAL"
+          - set(name, "nvidia.gpu.cycles.fp32.active") where name == "DCGM_FI_PROF_FP32_CYCLES_ACTIVE_TOTAL"
+          - set(unit, "{cycles}") where name == "DCGM_FI_PROF_FP16_CYCLES_ACTIVE_TOTAL"
+          - set(name, "nvidia.gpu.cycles.fp16.active") where name == "DCGM_FI_PROF_FP16_CYCLES_ACTIVE_TOTAL"
+          - set(unit, "{events}") where name == "DCGM_EXP_CLOCK_EVENTS_COUNT"
+          - set(name, "nvidia.gpu.clock_events.window") where name == "DCGM_EXP_CLOCK_EVENTS_COUNT"
+          - set(unit, "{events}") where name == "DCGM_EXP_CLOCK_EVENTS_TOTAL"
+          - set(name, "nvidia.gpu.clock_events") where name == "DCGM_EXP_CLOCK_EVENTS_TOTAL"
+          - set(unit, "{errors}") where name == "DCGM_EXP_XID_ERRORS_COUNT"
+          - set(name, "nvidia.gpu.xid.errors.window") where name == "DCGM_EXP_XID_ERRORS_COUNT"
+          - set(unit, "{errors}") where name == "DCGM_EXP_XID_ERRORS_TOTAL"
+          - set(name, "nvidia.gpu.xid.errors") where name == "DCGM_EXP_XID_ERRORS_TOTAL"
+          - set(unit, "1") where name == "DCGM_EXP_GPU_HEALTH_STATUS"
+          - set(name, "nvidia.gpu.health.status") where name == "DCGM_EXP_GPU_HEALTH_STATUS"
+          - set(unit, "1") where name == "DCGM_EXP_P2P_STATUS"
+          - set(name, "nvidia.gpu.p2p.status") where name == "DCGM_EXP_P2P_STATUS"
+  batch:
+    send_batch_max_size: 20000
+
+extensions:
+  solarwinds:
+    collector_name: # Required parameter
+    grpc: &grpc_settings
+      endpoint: # Required parameter
+      tls:
+        insecure: false
+      headers: {"Authorization": "Bearer ${env:SOLARWINDS_TOKEN}", "swi-reporter": "otel solarwinds-otel-collector"}
+
+exporters:
+  otlp_grpc:
+    <<: *grpc_settings
+
+service:
+  extensions:
+    - solarwinds
+  pipelines:
+    metrics/nvidia_dcgm:
+      receivers:
+        - prometheus
+      processors:
+        - memory_limiter
+        - resource_detection/ec2
+        - resource_detection/azure
+        - resource_detection/gcp
+        - resource_detection/system
+        - transform/nvidia_dcgm
+        - batch
+        - solarwinds/nvidia_dcgm
+      exporters:
+        - otlp_grpc
