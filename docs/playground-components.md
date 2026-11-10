@@ -225,7 +225,6 @@ All components. Generated based on manifest file
 | Receiver | [redfishreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/redfishreceiver) | No |
 | Receiver | [riakreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/riakreceiver) | No |
 | Receiver | [saphanareceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/saphanareceiver) | No |
-| Receiver | [signalfxreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/signalfxreceiver) | No |
 | Receiver | [simpleprometheusreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/simpleprometheusreceiver) | No |
 | Receiver | [skywalkingreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/skywalkingreceiver) | No |
 | Receiver | [snmpreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/snmpreceiver) | No |
@@ -243,7 +242,6 @@ All components. Generated based on manifest file
 | Receiver | [tlscheckreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/tlscheckreceiver) | No |
 | Receiver | [udplogreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/udplogreceiver) | No |
 | Receiver | [vcenterreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/vcenterreceiver) | No |
-| Receiver | [wavefrontreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/wavefrontreceiver) | No |
 | Receiver | [webhookeventreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/webhookeventreceiver) | No |
 | Receiver | [windowseventlogreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowseventlogreceiver) | No |
 | Receiver | [windowsperfcountersreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowsperfcountersreceiver) | No |
