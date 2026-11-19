@@ -4,6 +4,15 @@
 - Updates OpenTelemetry modules to [v1.71.0/v0.165.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.165.0)
 - Removes `wavefrontreceiver` and `signalfxreceiver` from the `playground` distribution; both were removed upstream ([#51397](https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/51397), [#51934](https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/51934)).
 
+## v0.165.0
+- Consumes public solarwinds-otel-collector-contrib v0.165.0 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01650)
+- Consumes private solarwinds-otel-collector-contrib v0.165.0 changes:
+  - Updates OpenTelemetry modules to [v1.71.0/v0.165.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.165.0)
+  - Updates golang to 1.27.4
+- Updates OpenTelemetry modules to [v1.71.0/v0.165.0](https://github.com/open-telemetry/opentelemetry-collector/releases/tag/v0.165.0)
+- Removes `wavefrontreceiver` and `signalfxreceiver` from the `playground` distribution; both were removed upstream ([#51397](https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/51397), [#51934](https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/51934)).
+- Adds new upstream components to the `playground` distribution: `natsexporter`, `filetelemetrypolicyextension`, `redisfleettrackerextension`, `partitioningprocessor`, `telemetrypolicyprocessor`, `verifyprocessor`, `gnmireceiver` and `natsreceiver`.
+
 ## v0.161.7
 - Consumes public solarwinds-otel-collector-contrib v0.161.7 dependencies - [full changelog](https://github.com/solarwinds/solarwinds-otel-collector-contrib/blob/main/CHANGELOG.md#v01617)
 - Consumes private solarwinds-otel-collector-contrib v0.161.7 changes:
