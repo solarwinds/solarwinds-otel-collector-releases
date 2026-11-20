@@ -10,6 +10,8 @@ All components. Generated based on manifest file
 | Extension | [asapauthextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/asapauthextension) | No |
 | Extension | [basicauthextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/basicauthextension) | No |
 | Extension | [bearertokenauthextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/bearertokenauthextension) | No |
+| Extension | [filetelemetrypolicyextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/filetelemetrypolicyextension) | No |
+| Extension | [redisfleettrackerextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/fleettracker/redisfleettrackerextension) | No |
 | Extension | [googleclientauthextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/googleclientauthextension) | No |
 | Extension | [headerssetterextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/headerssetterextension) | No |
 | Extension | [healthcheckextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/healthcheckextension) | No |
@@ -85,6 +87,7 @@ All components. Generated based on manifest file
 | Exporter | [loadbalancingexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/loadbalancingexporter) | No |
 | Exporter | [logicmonitorexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/logicmonitorexporter) | No |
 | Exporter | [logzioexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/logzioexporter) | No |
+| Exporter | [natsexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/natsexporter) | No |
 | Exporter | [opensearchexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/opensearchexporter) | No |
 | Exporter | [otelarrowexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/otelarrowexporter) | No |
 | Exporter | [prometheusexporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/prometheusexporter) | No |
@@ -121,6 +124,7 @@ All components. Generated based on manifest file
 | Processor | [lookupprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/lookupprocessor) | No |
 | Processor | [metricsgenerationprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricsgenerationprocessor) | No |
 | Processor | [metricstransformprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricstransformprocessor) | No |
+| Processor | [partitioningprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/partitioningprocessor) | No |
 | Processor | [probabilisticsamplerprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/probabilisticsamplerprocessor) | No |
 | Processor | [redactionprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/redactionprocessor) | No |
 | Processor | [remotetapprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/remotetapprocessor) | No |
@@ -130,6 +134,7 @@ All components. Generated based on manifest file
 | Processor | [spanprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/spanprocessor) | No |
 | Processor | [sumologicprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/sumologicprocessor) | No |
 | Processor | [tailsamplingprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor) | No |
+| Processor | [telemetrypolicyprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/telemetrypolicyprocessor) | No |
 | Processor | [transformprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/transformprocessor) | No |
 | Processor | [unrollprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/unrollprocessor) | No |
 | Processor | [isolationforestprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/isolationforestprocessor) | No |
@@ -140,6 +145,7 @@ All components. Generated based on manifest file
 | Processor | [genainormalizerprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/genainormalizerprocessor) | No |
 | Processor | [rollingspanlatencyprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/rollingspanlatencyprocessor) | No |
 | Processor | [signingprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/signingprocessor) | No |
+| Processor | [verifyprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/verifyprocessor) | No |
 | Processor | [k8seventgenerationprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/k8seventgenerationprocessor) | No |
 | Processor | [solarwindsprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/solarwindsprocessor) | No |
 | Processor | [swok8sworkloadtypeprocessor](https://github.com/solarwinds/solarwinds-otel-collector-contrib/tree/main/processor/swok8sworkloadtypeprocessor) | No |
@@ -181,6 +187,7 @@ All components. Generated based on manifest file
 | Receiver | [flinkmetricsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/flinkmetricsreceiver) | No |
 | Receiver | [fluentforwardreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/fluentforwardreceiver) | No |
 | Receiver | [githubreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/githubreceiver) | No |
+| Receiver | [gnmireceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/gnmireceiver) | No |
 | Receiver | [googlecloudmonitoringreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/googlecloudmonitoringreceiver) | No |
 | Receiver | [googlecloudpubsubreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/googlecloudpubsubreceiver) | No |
 | Receiver | [googlecloudpubsubpushreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/googlecloudpubsubpushreceiver) | No |
@@ -206,6 +213,7 @@ All components. Generated based on manifest file
 | Receiver | [mongodbreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/mongodbreceiver) | No |
 | Receiver | [mysqlreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/mysqlreceiver) | No |
 | Receiver | [namedpipereceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/namedpipereceiver) | No |
+| Receiver | [natsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/natsreceiver) | No |
 | Receiver | [nginxreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/nginxreceiver) | No |
 | Receiver | [nsxtreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/nsxtreceiver) | No |
 | Receiver | [ntpreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/ntpreceiver) | No |
@@ -225,7 +233,6 @@ All components. Generated based on manifest file
 | Receiver | [redfishreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/redfishreceiver) | No |
 | Receiver | [riakreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/riakreceiver) | No |
 | Receiver | [saphanareceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/saphanareceiver) | No |
-| Receiver | [signalfxreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/signalfxreceiver) | No |
 | Receiver | [simpleprometheusreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/simpleprometheusreceiver) | No |
 | Receiver | [skywalkingreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/skywalkingreceiver) | No |
 | Receiver | [snmpreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/snmpreceiver) | No |
@@ -243,7 +250,6 @@ All components. Generated based on manifest file
 | Receiver | [tlscheckreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/tlscheckreceiver) | No |
 | Receiver | [udplogreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/udplogreceiver) | No |
 | Receiver | [vcenterreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/vcenterreceiver) | No |
-| Receiver | [wavefrontreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/wavefrontreceiver) | No |
 | Receiver | [webhookeventreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/webhookeventreceiver) | No |
 | Receiver | [windowseventlogreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowseventlogreceiver) | No |
 | Receiver | [windowsperfcountersreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/windowsperfcountersreceiver) | No |
